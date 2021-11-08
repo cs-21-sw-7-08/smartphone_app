@@ -1,0 +1,94 @@
+{
+  "app_name": "Bee A Helper",
+  "@app_name": {
+    "description": "The name of the app"
+  },
+  "sign_in_with_google": "Continue with Google",
+  "@sign_in_with_google" : {
+    "description": "Sign in with a Google login text"
+  },
+  "sign_in_with_apple": "Continue with Apple",
+  "@sign_in_with_apple" : {
+    "description": "Sign in with a Apple login text"
+  },
+  "sign_in_with_phone_no": "Continue with phone no.",
+  "@sign_in_with_phone_no" : {
+    "description": "Sign in with phone no. text"
+  },
+  "overview": "Overview",
+  "@overview" : {
+    "description": "Overview title"
+  },
+  "sign_up": "Sign Up",
+  "@sign_up": {
+    "description": "Sign up title"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel task"
+  },
+  "settings" : "Settings",
+  "@settings": {
+    "description": "Settings drawer title"
+  },
+  "help" : "Help",
+  "@help": {
+    "description": "Help drawer title"
+  },
+  "log_out" : "Log out",
+  "@log_out": {
+    "description": "Log out drawer title"
+  },
+  "logging_out" : "Logging out...",
+  "@logging_out": {
+    "description": "Progress title"
+  },
+  "signing_up" : "Signing up...",
+  "@signing_up": {
+    "description": "Progress message"
+  },
+  "create_issue" : "Create issue",
+  "@create_issue": {
+    "description": "Create issue button text"
+  },
+  "phone_number" : "Phone Number",
+  "@phone_number": {
+    "description": "Phone number title"
+  },
+  "sms_code" : "SMS Code",
+  "@sms_code": {
+    "description": "SMS code title"
+  },
+  "name" : "Name",
+  "@name": {
+    "description": "Name title"
+  },
+  "details" : "Details",
+  "@details": {
+    "description": "Details title"
+  },
+  "getting_issues" : "Getting issues...",
+  "@getting_issues": {
+    "description": "Progress message"
+  },
+  "getting_issue_details" : "Getting issue details...",
+  "@getting_issue_details": {
+    "description": "Progress message"
+  },
+  "location" : "Location",
+  "@location": {
+    "description": "Location title"
+  },
+  "confirm" : "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  "category" : "Category",
+  "@category": {
+    "description": "Category title"
+  },
+  "description" : "Description",
+  "@description": {
+    "description": "Description title"
+  }
+}

@@ -1,4 +1,4 @@
-package com.cs21sw708.smartphoneapp.smartphone_app;
+package com.cs21sw708.smartphoneapp;
 
 import io.flutter.embedding.android.FlutterActivity;
 

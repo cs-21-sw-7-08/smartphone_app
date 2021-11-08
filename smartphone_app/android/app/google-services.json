@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "288408050050",
+    "project_id": "bee-a-helper",
+    "storage_bucket": "bee-a-helper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288408050050:android:b901e9bcf1b33104e6579b",
+        "android_client_info": {
+          "package_name": "com.cs21sw708.smartphoneapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "288408050050-n77iicsig2n485uoj2nvthqmnb68krl1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cs21sw708.smartphoneapp",
+            "certificate_hash": "5603e87c15c69cb1548d1c34c901420b8698c748"
+          }
+        },
+        {
+          "client_id": "288408050050-c1lmmhp3j9j4g8in7mgmb9c8ech58m5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrUyrHFlpSrQkAC_rUaW6QkyNe4tWzd8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "288408050050-c1lmmhp3j9j4g8in7mgmb9c8ech58m5e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

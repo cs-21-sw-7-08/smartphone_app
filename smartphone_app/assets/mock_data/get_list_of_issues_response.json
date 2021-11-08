@@ -1,0 +1,87 @@
+{
+  "Result": [
+    {
+      "Id": 1,
+      "CitizenId": 1,
+      "Description": "Jeg hader huller på fortorvet",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 57.012218,
+        "Longitude": 9.99433
+      },
+      "Category": {
+        "Id": 1,
+        "Name": "Sidewalk"
+      },
+      "SubCategory": {
+        "Id": 1,
+        "CategoryId": 1,
+        "Name": "Hole in sidewalk"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 1,
+        "Name": "Created"
+      }
+    },
+    {
+      "Id": 4,
+      "CitizenId": 1,
+      "Description": "This is a description",
+      "DateCreated": "2021-10-31T12:55:21.183",
+      "Location": {
+        "Latitude": 5,
+        "Longitude": 5
+      },
+      "Category": {
+        "Id": 1,
+        "Name": "Sidewalk"
+      },
+      "SubCategory": {
+        "Id": 1,
+        "CategoryId": 1,
+        "Name": "Hole in sidewalk"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 1,
+        "Name": "Created"
+      }
+    },
+    {
+      "Id": 5,
+      "CitizenId": 1,
+      "Description": "This is a description",
+      "DateCreated": "2021-11-01T09:55:20.883",
+      "Location": {
+        "Latitude": 10,
+        "Longitude": 10
+      },
+      "Category": {
+        "Id": 1,
+        "Name": "Sidewalk"
+      },
+      "SubCategory": {
+        "Id": 1,
+        "CategoryId": 1,
+        "Name": "Hole in sidewalk"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 1,
+        "Name": "Created"
+      }
+    }
+  ],
+  "IsSuccessful": true,
+  "ErrorNo": 0
+}
