@@ -42,6 +42,27 @@ Map<String, dynamic> _$GetListOfIssues_WASPResponseToJson(
       'Result': instance.result,
     };
 
+GetListOfMunicipalities_WASPResponse
+    _$GetListOfMunicipalities_WASPResponseFromJson(Map<String, dynamic> json) {
+  return GetListOfMunicipalities_WASPResponse(
+    result: (json['Result'] as List<dynamic>?)
+        ?.map((e) => Municipality.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  )
+    ..isSuccessful = json['IsSuccessful'] as bool
+    ..errorNo = json['ErrorNo'] as int
+    ..errorMessage = json['ErrorMessage'] as String?;
+}
+
+Map<String, dynamic> _$GetListOfMunicipalities_WASPResponseToJson(
+        GetListOfMunicipalities_WASPResponse instance) =>
+    <String, dynamic>{
+      'IsSuccessful': instance.isSuccessful,
+      'ErrorNo': instance.errorNo,
+      'ErrorMessage': instance.errorMessage,
+      'Result': instance.result,
+    };
+
 GetIssueDetails_WASPResponse _$GetIssueDetails_WASPResponseFromJson(
     Map<String, dynamic> json) {
   return GetIssueDetails_WASPResponse(

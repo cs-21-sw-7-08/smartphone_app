@@ -1,9 +1,11 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-enum AppValuesKey { citizenId }
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
+
+enum AppValuesKey { citizenId, municipalities }
 
 class AppValuesHelper {
-
   ///
   /// STATIC
   ///
@@ -25,6 +27,21 @@ class AppValuesHelper {
   //region Constructor
 
   AppValuesHelper._();
+
+  //endregion
+
+  ///
+  /// PROPERTIES
+  ///
+  //region Properties
+
+  List<Municipality> getMunicipalities() {
+    Iterable l =
+        jsonDecode(getString(AppValuesKey.municipalities) ?? "");
+    List<Municipality> municipalities =
+        List<Municipality>.from(l.map((model) => Municipality.fromJson(model)));
+    return municipalities;
+  }
 
   //endregion
 

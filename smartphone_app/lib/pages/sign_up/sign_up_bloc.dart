@@ -24,7 +24,10 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   ///
   //region Constructor
 
-  SignUpBloc({required BuildContext buildContext, required SignUpPageView signUpPageView, String? name})
+  SignUpBloc(
+      {required BuildContext buildContext,
+      required SignUpPageView signUpPageView,
+      String? name})
       : super(SignUpState(signUpPageView: signUpPageView, name: name)) {
     _buildContext = buildContext;
   }
@@ -78,7 +81,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   //region Methods
 
   verifyPhoneNo() async {
-    await TaskUtil.runTask<bool, bool>(
+    await TaskUtil.runTask<bool>(
         buildContext: _buildContext,
         progressMessage: "Sending verification code...",
         doInBackground: (runTask) async {
@@ -99,28 +102,23 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
               });
           return null;
         },
-        afterBackground: (value) {},
         taskCancelled: () {});
   }
 
   verifySmsCode({PhoneAuthCredential? credentials}) async {
-    UserCredential? userCredential =
-        await TaskUtil.runTask<UserCredential, UserCredential>(
-            buildContext: _buildContext,
-            progressMessage: "Verifying SMS code...",
-            doInBackground: (runTask) async {
-              if (credentials != null) {
-                return await ThirdPartySignInUtil.signInWithCredentials(
-                    credentials);
-              } else {
-                return await ThirdPartySignInUtil.signInWithSmsCode(
-                    state.verificationId!, state.smsCode!);
-              }
-            },
-            afterBackground: (value) {
-              return value;
-            },
-            taskCancelled: () {});
+    UserCredential? userCredential = await TaskUtil.runTask<UserCredential>(
+        buildContext: _buildContext,
+        progressMessage: "Verifying SMS code...",
+        doInBackground: (runTask) async {
+          if (credentials != null) {
+            return await ThirdPartySignInUtil.signInWithCredentials(
+                credentials);
+          } else {
+            return await ThirdPartySignInUtil.signInWithSmsCode(
+                state.verificationId!, state.smsCode!);
+          }
+        },
+        taskCancelled: () {});
     if (userCredential == null) return;
     add(MakeViewChange(signUpPageView: SignUpPageView.name));
   }

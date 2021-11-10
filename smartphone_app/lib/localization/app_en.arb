@@ -90,5 +90,45 @@
   "description" : "Description",
   "@description": {
     "description": "Description title"
+  },
+  "select_category" : "Select category",
+  "@select_category": {
+    "description": "Select category button text"
+  },
+  "change_category" : "Change category",
+  "@select_subcategory": {
+    "description": "Change category button text"
+  },
+  "select_location" : "Select location",
+  "@select_location": {
+    "description": "Select location button text"
+  },
+  "change_location" : "Change location",
+  "@change_location": {
+    "description": "Change location button text"
+  },
+  "near" : "Near",
+  "@near": {
+    "description": "Near an address"
+  },
+  "category_id_1" : "Sidewalk",
+  "@category_id_1": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_1" : "Hole in sidewalk",
+  "@sub_category_id_1": {
+    "description": "Model enum localization"
+  },
+  "issue_state_id_1" : "Created",
+  "@issue_state_id_1": {
+    "description": "Model enum localization"
+  },
+  "issue_state_id_2" : "Approved",
+  "@issue_state_id_2": {
+    "description": "Model enum localization"
+  },
+  "issue_state_id_3" : "Resolved",
+  "@issue_state_id_3": {
+    "description": "Model enum localization"
   }
 }

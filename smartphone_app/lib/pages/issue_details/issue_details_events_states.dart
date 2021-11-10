@@ -2,9 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
-class IssueDetailsEvent {}
+///
+/// ENUMS
+///
+//region Enums
 
 enum IssueDetailsButtonEvent { verifyIssue, editIssue }
+
+//endregion
+
+///
+/// EVENT
+///
+//region Event
+
+class IssueDetailsEvent {}
 
 class ButtonPressed extends IssueDetailsEvent {
   final IssueDetailsButtonEvent issueDetailsButtonEvent;
@@ -28,6 +40,13 @@ class PageContentLoaded extends IssueDetailsEvent {
       required this.category,
       required this.subCategory});
 }
+
+//endregion
+
+///
+/// STATE
+///
+//region State
 
 class IssueDetailsState {
   MapType? mapType;
@@ -65,3 +84,5 @@ class IssueDetailsState {
         subCategory: subCategory ?? this.subCategory);
   }
 }
+
+//endregion

@@ -145,7 +145,9 @@ class IssuesOverviewPage extends StatelessWidget {
                 getOverview(bloc, state),
                 // 'Create issue' button
                 CustomButton(
-                  onPressed: () {},
+                  onPressed: () => bloc.add(ButtonPressed(
+                      issuesOverviewButtonEvent:
+                          IssuesOverviewButtonEvent.createIssue)),
                   text: AppLocalizations.of(context)!.create_issue,
                   fontWeight: FontWeight.bold,
                   border: Border.all(color: Colors.black, width: 1),

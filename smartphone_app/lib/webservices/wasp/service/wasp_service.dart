@@ -90,6 +90,12 @@ class WASPService implements IWASPServiceFunctions {
     throw UnimplementedError();
   }
 
+  @override
+  Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>> getListOfMunicipalities() {
+    // TODO: implement getListOfMunicipalities
+    throw UnimplementedError();
+  }
+
   //endregion
 
 }

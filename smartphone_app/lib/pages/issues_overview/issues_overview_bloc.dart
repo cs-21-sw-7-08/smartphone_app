@@ -1,21 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:smartphone_app/pages/select_location/select_location_page.dart';
-import 'package:smartphone_app/webservices/google_reverse_geocoding/models/google_classes.dart';
-import 'package:smartphone_app/webservices/google_reverse_geocoding/service/google_service.dart';
-import '../../webservices/wasp/interfaces/wasp_service_functions.dart';
+import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/pages/create_issue/create_issue_page.dart';
 import 'package:smartphone_app/pages/issue_details/issue_details_page.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_events_states.dart';
-import 'package:smartphone_app/pages/issues_overview/issues_overview_page.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
-import 'package:smartphone_app/webservices/wasp/service/mock_wasp_service.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import '../../utilities/location/locator_util.dart';
 
@@ -28,11 +26,6 @@ class IssuesOverviewBloc
 
   // ignore: unused_field
   late BuildContext _buildContext;
-  late IWASPServiceFunctions _waspServiceFunctions;
-
-  IWASPServiceFunctions get waspService {
-    return _waspServiceFunctions;
-  }
 
   //endregion
 
@@ -46,7 +39,6 @@ class IssuesOverviewBloc
             issuesOverviewPageView: IssuesOverviewPageView.map,
             mapType: MapType.hybrid)) {
     _buildContext = buildContext;
-    _waspServiceFunctions = MockWASPService();
   }
 
   //endregion
@@ -64,7 +56,8 @@ class IssuesOverviewBloc
     } else if (event is ButtonPressed) {
       switch (event.issuesOverviewButtonEvent) {
         case IssuesOverviewButtonEvent.createIssue:
-          // TODO: Handle this case.
+          GeneralUtil.showPageAsDialog(
+              _buildContext, CreateIssuePage(mapType: state.mapType!));
           break;
         case IssuesOverviewButtonEvent.logOut:
           await logOut();
@@ -117,17 +110,15 @@ class IssuesOverviewBloc
   }
 
   Future<void> logOut() async {
-    await TaskUtil.runTask<bool, bool>(
+    await TaskUtil.runTask<bool>(
         buildContext: _buildContext,
         progressMessage: AppLocalizations.of(_buildContext)!.logging_out,
         doInBackground: (runTask) async {
           await ThirdPartySignInUtil.signOut();
           return null;
         },
-        afterBackground: (value) {
-          GeneralUtil.goToPage(_buildContext, LoginPage());
-        },
         taskCancelled: () {});
+    GeneralUtil.goToPage(_buildContext, LoginPage());
   }
 
   Future<bool> getValues() async {
@@ -140,8 +131,25 @@ class IssuesOverviewBloc
           // Fire event
           add(PositionRetrieved(devicePosition: position));
 
+          // Get list of municipalities
+          WASPServiceResponse<GetListOfMunicipalities_WASPResponse>
+              getListOfMunicipalitiesResponse =
+              await WASPService.getInstance().getListOfMunicipalities();
+          if (!getListOfMunicipalitiesResponse.isSuccess) {
+            GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+            return false;
+          }
+          // Convert municipality list to JSON
+          var municipalitiesJson = jsonEncode(getListOfMunicipalitiesResponse
+              .waspResponse!.result!
+              .map((e) => e.toJson())
+              .toList());
+          // Save municipalities
+          AppValuesHelper.getInstance()
+              .saveString(AppValuesKey.municipalities, municipalitiesJson);
+
           // Get list of issues
-          var response = await waspService.getListOfIssues();
+          var response = await WASPService.getInstance().getListOfIssues();
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);
@@ -153,9 +161,6 @@ class IssuesOverviewBloc
           add(ListOfIssuesRetrieved(issues: issues));
           // Return true
           return true;
-        },
-        afterBackground: (bool? value) {
-          return value;
         },
         taskCancelled: () {});
     return flag!;
@@ -167,7 +172,7 @@ class IssuesOverviewBloc
         progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
         doInBackground: (runTask) async {
           // Get list of issues
-          var response = await waspService.getListOfIssues();
+          var response = await WASPService.getInstance().getListOfIssues();
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);
@@ -179,9 +184,6 @@ class IssuesOverviewBloc
           add(ListOfIssuesRetrieved(issues: issues));
           // Return true
           return true;
-        },
-        afterBackground: (bool? value) {
-          return value;
         },
         taskCancelled: () {});
   }
@@ -203,9 +205,6 @@ class IssuesOverviewBloc
           // Get issue
           Issue issue = response.waspResponse!.result!;
           // Return issue
-          return issue;
-        },
-        afterBackground: (Issue? issue) {
           return issue;
         },
         taskCancelled: () {});

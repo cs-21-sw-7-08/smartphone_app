@@ -1,10 +1,22 @@
+
+///
+/// ENUMS
+///
+//region Enums
+
 enum SignUpPageView { phoneNo, name, smsCode }
-
-class SignUpEvent {}
-
 enum SignUpButtonEvent { verifyPhoneNo, verifySmsCode, confirmName }
 enum SignUpTextChangedEvent { name, phoneNo, smsCode }
 enum SignUpViewChangeEvent { name, phoneNo, smsCode }
+
+//endregion
+
+///
+/// EVENT
+///
+//region Event
+
+class SignUpEvent {}
 
 class ButtonPressed extends SignUpEvent {
   final SignUpButtonEvent signUpButtonEvent;
@@ -30,6 +42,13 @@ class VerificationIdRetrieved extends SignUpEvent {
 
   VerificationIdRetrieved({required this.verificationId});
 }
+
+//endregion
+
+///
+/// STATE
+///
+//region State
 
 class SignUpState {
   SignUpPageView? signUpPageView;
@@ -59,3 +78,5 @@ class SignUpState {
         signUpPageView: signUpPageView ?? this.signUpPageView);
   }
 }
+
+//endregion

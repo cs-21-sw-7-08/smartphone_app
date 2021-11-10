@@ -14,7 +14,7 @@ class CustomButton extends StatefulWidget {
   final EdgeInsetsGeometry margin;
   final EdgeInsetsGeometry padding;
   final double? width;
-  final double height;
+  final double? height;
 
   final String? text;
   final double fontSize;

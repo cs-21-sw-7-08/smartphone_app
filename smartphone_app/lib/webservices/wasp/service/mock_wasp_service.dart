@@ -52,6 +52,14 @@ class MockWASPService extends WASPService {
     return Future.value(WASPServiceResponse.success(WASPResponse()));
   }
 
+  @override
+  Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>>
+      getListOfMunicipalities() async {
+    return WASPServiceResponse.success(
+        GetListOfMunicipalities_WASPResponse.fromJson(
+            await getJsonData("get_list_of_municipalities_response.json")));
+  }
+
 //endregion
 
 }

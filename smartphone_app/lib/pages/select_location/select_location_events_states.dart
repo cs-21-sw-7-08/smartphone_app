@@ -1,9 +1,21 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class SelectLocationEvent {}
+///
+/// ENUMS
+///
+//region Enums
 
 enum SelectLocationButtonEvent { confirm, changeMapType }
+
+//endregion
+
+///
+/// EVENT
+///
+//region Event
+
+class SelectLocationEvent {}
 
 class ButtonPressed extends SelectLocationEvent {
   final SelectLocationButtonEvent selectLocationButtonEvent;
@@ -29,6 +41,13 @@ class PositionRetrieved extends SelectLocationEvent {
   PositionRetrieved({required this.devicePosition});
 }
 
+//endregion
+
+///
+/// STATE
+///
+//region State
+
 class SelectLocationState {
   Position? devicePosition;
   Marker? marker;
@@ -44,3 +63,5 @@ class SelectLocationState {
         mapType: mapType ?? this.mapType);
   }
 }
+
+//endregion

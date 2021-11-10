@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_page.dart';
@@ -12,8 +13,10 @@ import 'package:smartphone_app/webservices/google_reverse_geocoding/service/goog
 import 'package:smartphone_app/webservices/wasp/service/mock_wasp_service.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import 'helpers/app_values_helper.dart';
+import 'localization/localization_helper.dart';
 
 void main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
   await AppValuesHelper.getInstance().init();
   await Firebase.initializeApp();
@@ -34,14 +37,14 @@ void main() async {
     ThirdPartySignInUtil.signOut();
   } on Exception catch (_) {}*/
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class MyApp extends StatelessWidget {
 
   // ignore: use_key_in_widget_constructors
-  MyApp();
+  const MyApp();
 
   // This widget is the root of your application.
   @override
@@ -50,6 +53,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    LocalizationHelper.init(context: context);
 
     var localizations = [AppLocalizations.localizationsDelegates]
         .expand((element) => element)

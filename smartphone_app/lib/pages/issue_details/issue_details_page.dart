@@ -26,7 +26,7 @@ class IssueDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     IssueDetailsBloc bloc =
-        IssueDetailsBloc(buildContext: context, issue: issue);
+    IssueDetailsBloc(buildContext: context, issue: issue);
 
     return WillPopScope(
         onWillPop: () async {
@@ -52,22 +52,22 @@ class IssueDetailsPage extends StatelessWidget {
                       color: custom_colors.appSafeAreaColor,
                       child: SafeArea(
                           child: Scaffold(
-                        appBar: CustomAppBar(
-                          title: AppLocalizations.of(context)!.details,
-                          titleColor: Colors.white,
-                          background: custom_colors.appBarBackground,
-                          appBarLeftButton: AppBarLeftButton.back,
-                          leftButtonPressed: () async =>
+                            appBar: CustomAppBar(
+                              title: AppLocalizations.of(context)!.details,
+                              titleColor: Colors.white,
+                              background: custom_colors.appBarBackground,
+                              appBarLeftButton: AppBarLeftButton.back,
+                              leftButtonPressed: () async =>
                               {Navigator.pop(context)},
-                          button1Icon: bloc.state.isCreator!
-                              ? const Icon(Icons.edit_outlined,
+                              button1Icon: bloc.state.isCreator!
+                                  ? const Icon(Icons.edit_outlined,
                                   color: Colors.white)
-                              : const Icon(Icons.flag_outlined,
+                                  : const Icon(Icons.flag_outlined,
                                   color: Colors.white),
-                          onButton1Pressed: () {},
-                        ),
-                        body: getContent(bloc),
-                      ))));
+                              onButton1Pressed: () {},
+                            ),
+                            body: getContent(bloc),
+                          ))));
             }));
   }
 
@@ -87,36 +87,39 @@ class IssueDetailsPage extends StatelessWidget {
                     color: Colors.white.withOpacity(0.6),
                     child: BlocBuilder<IssueDetailsBloc, IssueDetailsState>(
                         builder: (context, state) {
-                      return SingleChildScrollView(
-                          child: Column(
-                        children: [
-                          CustomHeader(
-                            title: AppLocalizations.of(context)!.location,
-                            background: custom_colors.greyGradient,
-                            margin: const EdgeInsets.all(0),
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                          ),
-                          getLocationSnippet(bloc, state),
-                          CustomHeader(
-                            title: AppLocalizations.of(context)!.category,
-                            background: custom_colors.greyGradient,
-                            margin: const EdgeInsets.all(0),
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                          ),
-                          getCategory(bloc, state),
-                          CustomHeader(
-                            title: AppLocalizations.of(context)!.description,
-                            background: custom_colors.greyGradient,
-                            margin: const EdgeInsets.all(0),
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                          ),
-                          getDescription(bloc, state)
-                        ],
-                      ));
-                    })))));
+                          return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  CustomHeader(
+                                    title: AppLocalizations.of(context)!
+                                        .location,
+                                    background: custom_colors.greyGradient,
+                                    margin: const EdgeInsets.all(0),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10, top: 5, bottom: 5),
+                                  ),
+                                  getLocationSnippet(bloc, state),
+                                  CustomHeader(
+                                    title: AppLocalizations.of(context)!
+                                        .category,
+                                    background: custom_colors.greyGradient,
+                                    margin: const EdgeInsets.all(0),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10, top: 5, bottom: 5),
+                                  ),
+                                  getCategory(bloc, state),
+                                  CustomHeader(
+                                    title: AppLocalizations.of(context)!
+                                        .description,
+                                    background: custom_colors.greyGradient,
+                                    margin: const EdgeInsets.all(0),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10, top: 5, bottom: 5),
+                                  ),
+                                  getDescription(bloc, state)
+                                ],
+                              ));
+                        })))));
   }
 
   Widget getLocationSnippet(IssueDetailsBloc bloc, IssueDetailsState state) {
@@ -126,7 +129,7 @@ class IssueDetailsPage extends StatelessWidget {
       child: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition:
-            CameraPosition(target: state.marker!.position, zoom: 14),
+        CameraPosition(target: state.marker!.position, zoom: 14),
         scrollGesturesEnabled: false,
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
@@ -172,17 +175,16 @@ class IssueDetailsPage extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 15),
             ),
           GridView.count(
-            crossAxisCount: 3,
+            crossAxisCount: 2,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisSpacing: 4,
             shrinkWrap: true,
             mainAxisSpacing: 4,
             children:
-                List.generate((state.pictures ?? List.empty()).length, (index) {
-              return GestureDetector(
-                onTap: () {},
-                child: ImageFullScreenWrapper(child: state.pictures![index]),
-              );
+            List.generate((state.pictures ?? List.empty()).length, (index) {
+              return AspectRatio(
+                  aspectRatio: 1,
+                  child: ImageFullScreenWrapper(child: state.pictures![index]));
             }),
           )
         ],

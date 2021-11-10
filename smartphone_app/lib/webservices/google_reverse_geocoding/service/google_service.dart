@@ -1,7 +1,12 @@
+import 'dart:ui';
+
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:smartphone_app/helpers/rest_helper.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/interfaces/google_service_functions.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/models/google_classes.dart';
+import 'package:devicelocale/devicelocale.dart';
 
 class GoogleServiceResponse<Response extends GoogleResponse> {
   String? exception;
@@ -39,9 +44,11 @@ class GoogleService implements IGoogleServiceFunctions {
   //region Static
 
   static IGoogleServiceFunctions? _googleServiceFunctions;
+  static String? apiKey;
 
   static init(IGoogleServiceFunctions googleServiceFunctions) {
     _googleServiceFunctions = googleServiceFunctions;
+    apiKey = dotenv.env["GOOGLE_API_KEY"];
   }
 
   static IGoogleServiceFunctions getInstance() {
@@ -56,7 +63,6 @@ class GoogleService implements IGoogleServiceFunctions {
   //region Constants
 
   static const String url = "https://maps.googleapis.com";
-  static const String apiKey = "AIzaSyAiHjPFfpvyQRlZCVeBp1ysPFD60klv9ok";
 
   //endregion
 
@@ -88,11 +94,20 @@ class GoogleService implements IGoogleServiceFunctions {
   @override
   Future<GoogleServiceResponse<AddressFromCoordinateResponse>>
       getAddressFromCoordinate(LatLng coordinate) async {
+    Locale? locale;
+    String languageCode = "en";
+    try {
+      locale = await Devicelocale.currentAsLocale;
+    // ignore: empty_catches
+    } on PlatformException {}
+    if (locale != null) languageCode = locale.languageCode;
+
     // Send GET request
     RestResponse restResponse =
         await restHelper.sendGetRequest("/maps/api/geocode/json",
             parameters: List.of({
-              RestParameter(name: "key", value: apiKey),
+              RestParameter(name: "key", value: apiKey!),
+              RestParameter(name: "language", value: languageCode),
               RestParameter(
                   name: "latlng",
                   value: "${coordinate.latitude},${coordinate.longitude}")

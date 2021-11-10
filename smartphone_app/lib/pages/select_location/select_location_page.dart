@@ -15,12 +15,14 @@ import 'package:smartphone_app/widgets/custom_button.dart';
 class SelectLocationPage extends StatelessWidget {
   final Completer<GoogleMapController> _googleMapCompleter = Completer();
   late SelectLocationBloc bloc;
+  MapType mapType;
 
-  SelectLocationPage({Key? key}) : super(key: key);
+  SelectLocationPage({Key? key, required this.mapType}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    SelectLocationBloc bloc = SelectLocationBloc(buildContext: context);
+    SelectLocationBloc bloc =
+        SelectLocationBloc(buildContext: context, mapType: mapType);
 
     return WillPopScope(
         onWillPop: () async {
@@ -67,7 +69,7 @@ class SelectLocationPage extends StatelessWidget {
               CustomButton(
                 onPressed: () => bloc.add(ButtonPressed(
                     selectLocationButtonEvent:
-                    SelectLocationButtonEvent.confirm)),
+                        SelectLocationButtonEvent.confirm)),
                 text: AppLocalizations.of(context)!.confirm,
                 fontWeight: FontWeight.bold,
                 border: Border.all(color: Colors.black, width: 1),

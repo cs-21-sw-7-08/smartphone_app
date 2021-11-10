@@ -10,7 +10,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType keyBoardType;
 
   Key? key;
-  final double height;
+  final double? height;
   final double fontSize;
   final String? initialValue;
   String? text;
@@ -18,28 +18,31 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   bool enabled;
   final int? maxLength;
+  final int? maxLines;
+  Alignment alignment;
 
   List<TextInputFormatter>? inputFormatters = [];
   final EdgeInsetsGeometry margin;
   final ValueChanged<String>? onChanged;
   final TextEditingController _textEditingController = TextEditingController();
 
-  CustomTextField(
-      {this.key,
-      this.maxLength,
-      this.height = 55,
-      this.fontSize = 20,
-      this.hint,
-      this.textAlign = TextAlign.left,
-      this.readOnly = false,
-      this.keyBoardType = TextInputType.text,
-      this.onChanged,
-      this.enabled = true,
-      this.text,
-      this.margin =
-          const EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
-      this.textInputAction,
-      this.initialValue})
+  CustomTextField({this.key,
+    this.maxLength,
+    this.height = 55,
+    this.fontSize = 20,
+    this.hint,
+    this.alignment = Alignment.center,
+    this.maxLines = 1,
+    this.textAlign = TextAlign.left,
+    this.readOnly = false,
+    this.keyBoardType = TextInputType.text,
+    this.onChanged,
+    this.enabled = true,
+    this.text,
+    this.margin =
+    const EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
+    this.textInputAction,
+    this.initialValue})
       : super(key: key) {
     inputFormatters ??= [];
     GeneralUtil.setTextEditingControllerText(_textEditingController, text);
@@ -80,7 +83,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             border: Border.all(color: Colors.black),
             borderRadius: const BorderRadius.all(Radius.circular(2))),
         child: Align(
-            alignment: Alignment.center,
+            alignment: widget.alignment,
             child: TextFormField(
               maxLength: widget.maxLength,
               style: GoogleFonts.roboto(
@@ -102,10 +105,10 @@ class CustomTextFieldState extends State<CustomTextField> {
               inputFormatters: widget.inputFormatters,
               enabled: widget.enabled,
               textInputAction: widget.textInputAction,
-              maxLines: 1,
+              maxLines: widget.maxLines,
               buildCounter: (context,
-                      {currentLength = 0, isFocused = false, maxLength}) =>
-                  null,
+                  {currentLength = 0, isFocused = false, maxLength}) =>
+              null,
             )));
   }
 

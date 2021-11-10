@@ -22,8 +22,8 @@ class SelectLocationBloc
   ///
   //region Constructor
 
-  SelectLocationBloc({required BuildContext buildContext})
-      : super(SelectLocationState(mapType: MapType.normal)) {
+  SelectLocationBloc({required BuildContext buildContext, required MapType mapType})
+      : super(SelectLocationState(mapType: mapType)) {
     _buildContext = buildContext;
   }
 
@@ -43,7 +43,7 @@ class SelectLocationBloc
           markerId: markerId,
           position: event.point,
           consumeTapEvents: true,
-          onTap: () => {add(RemoveMarker(markerId: markerId))},
+          onTap: () => add(RemoveMarker(markerId: markerId)),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed));
       yield state.copyWith(marker: marker);
     } else if (event is RemoveMarker) {

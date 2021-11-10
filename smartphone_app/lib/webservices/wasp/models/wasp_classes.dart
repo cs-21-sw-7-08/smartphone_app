@@ -43,6 +43,22 @@ class GetListOfIssues_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+class GetListOfMunicipalities_WASPResponse extends WASPResponse {
+  @JsonKey(name: "Result")
+  late List<Municipality>? result;
+
+  GetListOfMunicipalities_WASPResponse({this.result});
+
+  factory GetListOfMunicipalities_WASPResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$GetListOfMunicipalities_WASPResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() =>
+      _$GetListOfMunicipalities_WASPResponseToJson(this);
+}
+
+@JsonSerializable()
 class GetIssueDetails_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Issue? result;
