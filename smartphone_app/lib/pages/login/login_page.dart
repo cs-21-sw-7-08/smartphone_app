@@ -1,17 +1,13 @@
 // ignore: must_be_immutable
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:smartphone_app/pages/issues_overview/issues_overview_page.dart';
 import 'package:smartphone_app/pages/login/login_bloc.dart';
 import 'package:smartphone_app/pages/login/login_events_states.dart';
-import 'package:smartphone_app/pages/sign_up/sign_up_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
-import '../../utilities/sign_in/third_party_sign_in_util.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:smartphone_app/widgets/custom_header.dart';
@@ -59,7 +55,7 @@ class LoginPage extends StatelessWidget {
                                       image: DecorationImage(
                                           fit: BoxFit.cover,
                                           image: ExactAssetImage(
-                                            "assets/login_background.jpg",
+                                            values.loginBackground,
                                           ))),
                                   child: BackdropFilter(
                                     filter:
@@ -79,7 +75,7 @@ class LoginPage extends StatelessWidget {
         Container(
             margin: const EdgeInsets.only(top: 0, left: 10, right: 10),
             child: SvgPicture.asset(
-              "assets/beahelper_feature_image.drawio.svg",
+              values.appFeatureImage,
               fit: BoxFit.contain,
               height: 150,
             )),

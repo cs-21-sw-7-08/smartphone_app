@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 .env
+android/app/google-services.json
 .DS_Store
 .atom/
 .buildlog/

@@ -18,8 +18,6 @@ class GoogleMapSnippet extends StatefulWidget {
   double zoom;
   EdgeInsetsGeometry? margin;
 
-  GoogleMapController? controller;
-
   //endregion
 
   ///
@@ -36,10 +34,7 @@ class GoogleMapSnippet extends StatefulWidget {
       this.mapType = MapType.normal,
       this.cameraPosition})
       : super(key: key) {
-    if (controller != null && marker != null) {
-      controller!.moveCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(target: marker!.position, zoom: zoom)));
-    }
+
   }
 
   //endregion
@@ -57,9 +52,15 @@ class GoogleMapSnippet extends StatefulWidget {
 
 class _GoogleMapSnippetState extends State<GoogleMapSnippet> {
   final Completer<GoogleMapController> _googleMapCompleter = Completer();
+  GoogleMapController? controller;
 
   @override
   Widget build(BuildContext context) {
+    if (controller != null && widget.marker != null) {
+      controller!.moveCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: widget.marker!.position, zoom: widget.zoom)));
+    }
+
     return Container(
         margin: widget.margin,
         height: widget.height,
@@ -81,7 +82,7 @@ class _GoogleMapSnippetState extends State<GoogleMapSnippet> {
           markers:
               widget.marker == null ? <Marker>{} : <Marker>{widget.marker!},
           onMapCreated: (GoogleMapController controller) {
-            widget.controller = controller;
+            this.controller = controller;
             _googleMapCompleter.complete(controller);
           },
         ));

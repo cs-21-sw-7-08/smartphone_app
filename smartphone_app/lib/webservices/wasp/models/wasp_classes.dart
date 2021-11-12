@@ -73,6 +73,22 @@ class GetIssueDetails_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+class GetListOfCategories_WASPResponse extends WASPResponse {
+  @JsonKey(name: "Result")
+  late List<Category>? result;
+
+  GetListOfCategories_WASPResponse({this.result});
+
+  factory GetListOfCategories_WASPResponse.fromJson(
+      Map<String, dynamic> json) =>
+      _$GetListOfCategories_WASPResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() =>
+      _$GetListOfCategories_WASPResponseToJson(this);
+}
+
+@JsonSerializable()
 class Location {
   @JsonKey(name: "Latitude")
   late double latitude;
@@ -93,8 +109,10 @@ class Category {
   late int id;
   @JsonKey(name: "Name")
   late String? name;
+  @JsonKey(name: "SubCategories")
+  late List<SubCategory>? subCategories;
 
-  Category({this.id = 0, this.name});
+  Category({this.id = 0, this.name, this.subCategories});
 
   factory Category.fromJson(Map<String, dynamic> json) =>
       _$CategoryFromJson(json);

@@ -139,14 +139,19 @@ class IssuesOverviewBloc
             GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
             return false;
           }
-          // Convert municipality list to JSON
-          var municipalitiesJson = jsonEncode(getListOfMunicipalitiesResponse
-              .waspResponse!.result!
-              .map((e) => e.toJson())
-              .toList());
-          // Save municipalities
-          AppValuesHelper.getInstance()
-              .saveString(AppValuesKey.municipalities, municipalitiesJson);
+          AppValuesHelper.getInstance().saveMunicipalities(
+              getListOfMunicipalitiesResponse.waspResponse!.result!);
+
+          // Get list of municipalities
+          WASPServiceResponse<GetListOfCategories_WASPResponse>
+              getListOfCategoriesResponse =
+              await WASPService.getInstance().getListOfCategories();
+          if (!getListOfCategoriesResponse.isSuccess) {
+            GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
+            return false;
+          }
+          AppValuesHelper.getInstance().saveCategories(
+              getListOfCategoriesResponse.waspResponse!.result!);
 
           // Get list of issues
           var response = await WASPService.getInstance().getListOfIssues();

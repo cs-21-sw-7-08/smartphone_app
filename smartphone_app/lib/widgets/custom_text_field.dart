@@ -24,28 +24,27 @@ class CustomTextField extends StatefulWidget {
   List<TextInputFormatter>? inputFormatters = [];
   final EdgeInsetsGeometry margin;
   final ValueChanged<String>? onChanged;
-  final TextEditingController _textEditingController = TextEditingController();
 
-  CustomTextField({this.key,
-    this.maxLength,
-    this.height = 55,
-    this.fontSize = 20,
-    this.hint,
-    this.alignment = Alignment.center,
-    this.maxLines = 1,
-    this.textAlign = TextAlign.left,
-    this.readOnly = false,
-    this.keyBoardType = TextInputType.text,
-    this.onChanged,
-    this.enabled = true,
-    this.text,
-    this.margin =
-    const EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
-    this.textInputAction,
-    this.initialValue})
+  CustomTextField(
+      {this.key,
+      this.maxLength,
+      this.height = 55,
+      this.fontSize = 20,
+      this.hint,
+      this.alignment = Alignment.center,
+      this.maxLines = 1,
+      this.textAlign = TextAlign.left,
+      this.readOnly = false,
+      this.keyBoardType = TextInputType.text,
+      this.onChanged,
+      this.enabled = true,
+      this.text,
+      this.margin =
+          const EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
+      this.textInputAction,
+      this.initialValue})
       : super(key: key) {
     inputFormatters ??= [];
-    GeneralUtil.setTextEditingControllerText(_textEditingController, text);
   }
 
   @override
@@ -53,6 +52,8 @@ class CustomTextField extends StatefulWidget {
 }
 
 class CustomTextFieldState extends State<CustomTextField> {
+  final TextEditingController _textEditingController = TextEditingController();
+
   ///
   /// OVERRIDE METHODS
   ///
@@ -60,7 +61,7 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   @override
   void dispose() {
-    widget._textEditingController.dispose();
+    _textEditingController.dispose();
     super.dispose();
   }
 
@@ -69,11 +70,14 @@ class CustomTextFieldState extends State<CustomTextField> {
     super.initState();
 
     GeneralUtil.setTextEditingControllerText(
-        widget._textEditingController, widget.initialValue);
+        _textEditingController, widget.initialValue);
   }
 
   @override
   Widget build(BuildContext context) {
+    GeneralUtil.setTextEditingControllerText(
+        _textEditingController, widget.text);
+
     return Container(
         margin: widget.margin,
         height: widget.height,
@@ -89,7 +93,7 @@ class CustomTextFieldState extends State<CustomTextField> {
               style: GoogleFonts.roboto(
                   textStyle: TextStyle(fontSize: widget.fontSize)),
               keyboardType: widget.keyBoardType,
-              controller: widget._textEditingController,
+              controller: _textEditingController,
               onChanged: (value) {
                 if (widget.onChanged != null) {
                   widget.onChanged!(value);
@@ -101,14 +105,23 @@ class CustomTextFieldState extends State<CustomTextField> {
                   enabledBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
+                  suffixIcon: widget.text != null && widget.text!.isNotEmpty
+                      ? IconButton(
+                          onPressed: _textEditingController.clear,
+                          icon: const Icon(
+                            Icons.clear,
+                            color: Colors.black,
+                          ),
+                        )
+                      : null,
                   hintText: widget.hint),
               inputFormatters: widget.inputFormatters,
               enabled: widget.enabled,
               textInputAction: widget.textInputAction,
               maxLines: widget.maxLines,
               buildCounter: (context,
-                  {currentLength = 0, isFocused = false, maxLength}) =>
-              null,
+                      {currentLength = 0, isFocused = false, maxLength}) =>
+                  null,
             )));
   }
 

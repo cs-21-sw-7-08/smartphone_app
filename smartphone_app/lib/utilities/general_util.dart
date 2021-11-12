@@ -12,10 +12,12 @@ class GeneralUtil {
   /// Set [text] for a given [textEditingController]
   static setTextEditingControllerText(
       TextEditingController textEditingController, String? text) {
+    text = text ?? "";
+    if (textEditingController.value.text == text) return;
     textEditingController.value = TextEditingValue(
-      text: text ?? '',
+      text: text,
       selection: TextSelection.fromPosition(
-        TextPosition(offset: (text ?? '').length),
+        TextPosition(offset: text.length),
       ),
     );
   }
@@ -37,7 +39,8 @@ class GeneralUtil {
             pageBuilder: (context, animation, anotherAnimation) {
               return page;
             },
-            transitionDuration: const Duration(milliseconds: pageTransitionTime),
+            transitionDuration:
+                const Duration(milliseconds: pageTransitionTime),
             transitionsBuilder: (context, animation, anotherAnimation, child) {
               return SlideTransition(
                 textDirection: goBack ? TextDirection.rtl : TextDirection.ltr,

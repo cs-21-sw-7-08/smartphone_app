@@ -1,0 +1,38 @@
+{
+  "Result": [
+    {
+      "Id": 1,
+      "Name": "Sidewalk",
+      "SubCategories": [
+        {
+          "Id": 1,
+          "CategoryId": 1,
+          "Name": "Hole in sidewalk"
+        },
+        {
+          "Id": 2,
+          "CategoryId": 1,
+          "Name": "Slippery sidewalk"
+        }
+      ]
+    },
+    {
+      "Id": 2,
+      "Name": "Road",
+      "SubCategories": [
+        {
+          "Id": 3,
+          "CategoryId": 2,
+          "Name": "Tree on road"
+        },
+        {
+          "Id": 4,
+          "CategoryId": 2,
+          "Name": "Hole on road"
+        }
+      ]
+    }
+  ],
+  "IsSuccessful": true,
+  "ErrorNo": 0
+}

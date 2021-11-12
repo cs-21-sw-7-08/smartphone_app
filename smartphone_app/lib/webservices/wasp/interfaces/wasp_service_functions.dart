@@ -21,4 +21,9 @@ class IWASPServiceFunctions {
       {required int citizenId, required int issueId}) async {
     throw UnimplementedError();
   }
+
+  Future<WASPServiceResponse<GetListOfCategories_WASPResponse>>
+  getListOfCategories() async {
+    throw UnimplementedError();
+  }
 }

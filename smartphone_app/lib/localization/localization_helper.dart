@@ -15,7 +15,7 @@ class LocalizationHelper {
   }
 
   static init({required BuildContext context}) {
-    _localizationHelper = LocalizationHelper._(context: context);
+    _localizationHelper = LocalizationHelper();
   }
 
   //endregion
@@ -25,7 +25,6 @@ class LocalizationHelper {
   ///
   //region Variables
 
-  BuildContext context;
 
   //endregion
 
@@ -34,7 +33,6 @@ class LocalizationHelper {
   ///
   //region Constructor
 
-  LocalizationHelper._({required this.context});
 
   //endregion
 
@@ -43,7 +41,7 @@ class LocalizationHelper {
   ///
   //region Methods
 
-  String getLocalizedCategory(Category? category) {
+  String getLocalizedCategory(BuildContext context, Category? category) {
     if (category == null) return "";
     String localizedCategory = "";
     switch (category.id) {
@@ -57,7 +55,7 @@ class LocalizationHelper {
         : (category.name ?? "");
   }
 
-  String getLocalizedSubCategory(SubCategory? subCategory) {
+  String getLocalizedSubCategory(BuildContext context, SubCategory? subCategory) {
     if (subCategory == null) return "";
     String localizedSubCategory = "";
     switch (subCategory.id) {
@@ -71,7 +69,7 @@ class LocalizationHelper {
         : (subCategory.name ?? "");
   }
 
-  String getLocalizedIssueState(IssueState? issueState) {
+  String getLocalizedIssueState(BuildContext context, IssueState? issueState) {
     if (issueState == null) return "";
     String localizedIssueState = "";
     switch (issueState.id) {

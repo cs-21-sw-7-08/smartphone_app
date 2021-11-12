@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
-enum AppValuesKey { citizenId, municipalities }
+enum AppValuesKey { citizenId, municipalities, categories }
 
 class AppValuesHelper {
   ///
@@ -35,12 +35,36 @@ class AppValuesHelper {
   ///
   //region Properties
 
+  List<T> _getList<T>(
+      AppValuesKey appValuesKey, Function(dynamic model) mapping) {
+    Iterable l = jsonDecode(getString(appValuesKey) ?? "");
+    List<T> list = List<T>.from(l.map((model) => mapping(model)));
+    return list;
+  }
+
   List<Municipality> getMunicipalities() {
-    Iterable l =
-        jsonDecode(getString(AppValuesKey.municipalities) ?? "");
-    List<Municipality> municipalities =
-        List<Municipality>.from(l.map((model) => Municipality.fromJson(model)));
-    return municipalities;
+    return _getList<Municipality>(
+        AppValuesKey.municipalities, (model) => Municipality.fromJson(model));
+  }
+
+  List<Category> getCategories() {
+    return _getList<Category>(
+        AppValuesKey.categories, (model) => Category.fromJson(model));
+  }
+
+  _saveList(AppValuesKey appValuesKey, List<dynamic> list) {
+    var json = jsonEncode(list.map((e) => e.toJson()).toList());
+    saveString(appValuesKey, json);
+  }
+
+  saveMunicipalities(List<Municipality> municipalities) {
+    // Save municipalities
+    _saveList(AppValuesKey.municipalities, municipalities);
+  }
+
+  saveCategories(List<Category> categories) {
+    // Save categories
+    _saveList(AppValuesKey.categories, categories);
   }
 
   //endregion

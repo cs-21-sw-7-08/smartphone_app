@@ -9,12 +9,16 @@ import 'package:smartphone_app/pages/create_issue/create_issue_events_states.dar
 import 'package:smartphone_app/pages/select_location/select_location_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/location/locator_util.dart';
+import 'package:smartphone_app/utilities/task_util.dart';
 import 'package:smartphone_app/values/values.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/models/google_classes.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/service/google_service.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
+import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_list_dialog/custom_list_dialog.dart';
+import 'package:smartphone_app/widgets/custom_list_tile.dart';
 
 class CreateIssueBloc extends Bloc<CreateIssueEvent, CreateIssueState> {
   ///
@@ -64,7 +68,58 @@ class CreateIssueBloc extends Bloc<CreateIssueEvent, CreateIssueState> {
           yield newState;
           break;
         case CreateIssueButtonEvent.selectCategory:
-          // TODO: Handle this case.
+          Category? selectedCategory;
+          SubCategory? selectedSubCategory;
+          List<Category> categories =
+              AppValuesHelper.getInstance().getCategories();
+          var flag = await CustomListDialog.show(_buildContext,
+              items: categories, itemBuilder: (item, itemSelected) {
+            if (item is Category) {
+              return CustomListTile(
+                  widget: Container(
+                    color: Colors.transparent,
+                    child: Column(
+                      children: [
+                        CustomHeader(
+                          title: item.name!,
+                          margin: const EdgeInsets.only(
+                              left: 10, top: 20, right: 10, bottom: 20),
+                        )
+                      ],
+                    ),
+                  ),
+                  onPressed: () {
+                    selectedCategory = item;
+                    itemSelected(item.subCategories);
+                  });
+            } else if (item is SubCategory) {
+              return CustomListTile(
+                  widget: Container(
+                    color: Colors.transparent,
+                    child: Column(
+                      children: [
+                        CustomHeader(
+                          title: item.name!,
+                          margin: const EdgeInsets.only(
+                              left: 10, top: 20, right: 10, bottom: 20),
+                        )
+                      ],
+                    ),
+                  ),
+                  onPressed: () {
+                    selectedSubCategory = item;
+                    itemSelected(null);
+                  });
+            }
+            return Container(
+              height: 50,
+            );
+          }, searchPredicate: (item, searchString) {
+            return true;
+          });
+          if (!flag) return;
+          yield state.copyWith(
+              category: selectedCategory, subCategory: selectedSubCategory);
           break;
         case CreateIssueButtonEvent.selectPicture:
           // TODO: Handle this case.

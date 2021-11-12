@@ -14,6 +14,7 @@ import 'package:smartphone_app/webservices/wasp/service/mock_wasp_service.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import 'helpers/app_values_helper.dart';
 import 'localization/localization_helper.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
 void main() async {
   await dotenv.load();
@@ -26,8 +27,8 @@ void main() async {
   // Pre-cache SVG
   await Future.wait([
     precachePicture(
-      ExactAssetPicture(SvgPicture.svgStringDecoderBuilder,
-          'assets/beahelper_feature_image.drawio.svg'),
+      ExactAssetPicture(
+          SvgPicture.svgStringDecoderBuilder, values.appFeatureImage),
       null,
     ),
     // other SVGs or images here
@@ -42,7 +43,6 @@ void main() async {
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class MyApp extends StatelessWidget {
-
   // ignore: use_key_in_widget_constructors
   const MyApp();
 
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         AppValuesHelper.getInstance().getInteger(AppValuesKey.citizenId);
 
     return MaterialApp(
-      navigatorObservers: [MyNavigatorObserver()],
+        navigatorObservers: [MyNavigatorObserver()],
         builder: (context, child) {
           return ScrollConfiguration(
             behavior: MyBehavior(),

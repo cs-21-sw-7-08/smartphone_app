@@ -84,6 +84,27 @@ Map<String, dynamic> _$GetIssueDetails_WASPResponseToJson(
       'Result': instance.result,
     };
 
+GetListOfCategories_WASPResponse _$GetListOfCategories_WASPResponseFromJson(
+    Map<String, dynamic> json) {
+  return GetListOfCategories_WASPResponse(
+    result: (json['Result'] as List<dynamic>?)
+        ?.map((e) => Category.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  )
+    ..isSuccessful = json['IsSuccessful'] as bool
+    ..errorNo = json['ErrorNo'] as int
+    ..errorMessage = json['ErrorMessage'] as String?;
+}
+
+Map<String, dynamic> _$GetListOfCategories_WASPResponseToJson(
+        GetListOfCategories_WASPResponse instance) =>
+    <String, dynamic>{
+      'IsSuccessful': instance.isSuccessful,
+      'ErrorNo': instance.errorNo,
+      'ErrorMessage': instance.errorMessage,
+      'Result': instance.result,
+    };
+
 Location _$LocationFromJson(Map<String, dynamic> json) {
   return Location(
     latitude: (json['Latitude'] as num).toDouble(),
@@ -100,12 +121,16 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
   return Category(
     id: json['Id'] as int,
     name: json['Name'] as String?,
+    subCategories: (json['SubCategories'] as List<dynamic>?)
+        ?.map((e) => SubCategory.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
 Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
       'Id': instance.id,
       'Name': instance.name,
+      'SubCategories': instance.subCategories,
     };
 
 SubCategory _$SubCategoryFromJson(Map<String, dynamic> json) {

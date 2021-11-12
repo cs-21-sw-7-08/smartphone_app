@@ -1,5 +1,3 @@
-
-
 import 'package:smartphone_app/helpers/rest_helper.dart';
 import '../interfaces/wasp_service_functions.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
@@ -29,7 +27,6 @@ class WASPServiceResponse<Response extends WASPResponse> {
 }
 
 class WASPService implements IWASPServiceFunctions {
-
   ///
   /// STATIC
   ///
@@ -74,7 +71,8 @@ class WASPService implements IWASPServiceFunctions {
   //region Override methods
 
   @override
-  Future<WASPServiceResponse<GetIssueDetails_WASPResponse>> getIssueDetails(int issueId) {
+  Future<WASPServiceResponse<GetIssueDetails_WASPResponse>> getIssueDetails(
+      int issueId) {
     // TODO: implement getIssueDetails
     throw UnimplementedError();
   }
@@ -85,17 +83,25 @@ class WASPService implements IWASPServiceFunctions {
   }
 
   @override
-  Future<WASPServiceResponse<WASPResponse>> verifyIssue({required int citizenId, required int issueId}) {
+  Future<WASPServiceResponse<WASPResponse>> verifyIssue(
+      {required int citizenId, required int issueId}) {
     // TODO: implement verifyIssue
     throw UnimplementedError();
   }
 
   @override
-  Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>> getListOfMunicipalities() {
+  Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>>
+      getListOfMunicipalities() {
     // TODO: implement getListOfMunicipalities
     throw UnimplementedError();
   }
 
-  //endregion
+  @override
+  Future<WASPServiceResponse<GetListOfCategories_WASPResponse>> getListOfCategories() {
+    // TODO: implement getListOfCategories
+    throw UnimplementedError();
+  }
+
+//endregion
 
 }

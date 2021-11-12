@@ -11,11 +11,11 @@ import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_map_snippet.dart';
 import 'package:smartphone_app/widgets/image_fullscreen_wrapper.dart';
 
 // ignore: must_be_immutable
 class IssueDetailsPage extends StatelessWidget {
-  final Completer<GoogleMapController> _googleMapCompleter = Completer();
   late IssueDetailsBloc bloc;
   late Issue issue;
   late MapType mapType;
@@ -123,26 +123,11 @@ class IssueDetailsPage extends StatelessWidget {
   }
 
   Widget getLocationSnippet(IssueDetailsBloc bloc, IssueDetailsState state) {
-    return Container(
+    return GoogleMapSnippet(
       height: 200,
       margin: const EdgeInsets.all(10),
-      child: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition:
-        CameraPosition(target: state.marker!.position, zoom: 14),
-        scrollGesturesEnabled: false,
-        rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        zoomGesturesEnabled: false,
-        myLocationEnabled: false,
-        zoomControlsEnabled: false,
-        myLocationButtonEnabled: false,
-        buildingsEnabled: false,
-        markers: state.marker == null ? <Marker>{} : <Marker>{state.marker!},
-        onMapCreated: (GoogleMapController controller) {
-          _googleMapCompleter.complete(controller);
-        },
-      ),
+      mapType: state.mapType ?? MapType.normal,
+      marker: state.marker,
     );
   }
 

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -15,13 +14,12 @@ import 'package:smartphone_app/widgets/custom_header.dart';
 import 'package:smartphone_app/widgets/custom_map_snippet.dart';
 import 'package:smartphone_app/widgets/custom_text_field.dart';
 import 'package:smartphone_app/widgets/image_fullscreen_wrapper.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
 import 'create_issue_bloc.dart';
 
 // ignore: must_be_immutable
 class CreateIssuePage extends StatelessWidget {
-  final Completer<GoogleMapController> _googleMapCompleter = Completer();
-  GoogleMapController? _googleMapController;
   late CreateIssueBloc bloc;
   late Issue? issue;
   late MapType mapType;
@@ -57,23 +55,34 @@ class CreateIssuePage extends StatelessWidget {
                   child: Container(
                       color: custom_colors.appSafeAreaColor,
                       child: SafeArea(
-                          child: Scaffold(
-                        appBar: CustomAppBar(
-                          title: AppLocalizations.of(context)!.details,
-                          titleColor: Colors.white,
-                          background: custom_colors.appBarBackground,
-                          appBarLeftButton: AppBarLeftButton.back,
-                          leftButtonPressed: () => Navigator.pop(context),
-                          onButton1Pressed: () {},
-                          button1Icon: Icon(
-                              bloc.state.createIssuePageView! ==
-                                      CreateIssuePageView.create
-                                  ? Icons.send_outlined
-                                  : Icons.check,
-                              color: Colors.white),
-                        ),
-                        body: getContent(bloc),
-                      ))));
+                          child: Container(
+                              constraints: const BoxConstraints.expand(),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: ExactAssetImage(
+                                      values.createIssueBackground,
+                                    )),
+                              ),
+                              child: Scaffold(
+                                backgroundColor: Colors.transparent,
+                                appBar: CustomAppBar(
+                                  title: AppLocalizations.of(context)!.details,
+                                  titleColor: Colors.white,
+                                  background: custom_colors.appBarBackground,
+                                  appBarLeftButton: AppBarLeftButton.back,
+                                  leftButtonPressed: () =>
+                                      Navigator.pop(context),
+                                  onButton1Pressed: () {},
+                                  button1Icon: Icon(
+                                      bloc.state.createIssuePageView! ==
+                                              CreateIssuePageView.create
+                                          ? Icons.send_outlined
+                                          : Icons.check,
+                                      color: Colors.white),
+                                ),
+                                body: getContent(bloc),
+                              )))));
             }));
   }
 
@@ -81,12 +90,6 @@ class CreateIssuePage extends StatelessWidget {
     return ClipRect(
         child: Container(
             constraints: const BoxConstraints.expand(),
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(
-                      "assets/login_background.jpg",
-                    ))),
             child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                 child: Container(
@@ -94,43 +97,41 @@ class CreateIssuePage extends StatelessWidget {
                     child: BlocBuilder<CreateIssueBloc, CreateIssueState>(
                         builder: (context, state) {
                       return SingleChildScrollView(
+                          physics: const ClampingScrollPhysics(),
                           child: Column(
-                        children: [
-                          CustomHeader(
-                            title: AppLocalizations.of(context)!.location,
-                            background: custom_colors.greyGradient,
-                            margin: const EdgeInsets.all(0),
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                          ),
-                          getLocationSnippet(context, bloc, state),
-                          CustomHeader(
-                            title: AppLocalizations.of(context)!.category,
-                            background: custom_colors.greyGradient,
-                            margin: const EdgeInsets.all(0),
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                          ),
-                          getCategory(context, bloc, state),
-                          CustomHeader(
-                            title: AppLocalizations.of(context)!.description,
-                            background: custom_colors.greyGradient,
-                            margin: const EdgeInsets.all(0),
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                          ),
-                          getDescription(context, bloc, state)
-                        ],
-                      ));
+                            children: [
+                              CustomHeader(
+                                title: AppLocalizations.of(context)!.location,
+                                background: custom_colors.greyGradient,
+                                margin: const EdgeInsets.all(0),
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10, top: 5, bottom: 5),
+                              ),
+                              getLocationSnippet(context, bloc, state),
+                              CustomHeader(
+                                title: AppLocalizations.of(context)!.category,
+                                background: custom_colors.greyGradient,
+                                margin: const EdgeInsets.all(0),
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10, top: 5, bottom: 5),
+                              ),
+                              getCategory(context, bloc, state),
+                              CustomHeader(
+                                title:
+                                    AppLocalizations.of(context)!.description,
+                                background: custom_colors.greyGradient,
+                                margin: const EdgeInsets.all(0),
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10, top: 5, bottom: 5),
+                              ),
+                              getDescription(context, bloc, state)
+                            ],
+                          ));
                     })))));
   }
 
   Widget getLocationSnippet(
       BuildContext context, CreateIssueBloc bloc, CreateIssueState state) {
-    if (_googleMapController != null) {
-      _googleMapController!.moveCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(target: state.marker!.position, zoom: 14)));
-    }
     return Column(
       children: [
         if (state.marker != null)
@@ -172,12 +173,12 @@ class CreateIssuePage extends StatelessWidget {
               children: [
                 CustomHeader(
                   title: LocalizationHelper.getInstance()
-                      .getLocalizedCategory(state.category),
+                      .getLocalizedCategory(context, state.category),
                   margin: const EdgeInsets.all(0),
                 ),
                 CustomHeader(
                   title: LocalizationHelper.getInstance()
-                      .getLocalizedSubCategory(state.subCategory),
+                      .getLocalizedSubCategory(context, state.subCategory),
                   margin: const EdgeInsets.only(top: 10),
                 )
               ],
