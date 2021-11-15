@@ -166,7 +166,9 @@ class IssuePage extends StatelessWidget {
                                         IssuePageView.see)
                                       Card(
                                           margin: const EdgeInsets.only(
-                                              top: 8, left: 8, right: 8),
+                                              top: values.padding,
+                                              left: values.padding,
+                                              right: values.padding),
                                           child: Column(
                                             children: [
                                               _getHeader(
@@ -178,7 +180,9 @@ class IssuePage extends StatelessWidget {
                                           )),
                                     Card(
                                         margin: const EdgeInsets.only(
-                                            top: 8, left: 8, right: 8),
+                                            top: values.padding,
+                                            left: values.padding,
+                                            right: values.padding),
                                         child: Column(
                                           children: [
                                             _getHeader(
@@ -190,7 +194,9 @@ class IssuePage extends StatelessWidget {
                                         )),
                                     Card(
                                         margin: const EdgeInsets.only(
-                                            top: 8, left: 8, right: 8),
+                                            top: values.padding,
+                                            left: values.padding,
+                                            right: values.padding),
                                         child: Column(
                                           children: [
                                             _getHeader(
@@ -201,10 +207,10 @@ class IssuePage extends StatelessWidget {
                                         )),
                                     Card(
                                         margin: const EdgeInsets.only(
-                                            top: 8,
-                                            left: 8,
-                                            right: 8,
-                                            bottom: 8),
+                                            top: values.padding,
+                                            left: values.padding,
+                                            right: values.padding,
+                                            bottom: values.padding),
                                         child: Column(
                                           children: [
                                             _getHeader(
@@ -226,11 +232,8 @@ class IssuePage extends StatelessWidget {
                                     IssueButtonEvent.verifyIssue)),
                             text: AppLocalizations.of(context)!.verify_issue,
                             fontWeight: FontWeight.bold,
-                            border: Border.all(color: Colors.black, width: 1),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(0)),
                             fontSize: 20,
-                            showBorder: true,
+                            margin: const EdgeInsets.all(values.padding),
                           )
                       ],
                     )))));
@@ -243,13 +246,17 @@ class IssuePage extends StatelessWidget {
           title: title,
           fontWeight: FontWeight.bold,
           margin: const EdgeInsets.all(0),
-          padding:
-              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+          padding: const EdgeInsets.only(
+              left: values.padding,
+              right: values.padding,
+              top: values.padding,
+              bottom: values.smallPadding),
         ),
         Container(
           height: 1,
           color: custom_colors.contentDivider,
-          margin: const EdgeInsets.only(left: 10, right: 10),
+          margin: const EdgeInsets.only(
+              left: values.padding, right: values.padding),
         ),
       ],
     );
@@ -258,7 +265,11 @@ class IssuePage extends StatelessWidget {
   Widget _getIssueState(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
     return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+      margin: const EdgeInsets.only(
+          left: values.padding,
+          right: values.padding,
+          top: values.smallPadding,
+          bottom: values.padding),
       child: CustomHeader(
         title: LocalizationHelper.getInstance()
             .getLocalizedIssueState(context, state.issueState),
@@ -270,13 +281,17 @@ class IssuePage extends StatelessWidget {
   Widget _getLocationSnippet(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
     return Container(
-        margin: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
+        margin: const EdgeInsets.only(
+            left: values.padding,
+            top: values.smallPadding,
+            right: values.padding,
+            bottom: values.padding),
         child: Column(
           children: [
             if (state.marker != null)
               GoogleMapSnippet(
                 height: 200,
-                margin: const EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: values.padding),
                 mapType: state.mapType ?? MapType.normal,
                 marker: state.marker,
               ),
@@ -284,14 +299,14 @@ class IssuePage extends StatelessWidget {
               CustomHeader(
                 title:
                     "${AppLocalizations.of(context)!.near} ${(state.address ?? "")}",
-                margin: const EdgeInsets.all(0),
+                margin: const EdgeInsets.only(bottom: values.padding),
               ),
             if (state.issuePageView == IssuePageView.create ||
                 state.issuePageView == IssuePageView.edit)
               CustomButton(
                 onPressed: () => bloc.add(ButtonPressed(
                     issueButtonEvent: IssueButtonEvent.selectLocation)),
-                margin: const EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.all(0),
                 fontWeight: FontWeight.bold,
                 text: state.category == null
                     ? AppLocalizations.of(context)!.select_location
@@ -304,7 +319,11 @@ class IssuePage extends StatelessWidget {
   Widget _getCategory(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
     return Container(
-        margin: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
+        margin: const EdgeInsets.only(
+            left: values.padding,
+            top: values.smallPadding,
+            right: values.padding,
+            bottom: values.padding),
         child: Column(
           children: [
             if (state.category != null && state.subCategory != null)
@@ -318,7 +337,7 @@ class IssuePage extends StatelessWidget {
                   CustomHeader(
                     title: LocalizationHelper.getInstance()
                         .getLocalizedSubCategory(context, state.subCategory),
-                    margin: const EdgeInsets.only(top: 10),
+                    margin: const EdgeInsets.only(top: values.padding),
                   )
                 ],
               ),
@@ -327,7 +346,10 @@ class IssuePage extends StatelessWidget {
               CustomButton(
                 onPressed: () => bloc.add(ButtonPressed(
                     issueButtonEvent: IssueButtonEvent.selectCategory)),
-                margin: const EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(
+                    top: (state.category != null && state.subCategory != null)
+                        ? values.padding
+                        : values.smallPadding),
                 fontWeight: FontWeight.bold,
                 text: state.category == null
                     ? AppLocalizations.of(context)!.select_category
@@ -351,12 +373,16 @@ class IssuePage extends StatelessWidget {
   Widget _getCreateEditDescription(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
     return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+      margin: const EdgeInsets.only(
+          left: values.padding,
+          right: values.padding,
+          top: values.smallPadding,
+          bottom: values.padding),
       child: Column(
         children: [
           CustomTextField(
             alignment: Alignment.topCenter,
-            margin: const EdgeInsets.only(bottom: 10),
+            margin: const EdgeInsets.only(bottom: values.padding),
             text: state.description,
             initialValue: state.description,
             onChanged: (value) => bloc.add(TextChanged(
@@ -369,9 +395,9 @@ class IssuePage extends StatelessWidget {
           GridView.count(
             crossAxisCount: 2,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 10,
+            crossAxisSpacing: values.padding,
             shrinkWrap: true,
-            mainAxisSpacing: 10,
+            mainAxisSpacing: values.padding,
             children: List.generate(
                 (state.pictures == null ? 0 : state.pictures!.length) + 1,
                 (index) {
@@ -399,8 +425,11 @@ class IssuePage extends StatelessWidget {
                           child: CustomButton(
                               height: 50,
                               width: 50,
-                              margin: const EdgeInsets.only(right: 4, top: 4),
-                              imagePadding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(
+                                  right: values.smallPadding,
+                                  top: values.smallPadding),
+                              imagePadding:
+                                  const EdgeInsets.all(values.padding),
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(25)),
                               icon:
@@ -428,23 +457,25 @@ class IssuePage extends StatelessWidget {
           if (state.description != null && state.description!.isNotEmpty)
             CustomHeader(
               title: state.description!,
-              margin: const EdgeInsets.only(bottom: 15),
+              margin: const EdgeInsets.only(bottom: 0),
             ),
           if (state.pictures!.isNotEmpty)
-            GridView.count(
-              crossAxisCount: 2,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 10,
-              shrinkWrap: true,
-              mainAxisSpacing: 10,
-              children: List.generate((state.pictures ?? List.empty()).length,
-                  (index) {
-                return AspectRatio(
-                    aspectRatio: 1,
-                    child:
-                        ImageFullScreenWrapper(child: state.pictures![index]));
-              }),
-            )
+            Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 10,
+                  shrinkWrap: true,
+                  mainAxisSpacing: 10,
+                  children: List.generate(
+                      (state.pictures ?? List.empty()).length, (index) {
+                    return AspectRatio(
+                        aspectRatio: 1,
+                        child: ImageFullScreenWrapper(
+                            child: state.pictures![index]));
+                  }),
+                ))
         ],
       ),
     );

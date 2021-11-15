@@ -7,12 +7,10 @@ import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 ///
 //region Enums
 
-enum IssuesOverviewPageView { map, list }
 enum IssuesOverviewButtonEvent {
   createIssue,
   logOut,
   changeMapType,
-  changeOverviewType,
   getListOfIssues
 }
 
@@ -65,28 +63,21 @@ class IssuePressed extends IssuesOverviewEvent {
 class IssuesOverviewState {
   Set<Marker>? markers;
   Position? devicePosition;
-  IssuesOverviewPageView? issuesOverviewPageView;
   MapType? mapType;
   List<Issue>? issues;
 
   IssuesOverviewState(
-      {this.issuesOverviewPageView,
-      this.mapType,
-      this.markers,
-      this.devicePosition,
-      this.issues});
+      {this.mapType, this.markers, this.devicePosition, this.issues});
 
-  IssuesOverviewState copyWith(
-      {Set<Marker>? markers,
-      Position? devicePosition,
-      MapType? mapType,
-      List<Issue>? issues,
-      IssuesOverviewPageView? issuesOverviewPageView}) {
+  IssuesOverviewState copyWith({
+    Set<Marker>? markers,
+    Position? devicePosition,
+    MapType? mapType,
+    List<Issue>? issues,
+  }) {
     return IssuesOverviewState(
         mapType: mapType ?? this.mapType,
         issues: issues ?? this.issues,
-        issuesOverviewPageView:
-            issuesOverviewPageView ?? this.issuesOverviewPageView,
         markers: markers ?? this.markers,
         devicePosition: devicePosition ?? this.devicePosition);
   }

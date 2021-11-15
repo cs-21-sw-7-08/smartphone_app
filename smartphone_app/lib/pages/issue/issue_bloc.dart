@@ -9,6 +9,7 @@ import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/select_location/select_location_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
+import 'package:smartphone_app/utilities/wasp_util.dart';
 import 'package:smartphone_app/values/values.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/models/google_classes.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/service/google_service.dart';
@@ -578,8 +579,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
             position:
             LatLng(issue!.location!.latitude, issue!.location!.longitude),
             consumeTapEvents: true,
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueRed));
+            icon: WASPUtil.getIssueStateMarkerIcon(issue!.issueState!));
       }
       // Pictures
       if (issue!.picture1 != null) {

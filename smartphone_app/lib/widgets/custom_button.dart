@@ -53,7 +53,7 @@ class CustomButton extends StatefulWidget {
     this.margin = const EdgeInsets.all(0),
     this.padding = const EdgeInsets.all(0),
     this.border,
-    this.borderRadius,
+    this.borderRadius = const BorderRadius.all(Radius.circular(5.0)),
     this.showBorder = false,
     this.icon,
     this.image,
@@ -124,8 +124,7 @@ class CustomButtonState extends State<CustomButton> {
         decoration: BoxDecoration(
           gradient:
               _isPressed ? widget.pressedBackground : widget.defaultBackground,
-          borderRadius: widget.borderRadius ??
-              const BorderRadius.all(Radius.circular(5.0)),
+          borderRadius: widget.borderRadius,
           border: !widget.showBorder
               ? null
               : widget.border ?? Border.all(color: _border, width: 1),

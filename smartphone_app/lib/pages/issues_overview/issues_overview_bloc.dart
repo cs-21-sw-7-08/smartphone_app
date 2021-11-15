@@ -10,6 +10,7 @@ import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:smartphone_app/utilities/wasp_util.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import '../../utilities/location/locator_util.dart';
@@ -32,9 +33,7 @@ class IssuesOverviewBloc
   //region Constructor
 
   IssuesOverviewBloc({required BuildContext buildContext})
-      : super(IssuesOverviewState(
-            issuesOverviewPageView: IssuesOverviewPageView.map,
-            mapType: MapType.hybrid)) {
+      : super(IssuesOverviewState(mapType: MapType.hybrid)) {
     _buildContext = buildContext;
   }
 
@@ -68,13 +67,6 @@ class IssuesOverviewBloc
               mapType: state.mapType == MapType.hybrid
                   ? MapType.normal
                   : MapType.hybrid);
-          break;
-        case IssuesOverviewButtonEvent.changeOverviewType:
-          yield state.copyWith(
-              issuesOverviewPageView:
-                  state.issuesOverviewPageView == IssuesOverviewPageView.map
-                      ? IssuesOverviewPageView.list
-                      : IssuesOverviewPageView.map);
           break;
         case IssuesOverviewButtonEvent.getListOfIssues:
           await getListOfIssues();
@@ -111,32 +103,12 @@ class IssuesOverviewBloc
     for (var issue in issues) {
       var markerId = MarkerId(issue.id.toString());
 
-      BitmapDescriptor? icon;
-
-      switch (issue.issueState!.getEnum()) {
-        case IssueStates.created:
-          icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
-          break;
-        case IssueStates.approved:
-          icon =
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
-          break;
-        case IssueStates.resolved:
-          icon =
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
-          break;
-        case IssueStates.notResolved:
-          icon =
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
-          break;
-      }
-
       markers.add(Marker(
           markerId: markerId,
           position: LatLng(issue.location!.latitude, issue.location!.longitude),
           consumeTapEvents: true,
           onTap: () => add(IssuePressed(issue: issue)),
-          icon: icon));
+          icon: WASPUtil.getIssueStateMarkerIcon(issue.issueState!)));
     }
     return markers;
   }
