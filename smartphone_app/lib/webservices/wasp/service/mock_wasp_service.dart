@@ -33,8 +33,8 @@ class MockWASPService extends WASPService {
   //region Override methods
 
   @override
-  Future<WASPServiceResponse<GetListOfIssues_WASPResponse>>
-      getListOfIssues() async {
+  Future<WASPServiceResponse<GetListOfIssues_WASPResponse>> getListOfIssues(
+      {required IssuesOverviewFilter filter}) async {
     return WASPServiceResponse.success(GetListOfIssues_WASPResponse.fromJson(
         await getJsonData("get_list_of_issues_response.json")));
   }
@@ -42,13 +42,30 @@ class MockWASPService extends WASPService {
   @override
   Future<WASPServiceResponse<GetIssueDetails_WASPResponse>> getIssueDetails(
       int issueId) async {
-    return WASPServiceResponse.success(GetIssueDetails_WASPResponse.fromJson(
-        await getJsonData("get_issue_details_response.json")));
+    if (issueId % 2 == 0) {
+      return WASPServiceResponse.success(GetIssueDetails_WASPResponse.fromJson(
+          await getJsonData("get_issue_details_response.json")));
+    } else {
+      return WASPServiceResponse.success(GetIssueDetails_WASPResponse.fromJson(
+          await getJsonData("get_issue_details_response_2.json")));
+    }
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> updateIssue(
+      {required int issueId, required List<WASPUpdate> updates}) {
+    return Future.value(WASPServiceResponse.success(WASPResponse()));
   }
 
   @override
   Future<WASPServiceResponse<WASPResponse>> verifyIssue(
       {required int citizenId, required int issueId}) {
+    return Future.value(WASPServiceResponse.success(WASPResponse()));
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> reportIssue(
+      {required int reportCategoryId, required int issueId}) {
     return Future.value(WASPServiceResponse.success(WASPResponse()));
   }
 
@@ -66,6 +83,19 @@ class MockWASPService extends WASPService {
     return WASPServiceResponse.success(
         GetListOfCategories_WASPResponse.fromJson(
             await getJsonData("get_list_of_categories_response.json")));
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> createIssue(
+      {required int citizenId,
+      required int municipalityId,
+      required int subCategoryId,
+      required String description,
+      required Location location,
+      String? picture1,
+      String? picture2,
+      String? picture3}) {
+    return Future.value(WASPServiceResponse.success(WASPResponse()));
   }
 
 //endregion

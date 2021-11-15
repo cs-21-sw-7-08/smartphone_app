@@ -49,6 +49,12 @@ class IssueDetailsRetrieved extends IssuesOverviewEvent {
   IssueDetailsRetrieved({required this.issue});
 }
 
+class IssuePressed extends IssuesOverviewEvent {
+  final Issue issue;
+
+  IssuePressed({required this.issue});
+}
+
 //endregion
 
 ///

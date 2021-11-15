@@ -2,33 +2,352 @@
   "Result": [
     {
       "Id": 1,
-      "Name": "Sidewalk",
+      "Name": "Vej",
       "SubCategories": [
         {
           "Id": 1,
           "CategoryId": 1,
-          "Name": "Hole in sidewalk"
+          "Name": "Hul i vej"
         },
         {
           "Id": 2,
           "CategoryId": 1,
-          "Name": "Slippery sidewalk"
+          "Name": "Rendestenbrønde"
+        },
+        {
+          "Id": 3,
+          "CategoryId": 1,
+          "Name": "Skiltning"
+        },
+        {
+          "Id": 4,
+          "CategoryId": 1,
+          "Name": "Vejtræer"
+        },
+        {
+          "Id": 5,
+          "CategoryId": 1,
+          "Name": "Vand på vejen"
+        },
+        {
+          "Id": 6,
+          "CategoryId": 1,
+          "Name": "Døde dyr"
+        },
+        {
+          "Id": 7,
+          "CategoryId": 1,
+          "Name": "Andet"
         }
       ]
     },
     {
       "Id": 2,
-      "Name": "Road",
+      "Name": "Rabat",
       "SubCategories": [
         {
-          "Id": 3,
+          "Id": 8,
           "CategoryId": 2,
-          "Name": "Tree on road"
+          "Name": "Hul i rabat"
         },
         {
-          "Id": 4,
+          "Id": 9,
           "CategoryId": 2,
-          "Name": "Hole on road"
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 3,
+      "Name": "Fortov",
+      "SubCategories": [
+        {
+          "Id": 10,
+          "CategoryId": 3,
+          "Name": "Skade på fortov"
+        },
+        {
+          "Id": 11,
+          "CategoryId": 3,
+          "Name": "Løse filser"
+        },
+        {
+          "Id": 12,
+          "CategoryId": 3,
+          "Name": "Opspring i flise >3 cm"
+        },
+        {
+          "Id": 13,
+          "CategoryId": 3,
+          "Name": "Flise krakkeleret"
+        },
+        {
+          "Id": 14,
+          "CategoryId": 3,
+          "Name": "Skiltning"
+        },
+        {
+          "Id": 15,
+          "CategoryId": 3,
+          "Name": "Ukrudt"
+        },
+        {
+          "Id": 16,
+          "CategoryId": 3,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 4,
+      "Name": "Sti",
+      "SubCategories": [
+        {
+          "Id": 17,
+          "CategoryId": 4,
+          "Name": "hul i sti"
+        },
+        {
+          "Id": 18,
+          "CategoryId": 4,
+          "Name": "Rendestensbrønde"
+        },
+        {
+          "Id": 19,
+          "CategoryId": 4,
+          "Name": "Skiltning"
+        },
+        {
+          "Id": 20,
+          "CategoryId": 4,
+          "Name": "Vand på stien"
+        },
+        {
+          "Id": 21,
+          "CategoryId": 4,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 5,
+      "Name": "Cykelsti",
+      "SubCategories": [
+        {
+          "Id": 22,
+          "CategoryId": 5,
+          "Name": "Hul i cykelsti"
+        },
+        {
+          "Id": 23,
+          "CategoryId": 5,
+          "Name": "Rendestensbrønde"
+        },
+        {
+          "Id": 24,
+          "CategoryId": 5,
+          "Name": "Skiltning"
+        },
+        {
+          "Id": 25,
+          "CategoryId": 5,
+          "Name": "Vand på cykelstien"
+        },
+        {
+          "Id": 26,
+          "CategoryId": 5,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 6,
+      "Name": "Byudstyr",
+      "SubCategories": [
+        {
+          "Id": 27,
+          "CategoryId": 6,
+          "Name": "Borde / Bænke"
+        },
+        {
+          "Id": 28,
+          "CategoryId": 6,
+          "Name": "Affaldsstativ / beholdere"
+        },
+        {
+          "Id": 29,
+          "CategoryId": 6,
+          "Name": "Cykelstativ"
+        },
+        {
+          "Id": 30,
+          "CategoryId": 6,
+          "Name": "Pullert"
+        },
+        {
+          "Id": 31,
+          "CategoryId": 6,
+          "Name": "Hegn - fodhegn"
+        },
+        {
+          "Id": 32,
+          "CategoryId": 6,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 7,
+      "Name": "Tekniske anlæg",
+      "SubCategories": [
+        {
+          "Id": 33,
+          "CategoryId": 7,
+          "Name": "Fejl på gadebelysning"
+        },
+        {
+          "Id": 34,
+          "CategoryId": 7,
+          "Name": "Fejl på signalanlæg"
+        },
+        {
+          "Id": 35,
+          "CategoryId": 7,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 8,
+      "Name": "Parkinventar og lign.",
+      "SubCategories": [
+        {
+          "Id": 36,
+          "CategoryId": 8,
+          "Name": "Borde / Bænke"
+        },
+        {
+          "Id": 37,
+          "CategoryId": 8,
+          "Name": "Legeplads"
+        },
+        {
+          "Id": 38,
+          "CategoryId": 8,
+          "Name": "Affaldsstativ / beholdere"
+        },
+        {
+          "Id": 39,
+          "CategoryId": 8,
+          "Name": "Springvand"
+        },
+        {
+          "Id": 40,
+          "CategoryId": 8,
+          "Name": "Infotavler"
+        },
+        {
+          "Id": 41,
+          "CategoryId": 8,
+          "Name": "Toiletbygninger"
+        },
+        {
+          "Id": 42,
+          "CategoryId": 8,
+          "Name": "Shelter / bålpladser"
+        },
+        {
+          "Id": 43,
+          "CategoryId": 8,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 9,
+      "Name": "Parker og grønne områder",
+      "SubCategories": [
+        {
+          "Id": 44,
+          "CategoryId": 9,
+          "Name": "Træer"
+        },
+        {
+          "Id": 45,
+          "CategoryId": 9,
+          "Name": "Græs"
+        },
+        {
+          "Id": 46,
+          "CategoryId": 9,
+          "Name": "Beplantning i øvrigt"
+        },
+        {
+          "Id": 47,
+          "CategoryId": 9,
+          "Name": "Søer"
+        },
+        {
+          "Id": 48,
+          "CategoryId": 9,
+          "Name": "Stier"
+        },
+        {
+          "Id": 49,
+          "CategoryId": 9,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 10,
+      "Name": "Skove og naturområder",
+      "SubCategories": [
+        {
+          "Id": 50,
+          "CategoryId": 10,
+          "Name": "Træer"
+        },
+        {
+          "Id": 51,
+          "CategoryId": 10,
+          "Name": "Øvrig beplantning"
+        },
+        {
+          "Id": 52,
+          "CategoryId": 10,
+          "Name": "Fortidsminder"
+        },
+        {
+          "Id": 53,
+          "CategoryId": 10,
+          "Name": "Dyrehegn"
+        },
+        {
+          "Id": 54,
+          "CategoryId": 10,
+          "Name": "Afmærkede stier / ruter"
+        },
+        {
+          "Id": 55,
+          "CategoryId": 10,
+          "Name": "Andet"
+        }
+      ]
+    },
+    {
+      "Id": 11,
+      "Name": "Bjørneklo og ander invasive arter",
+      "SubCategories": [
+        {
+          "Id": 56,
+          "CategoryId": 11,
+          "Name": "Kæmpe bjørneklo"
+        },
+        {
+          "Id": 57,
+          "CategoryId": 11,
+          "Name": "Andet"
         }
       ]
     }

@@ -4,19 +4,27 @@
     "description": "The name of the app"
   },
   "sign_in_with_google": "Continue with Google",
-  "@sign_in_with_google" : {
+  "@sign_in_with_google": {
     "description": "Sign in with a Google login text"
   },
   "sign_in_with_apple": "Continue with Apple",
-  "@sign_in_with_apple" : {
+  "@sign_in_with_apple": {
     "description": "Sign in with a Apple login text"
   },
   "sign_in_with_phone_no": "Continue with phone no.",
-  "@sign_in_with_phone_no" : {
+  "@sign_in_with_phone_no": {
     "description": "Sign in with phone no. text"
   },
+  "you_cannot_add_more_than_three_pictures": "You cannot add more than 3 pictures",
+  "@you_cannot_add_more_than_three_pictures": {
+    "description": "Informative message to the user"
+  },
+  "do_you_want_to_remove_this_picture": "Do you want to remove this picture?",
+  "@do_you_want_to_remove_this_picture": {
+    "description": "Question to the user"
+  },
   "overview": "Overview",
-  "@overview" : {
+  "@overview": {
     "description": "Overview title"
   },
   "sign_up": "Sign Up",
@@ -27,107 +35,191 @@
   "@cancel": {
     "description": "Cancel task"
   },
-  "settings" : "Settings",
+  "yes": "Yes",
+  "@yes": {
+    "description": "Button text"
+  },
+  "no": "No",
+  "@no": {
+    "description": "Button text"
+  },
+  "getting_location_information": "Getting location information...",
+  "@getting_location_information": {
+    "description": "Progress message"
+  },
+  "could_not_get_location_information": "Could not get location information...",
+  "@could_not_get_location_information": {
+    "description": "Informative message to the user"
+  },
+  "settings": "Settings",
   "@settings": {
     "description": "Settings drawer title"
   },
-  "help" : "Help",
+  "please_select_a_location": "Please select a location",
+  "@please_select_a_location": {
+    "description": "Informative message to the user"
+  },
+  "please_select_a_category": "Please select a category",
+  "@please_select_a_category": {
+    "description": "Informative message to the user"
+  },
+  "verify_issue": "Verify issue",
+  "@verify_issue": {
+    "description": "Button text"
+  },
+  "edit_issue": "Edit issue",
+  "@edit_issue": {
+    "description": "Title"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Status title"
+  },
+  "verifying_issue": "Verifying issue...",
+  "@verifying_issue": {
+    "description": "Progress message"
+  },
+  "updating_issue": "Updating issue...",
+  "@updating_issue": {
+    "description": "Progress message"
+  },
+  "by_verifying": "By verifying this issue, you inform your municipality that you agree with its content. Is this correct?",
+  "@by_verifying": {
+    "description": "Question to the user"
+  },
+  "do_you_want_to_save_the_changes": "Do you want to save the changes?",
+  "@do_you_want_to_save_the_changes": {
+    "description": "Question to the user"
+  },
+  "creating_issue": "Creating issue...",
+  "@creating_issue": {
+    "description": "Progress message"
+  },
+  "please_enter_a_description_of_your_problem": "Please enter a description",
+  "@please_enter_a_description_of_your_problem": {
+    "description": "Informative message to the user"
+  },
+  "help": "Help",
   "@help": {
     "description": "Help drawer title"
   },
-  "log_out" : "Log out",
+  "log_out": "Log out",
   "@log_out": {
     "description": "Log out drawer title"
   },
-  "logging_out" : "Logging out...",
+  "logging_out": "Logging out...",
   "@logging_out": {
     "description": "Progress title"
   },
-  "signing_up" : "Signing up...",
+  "signing_up": "Signing up...",
   "@signing_up": {
     "description": "Progress message"
   },
-  "create_issue" : "Create issue",
+  "create_issue": "Create issue",
   "@create_issue": {
     "description": "Create issue button text"
   },
-  "phone_number" : "Phone Number",
+  "phone_number": "Phone Number",
   "@phone_number": {
     "description": "Phone number title"
   },
-  "sms_code" : "SMS Code",
+  "sms_code": "SMS Code",
   "@sms_code": {
     "description": "SMS code title"
   },
-  "name" : "Name",
+  "name": "Name",
   "@name": {
     "description": "Name title"
   },
-  "details" : "Details",
+  "details": "Details",
   "@details": {
     "description": "Details title"
   },
-  "getting_issues" : "Getting issues...",
+  "getting_issues": "Getting issues...",
   "@getting_issues": {
     "description": "Progress message"
   },
-  "getting_issue_details" : "Getting issue details...",
+  "getting_issue_details": "Getting issue details...",
   "@getting_issue_details": {
     "description": "Progress message"
   },
-  "location" : "Location",
+  "please_place_a_marker_first": "Please place a marker first before confirming",
+  "@please_place_a_marker_first": {
+    "description": "Informative message to the user"
+  },
+  "please_select_how_to_add_the_picture": "Please select how to add the picture",
+  "@please_select_how_to_add_the_picture": {
+    "description": "Informative message to the user"
+  },
+  "from_gallery": "From gallery",
+  "@from_gallery": {
+    "description": "Button text"
+  },
+  "take_picture": "Take picture",
+  "@take_picture": {
+    "description": "Button text"
+  },
+  "location": "Location",
   "@location": {
     "description": "Location title"
   },
-  "confirm" : "Confirm",
+  "confirm": "Confirm",
   "@confirm": {
     "description": "Confirm button text"
   },
-  "category" : "Category",
+  "category": "Category",
   "@category": {
     "description": "Category title"
   },
-  "description" : "Description",
+  "subcategory": "Subcategory",
+  "@subcategory": {
+    "description": "Subcategory title"
+  },
+  "description": "Description",
   "@description": {
     "description": "Description title"
   },
-  "select_category" : "Select category",
+  "select_category": "Select category",
   "@select_category": {
     "description": "Select category button text"
   },
-  "change_category" : "Change category",
+  "change_category": "Change category",
   "@select_subcategory": {
     "description": "Change category button text"
   },
-  "select_location" : "Select location",
+  "select_location": "Select location",
   "@select_location": {
     "description": "Select location button text"
   },
-  "change_location" : "Change location",
+  "change_location": "Change location",
   "@change_location": {
     "description": "Change location button text"
   },
-  "near" : "Near",
+  "near": "Near",
   "@near": {
     "description": "Near an address"
   },
-  "category_id_1" : "Sidewalk",
+  "search_hint": "Search...",
+  "@search_hint": {
+    "description": "Search field hint"
+  },
+  "category_id_1": "Sidewalk",
   "@category_id_1": {
     "description": "Model enum localization"
   },
-  "sub_category_id_1" : "Hole in sidewalk",
+  "sub_category_id_1": "Hole in sidewalk",
   "@sub_category_id_1": {
     "description": "Model enum localization"
   },
-  "issue_state_id_1" : "Created",
+  "issue_state_id_1": "Created",
   "@issue_state_id_1": {
     "description": "Model enum localization"
   },
-  "issue_state_id_2" : "Approved",
+  "issue_state_id_2": "Approved",
   "@issue_state_id_2": {
     "description": "Model enum localization"
   },
-  "issue_state_id_3" : "Resolved",
+  "issue_state_id_3": "Resolved",
   "@issue_state_id_3": {
     "description": "Model enum localization"
   }

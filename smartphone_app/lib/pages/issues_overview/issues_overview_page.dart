@@ -3,11 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
+import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:smartphone_app/widgets/custom_drawer_tile.dart';
+import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_list_tile.dart';
 
 import 'issues_overview_bloc.dart';
 import 'issues_overview_events_states.dart';
@@ -92,7 +97,9 @@ class IssuesOverviewPage extends StatelessWidget {
                                               color: Colors.black, size: 30),
                                           text: AppLocalizations.of(context)!
                                               .help,
-                                          onPressed: () {},
+                                          onPressed: () async {
+
+                                          },
                                         ),
                                         Container(
                                           height: 1,
@@ -142,7 +149,7 @@ class IssuesOverviewPage extends StatelessWidget {
             Column(
               children: [
                 // Overview
-                getOverview(bloc, state),
+                _getOverview(bloc, state),
                 // 'Create issue' button
                 CustomButton(
                   onPressed: () => bloc.add(ButtonPressed(
@@ -154,29 +161,28 @@ class IssuesOverviewPage extends StatelessWidget {
                   borderRadius: const BorderRadius.all(Radius.circular(0)),
                   fontSize: 20,
                   showBorder: true,
-                  defaultBackground: custom_colors.whiteGradient,
-                  pressedBackground: custom_colors.greyGradient,
                 )
               ],
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: CustomButton(
-                  height: 50,
-                  width: 50,
-                  margin: const EdgeInsets.only(right: 8, top: 8),
-                  imagePadding: const EdgeInsets.all(10),
-                  showBorder: true,
-                  borderRadius: const BorderRadius.all(Radius.circular(25)),
-                  defaultBackground: custom_colors.whiteGradient,
-                  pressedBackground: custom_colors.greyGradient,
-                  icon: state.mapType == MapType.hybrid
-                      ? const Icon(Icons.layers_outlined, color: Colors.black)
-                      : const Icon(Icons.layers, color: Colors.black),
-                  onPressed: () => bloc.add(ButtonPressed(
-                      issuesOverviewButtonEvent:
-                          IssuesOverviewButtonEvent.changeMapType))),
-            ),
+            if (state.issuesOverviewPageView == IssuesOverviewPageView.map)
+              Align(
+                alignment: Alignment.topRight,
+                child: CustomButton(
+                    height: 50,
+                    width: 50,
+                    margin: const EdgeInsets.only(right: 8, top: 8),
+                    imagePadding: const EdgeInsets.all(10),
+                    showBorder: true,
+                    borderRadius: const BorderRadius.all(Radius.circular(25)),
+                    defaultBackground: custom_colors.whiteGradient,
+                    pressedBackground: custom_colors.greyGradient,
+                    icon: state.mapType == MapType.hybrid
+                        ? const Icon(Icons.layers_outlined, color: Colors.black)
+                        : const Icon(Icons.layers, color: Colors.black),
+                    onPressed: () => bloc.add(ButtonPressed(
+                        issuesOverviewButtonEvent:
+                            IssuesOverviewButtonEvent.changeMapType))),
+              ),
             Container(
                 margin: const EdgeInsets.only(bottom: 55),
                 child: Align(
@@ -229,7 +235,21 @@ class IssuesOverviewPage extends StatelessWidget {
     );
   }
 
-  Widget getOverview(IssuesOverviewBloc bloc, IssuesOverviewState state) {
+  Color _getIssueStateColor(IssueState? issueState) {
+    if (issueState == null) return Colors.white;
+    switch (issueState.getEnum()) {
+      case IssueStates.created:
+        return custom_colors.issueStateCreated;
+      case IssueStates.approved:
+        return custom_colors.issueStateApproved;
+      case IssueStates.resolved:
+        return custom_colors.issueStateResolved;
+      case IssueStates.notResolved:
+        return custom_colors.issueStateNotResolved;
+    }
+  }
+
+  Widget _getOverview(IssuesOverviewBloc bloc, IssuesOverviewState state) {
     switch (state.issuesOverviewPageView!) {
       case IssuesOverviewPageView.map:
         return Expanded(
@@ -252,7 +272,86 @@ class IssuesOverviewPage extends StatelessWidget {
           },*/
         ));
       case IssuesOverviewPageView.list:
-        return Expanded(child: Container());
+        return Expanded(
+            child: ListView.separated(
+          itemCount: state.issues!.length,
+          itemBuilder: (context, index) {
+            var issue = state.issues![index];
+            return CustomListTile(
+                widget: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        color: _getIssueStateColor(issue.issueState),
+                        width: 20,
+                      ),
+                      Container(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                      Expanded(
+                          child: Column(
+                        children: [
+                          IntrinsicHeight(
+                              child: Row(
+                            children: [
+                              Expanded(
+                                  child: CustomHeader(
+                                      alignmentGeometry: Alignment.topLeft,
+                                      textAlign: TextAlign.start,
+                                      margin: const EdgeInsets.all(0),
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          top: 10,
+                                          right: 5,
+                                          bottom: 10),
+                                      title: LocalizationHelper.getInstance()
+                                          .getLocalizedCategory(
+                                              context, issue.category))),
+                              Expanded(
+                                  child: CustomHeader(
+                                      textAlign: TextAlign.end,
+                                      alignmentGeometry: Alignment.topRight,
+                                      margin: const EdgeInsets.all(0),
+                                      padding: const EdgeInsets.only(
+                                          left: 5,
+                                          top: 10,
+                                          right: 10,
+                                          bottom: 10),
+                                      title: LocalizationHelper.getInstance()
+                                          .getLocalizedSubCategory(
+                                              context, issue.subCategory))),
+                            ],
+                          )),
+                          Expanded(
+                              child: CustomHeader(
+                            margin: const EdgeInsets.all(0),
+                            fontSize: 16,
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 5, right: 10, bottom: 10),
+                            textColor: custom_colors.darkGrey,
+                            title: issue.description ?? "",
+                          ))
+                        ],
+                      ))
+                    ],
+                  ),
+                ),
+                onPressed: () => bloc.add(IssuePressed(issue: issue)));
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 1,
+              thickness: 1,
+              color: Colors.black,
+            );
+          },
+        ));
     }
   }
 }
+
+/*
+
+ */

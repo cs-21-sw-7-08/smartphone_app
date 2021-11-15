@@ -44,7 +44,8 @@ class SelectLocationPage extends StatelessWidget {
                         builder: (context, state) {
                           return Scaffold(
                               appBar: CustomAppBar(
-                                title: AppLocalizations.of(context)!.overview,
+                                title: AppLocalizations.of(context)!
+                                    .select_location,
                                 titleColor: Colors.white,
                                 background: custom_colors.appBarBackground,
                                 appBarLeftButton: AppBarLeftButton.back,
@@ -65,20 +66,19 @@ class SelectLocationPage extends StatelessWidget {
             // Overview
             getMap(bloc, state),
             // 'Confirm' button
-            if (state.marker != null)
-              CustomButton(
-                onPressed: () => bloc.add(ButtonPressed(
-                    selectLocationButtonEvent:
-                        SelectLocationButtonEvent.confirm)),
-                text: AppLocalizations.of(context)!.confirm,
-                fontWeight: FontWeight.bold,
-                border: Border.all(color: Colors.black, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(0)),
-                fontSize: 20,
-                showBorder: true,
-                defaultBackground: custom_colors.whiteGradient,
-                pressedBackground: custom_colors.greyGradient,
-              )
+            CustomButton(
+              onPressed: () => bloc.add(ButtonPressed(
+                  selectLocationButtonEvent:
+                      SelectLocationButtonEvent.confirm)),
+              text: AppLocalizations.of(context)!.confirm,
+              fontWeight: FontWeight.bold,
+              border: Border.all(color: Colors.black, width: 1),
+              borderRadius: const BorderRadius.all(Radius.circular(0)),
+              fontSize: 20,
+              showBorder: true,
+              defaultBackground: custom_colors.whiteGradient,
+              pressedBackground: custom_colors.greyGradient,
+            )
           ],
         ),
         Align(

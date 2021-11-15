@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/pages/create_issue/create_issue_page.dart';
-import 'package:smartphone_app/pages/issue_details/issue_details_page.dart';
+import 'package:smartphone_app/pages/issue/issue_page.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_events_states.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
@@ -56,8 +53,12 @@ class IssuesOverviewBloc
     } else if (event is ButtonPressed) {
       switch (event.issuesOverviewButtonEvent) {
         case IssuesOverviewButtonEvent.createIssue:
-          GeneralUtil.showPageAsDialog(
-              _buildContext, CreateIssuePage(mapType: state.mapType!));
+          bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
+              _buildContext, IssuePage(mapType: state.mapType!));
+          flag ??= false;
+          if (flag) {
+            await getListOfIssues();
+          }
           break;
         case IssuesOverviewButtonEvent.logOut:
           await logOut();
@@ -80,10 +81,21 @@ class IssuesOverviewBloc
           break;
       }
     } else if (event is IssueDetailsRetrieved) {
-      GeneralUtil.showPopup(_buildContext,
-          IssueDetailsPage(issue: event.issue, mapType: state.mapType!));
+      bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
+          _buildContext,
+          IssuePage(
+            issue: event.issue,
+            mapType: state.mapType!,
+          ));
+      flag ??= false;
+      if (flag) {
+        await getListOfIssues();
+      }
     } else if (event is ListOfIssuesRetrieved) {
-      yield state.copyWith(markers: getMarkersFromIssues(event.issues));
+      yield state.copyWith(
+          markers: getMarkersFromIssues(event.issues), issues: event.issues);
+    } else if (event is IssuePressed) {
+      await getIssueDetails(event.issue.id!);
     }
   }
 
@@ -98,13 +110,33 @@ class IssuesOverviewBloc
     Set<Marker> markers = <Marker>{};
     for (var issue in issues) {
       var markerId = MarkerId(issue.id.toString());
+
+      BitmapDescriptor? icon;
+
+      switch (issue.issueState!.getEnum()) {
+        case IssueStates.created:
+          icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+          break;
+        case IssueStates.approved:
+          icon =
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
+          break;
+        case IssueStates.resolved:
+          icon =
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+          break;
+        case IssueStates.notResolved:
+          icon =
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+          break;
+      }
+
       markers.add(Marker(
           markerId: markerId,
           position: LatLng(issue.location!.latitude, issue.location!.longitude),
           consumeTapEvents: true,
-          onTap: () => getIssueDetails(issue.id),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)));
+          onTap: () => add(IssuePressed(issue: issue)),
+          icon: icon));
     }
     return markers;
   }
@@ -154,7 +186,8 @@ class IssuesOverviewBloc
               getListOfCategoriesResponse.waspResponse!.result!);
 
           // Get list of issues
-          var response = await WASPService.getInstance().getListOfIssues();
+          var response = await WASPService.getInstance()
+              .getListOfIssues(filter: IssuesOverviewFilter());
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);
@@ -177,7 +210,8 @@ class IssuesOverviewBloc
         progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
         doInBackground: (runTask) async {
           // Get list of issues
-          var response = await WASPService.getInstance().getListOfIssues();
+          var response = await WASPService.getInstance()
+              .getListOfIssues(filter: IssuesOverviewFilter());
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);

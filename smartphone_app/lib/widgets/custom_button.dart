@@ -58,8 +58,8 @@ class CustomButton extends StatefulWidget {
     this.icon,
     this.image,
     this.imagePadding = const EdgeInsets.all(0),
-    this.defaultBackground = custom_colors.buttonGradientDefault,
-    this.pressedBackground = custom_colors.buttonGradientPressedDefault,
+    this.defaultBackground = custom_colors.buttonDefaultGradient,
+    this.pressedBackground = custom_colors.buttonPressedGradient,
     required this.onPressed,
   })  : assert(
             (text == null && (image != null || icon != null)) || text != null),
@@ -125,7 +125,7 @@ class CustomButtonState extends State<CustomButton> {
           gradient:
               _isPressed ? widget.pressedBackground : widget.defaultBackground,
           borderRadius: widget.borderRadius ??
-              const BorderRadius.all(Radius.circular(2.0)),
+              const BorderRadius.all(Radius.circular(5.0)),
           border: !widget.showBorder
               ? null
               : widget.border ?? Border.all(color: _border, width: 1),

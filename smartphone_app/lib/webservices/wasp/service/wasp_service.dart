@@ -78,7 +78,8 @@ class WASPService implements IWASPServiceFunctions {
   }
 
   @override
-  Future<WASPServiceResponse<GetListOfIssues_WASPResponse>> getListOfIssues() {
+  Future<WASPServiceResponse<GetListOfIssues_WASPResponse>> getListOfIssues(
+      {required IssuesOverviewFilter filter}) {
     throw UnimplementedError();
   }
 
@@ -97,8 +98,37 @@ class WASPService implements IWASPServiceFunctions {
   }
 
   @override
-  Future<WASPServiceResponse<GetListOfCategories_WASPResponse>> getListOfCategories() {
+  Future<WASPServiceResponse<GetListOfCategories_WASPResponse>>
+      getListOfCategories() {
     // TODO: implement getListOfCategories
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> createIssue(
+      {required int citizenId,
+      required int municipalityId,
+      required int subCategoryId,
+      required String description,
+      required Location location,
+      String? picture1,
+      String? picture2,
+      String? picture3}) {
+    // TODO: implement createIssue
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> reportIssue(
+      {required int reportCategoryId, required int issueId}) {
+    // TODO: implement reportIssue
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> updateIssue(
+      {required int issueId, required List<WASPUpdate> updates}) {
+    // TODO: implement updateIssue
     throw UnimplementedError();
   }
 

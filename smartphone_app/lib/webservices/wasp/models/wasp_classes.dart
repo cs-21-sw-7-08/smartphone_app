@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'wasp_classes.g.dart';
@@ -80,7 +81,7 @@ class GetListOfCategories_WASPResponse extends WASPResponse {
   GetListOfCategories_WASPResponse({this.result});
 
   factory GetListOfCategories_WASPResponse.fromJson(
-      Map<String, dynamic> json) =>
+          Map<String, dynamic> json) =>
       _$GetListOfCategories_WASPResponseFromJson(json);
 
   @override
@@ -101,6 +102,9 @@ class Location {
       _$LocationFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocationToJson(this);
+
+  factory Location.fromLatLng(LatLng latLng) =>
+      Location(latitude: latLng.latitude, longitude: latLng.longitude);
 }
 
 @JsonSerializable()
@@ -118,6 +122,18 @@ class Category {
       _$CategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => id;
+
+  @override
+  bool operator ==(Object other) {
+    if (Object is! Category) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
 
 @JsonSerializable()
@@ -135,6 +151,18 @@ class SubCategory {
       _$SubCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubCategoryToJson(this);
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => id;
+
+  @override
+  bool operator ==(Object other) {
+    if (Object is! Category) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
 
 @JsonSerializable()
@@ -152,6 +180,13 @@ class Municipality {
   Map<String, dynamic> toJson() => _$MunicipalityToJson(this);
 }
 
+enum IssueStates {
+  created,
+  approved,
+  resolved,
+  notResolved
+}
+
 @JsonSerializable()
 class IssueState {
   @JsonKey(name: "Id")
@@ -165,6 +200,8 @@ class IssueState {
       _$IssueStateFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssueStateToJson(this);
+
+  IssueStates getEnum() => IssueStates.values[id - 1];
 }
 
 @JsonSerializable()
@@ -196,15 +233,17 @@ class MunicipalityResponse {
 @JsonSerializable()
 class Issue {
   @JsonKey(name: "Id")
-  late int id;
+  late int? id;
   @JsonKey(name: "CitizenId")
-  late int citizenId;
+  late int? citizenId;
   @JsonKey(name: "Description")
   late String? description;
   @JsonKey(name: "DateCreated")
   late DateTime? dateCreated;
   @JsonKey(name: "Location")
   late Location? location;
+  @JsonKey(name: "Address")
+  late String? address;
   @JsonKey(name: "Picture1")
   late String? picture1;
   @JsonKey(name: "Picture2")
@@ -230,6 +269,7 @@ class Issue {
       this.description,
       this.dateCreated,
       this.location,
+      this.address,
       this.category,
       this.subCategory,
       this.municipality,
@@ -243,4 +283,51 @@ class Issue {
   factory Issue.fromJson(Map<String, dynamic> json) => _$IssueFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssueToJson(this);
+}
+
+@JsonSerializable()
+class IssuesOverviewFilter {
+  @JsonKey(name: "FromTime")
+  late DateTime? fromTime;
+  @JsonKey(name: "ToTime")
+  late DateTime? toTime;
+  @JsonKey(name: "MunicipalityId")
+  late int? municipalityId;
+  @JsonKey(name: "IssueStateId")
+  late int? issueStateId;
+  @JsonKey(name: "CategoryId")
+  late int? categoryId;
+  @JsonKey(name: "SubCategoryId")
+  late int? subCategoryId;
+  @JsonKey(name: "IsBlocked")
+  late bool? isBlocked;
+
+  IssuesOverviewFilter(
+      {this.fromTime,
+      this.toTime,
+      this.municipalityId,
+      this.issueStateId,
+      this.categoryId,
+      this.subCategoryId,
+      this.isBlocked});
+
+  factory IssuesOverviewFilter.fromJson(Map<String, dynamic> json) =>
+      _$IssuesOverviewFilterFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IssuesOverviewFilterToJson(this);
+}
+
+@JsonSerializable()
+class WASPUpdate {
+  @JsonKey(name: "Name")
+  late String? name;
+  @JsonKey(name: "Value")
+  late String? value;
+
+  WASPUpdate({this.name, this.value});
+
+  factory WASPUpdate.fromJson(Map<String, dynamic> json) =>
+      _$WASPUpdateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WASPUpdateToJson(this);
 }

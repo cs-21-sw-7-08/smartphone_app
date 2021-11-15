@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
-import 'package:smartphone_app/widgets/custom_dialog.dart';
 
 // ignore: implementation_imports
 import 'package:async/src/cancelable_operation.dart' show CancelableOperation;

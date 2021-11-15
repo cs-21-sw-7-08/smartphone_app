@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/pages/select_location/select_location_events_states.dart';
+import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/location/locator_util.dart';
 import 'package:smartphone_app/values/values.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SelectLocationBloc
     extends Bloc<SelectLocationEvent, SelectLocationState> {
@@ -22,7 +24,8 @@ class SelectLocationBloc
   ///
   //region Constructor
 
-  SelectLocationBloc({required BuildContext buildContext, required MapType mapType})
+  SelectLocationBloc(
+      {required BuildContext buildContext, required MapType mapType})
       : super(SelectLocationState(mapType: mapType)) {
     _buildContext = buildContext;
   }
@@ -53,6 +56,11 @@ class SelectLocationBloc
     } else if (event is ButtonPressed) {
       switch (event.selectLocationButtonEvent) {
         case SelectLocationButtonEvent.confirm:
+          if (state.marker == null) {
+            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+                .please_place_a_marker_first);
+            return;
+          }
           Navigator.pop(_buildContext, state.marker!.position);
           break;
         case SelectLocationButtonEvent.changeMapType:

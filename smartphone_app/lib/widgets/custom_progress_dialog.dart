@@ -85,8 +85,9 @@ class CustomProgressDialog extends StatelessWidget {
                     )),
                 CustomButton(
                     text: AppLocalizations.of(context)!.cancel,
-                    defaultBackground: custom_colors.buttonGradientDefault2,
+                    defaultBackground: custom_colors.buttonBlackGradient,
                     textColor: Colors.white,
+                    fontWeight: FontWeight.bold,
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(2),
                         bottomRight: Radius.circular(2)),

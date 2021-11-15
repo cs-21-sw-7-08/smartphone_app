@@ -6,19 +6,28 @@ const Color blue = Color(0xFF0067B0);
 const Color lightBlue = Color(0xFF00AEEF);
 const Color orange_1 = Color(0xFFF58220);
 const Color orange_2 = Color(0xFFFFA500);
+const Color orange3 = Color(0xFFEB9800);
 const Color transparent = Color(0x00000000);
 const Color transparentWhite = Color(0x20FFFFFF);
 const Color black = Color(0xFF202020);
+const Color darkGrey = Color(0xFF505050);
 
 const Color appBarColor = Color(0xFF202020);
 const Color borderColor = Color(0xFF202020);
 const Color appSafeAreaColor = Color(0xFF202020);
 
-const Color yellow1 = Color(0xFFFFE87C);
-const Color yellow2 = Color(0xFFFFDB58);
+const Color yellow1 = Color(0xFFFCC62B);
+const Color yellow2 = Color(0xFFF0BC29);
 
 const Color yellowWhite1 = Color(0xFFFCFCEF);
 const Color grey1 = Color(0xFFF0F0F0);
+
+const Color issueStateCreated = Color(0xFFD93534);
+const Color issueStateApproved = Color(0xFFDA9135);
+const Color issueStateResolved = Color(0xFF34DA35);
+const Color issueStateNotResolved = Color(0xFF3590D9);
+
+const Color contentDivider = Color(0xFFD0D0D0);
 
 const LinearGradient loginBackground = LinearGradient(
     colors: <Color>[yellowWhite1, yellowWhite1],
@@ -42,19 +51,24 @@ const Gradient orangeGradient = LinearGradient(
   end: Alignment(0.0, 1.0),
   colors: <Color>[orange_1, orange_2],
 );
+const Gradient orangeYellowGradient = LinearGradient(
+  begin: Alignment(0.0, -1.0),
+  end: Alignment(0.0, 1.0),
+  colors: <Color>[yellow1, orange3],
+);
 
-const Gradient buttonGradientDefault = LinearGradient(
-    colors: <Color>[lightBlue, blue],
+const Gradient buttonDefaultGradient = LinearGradient(
+    colors: <Color>[yellow1, orange3],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
-const Gradient buttonGradientDefault2 = LinearGradient(
+const Gradient buttonBlackGradient = LinearGradient(
     colors: <Color>[black, black],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
-const Gradient buttonGradientPressedDefault = LinearGradient(
+const Gradient buttonPressedGradient = LinearGradient(
   begin: Alignment(0.0, -1.0),
   end: Alignment(0.0, 1.0),
-  colors: <Color>[orange_1, orange_2],
+  colors: <Color>[orange_2, orange_2],
 );
 const Gradient transparentGradient = LinearGradient(
   begin: Alignment(0.0, -1.0),
