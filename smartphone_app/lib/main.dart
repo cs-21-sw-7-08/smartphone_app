@@ -37,7 +37,8 @@ void main() async {
   /*try {
     ThirdPartySignInUtil.signOut();
   } on Exception catch (_) {}*/
-
+  AppValuesHelper.getInstance()
+      .saveInteger(AppValuesKey.defaultMunicipality, 1);
   runApp(const MyApp());
 }
 

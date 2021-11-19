@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartphone_app/objects/place.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
@@ -11,7 +12,8 @@ enum IssuesOverviewButtonEvent {
   createIssue,
   logOut,
   changeMapType,
-  getListOfIssues
+  getListOfIssues,
+  showFilter
 }
 
 //endregion
@@ -53,6 +55,12 @@ class IssuePressed extends IssuesOverviewEvent {
   IssuePressed({required this.issue});
 }
 
+class MarkersUpdated extends IssuesOverviewEvent {
+  final Set<Marker>? markers;
+
+  MarkersUpdated({required this.markers});
+}
+
 //endregion
 
 ///
@@ -65,19 +73,22 @@ class IssuesOverviewState {
   Position? devicePosition;
   MapType? mapType;
   List<Issue>? issues;
+  List<Place>? places;
 
   IssuesOverviewState(
-      {this.mapType, this.markers, this.devicePosition, this.issues});
+      {this.mapType, this.places, this.markers, this.devicePosition, this.issues});
 
   IssuesOverviewState copyWith({
     Set<Marker>? markers,
     Position? devicePosition,
     MapType? mapType,
     List<Issue>? issues,
+    List<Place>? places,
   }) {
     return IssuesOverviewState(
         mapType: mapType ?? this.mapType,
         issues: issues ?? this.issues,
+        places: places ?? this.places,
         markers: markers ?? this.markers,
         devicePosition: devicePosition ?? this.devicePosition);
   }

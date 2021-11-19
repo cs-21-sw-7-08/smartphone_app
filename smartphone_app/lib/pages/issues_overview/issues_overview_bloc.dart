@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/objects/place.dart';
 import 'package:smartphone_app/pages/issue/issue_page.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_events_states.dart';
+import 'package:smartphone_app/pages/issues_overview_filter/issues_overview_filter_page.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
@@ -14,6 +16,7 @@ import 'package:smartphone_app/utilities/wasp_util.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import '../../utilities/location/locator_util.dart';
+import 'package:darq/darq.dart';
 
 class IssuesOverviewBloc
     extends Bloc<IssuesOverviewEvent, IssuesOverviewState> {
@@ -32,9 +35,9 @@ class IssuesOverviewBloc
   ///
   //region Constructor
 
-  IssuesOverviewBloc({required BuildContext buildContext})
+  IssuesOverviewBloc({required BuildContext context})
       : super(IssuesOverviewState(mapType: MapType.hybrid)) {
-    _buildContext = buildContext;
+    _buildContext = context;
   }
 
   //endregion
@@ -71,6 +74,10 @@ class IssuesOverviewBloc
         case IssuesOverviewButtonEvent.getListOfIssues:
           await getListOfIssues();
           break;
+        case IssuesOverviewButtonEvent.showFilter:
+          await GeneralUtil.showPageAsDialog(
+              _buildContext, IssuesOverviewFilterPage());
+          break;
       }
     } else if (event is IssueDetailsRetrieved) {
       bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
@@ -84,10 +91,14 @@ class IssuesOverviewBloc
         await getListOfIssues();
       }
     } else if (event is ListOfIssuesRetrieved) {
-      yield state.copyWith(
-          markers: getMarkersFromIssues(event.issues), issues: event.issues);
+      List<Place> places = event.issues
+          .select((element, index) => Place(issue: element))
+          .toList();
+      yield state.copyWith(places: places, issues: event.issues);
     } else if (event is IssuePressed) {
       await getIssueDetails(event.issue.id!);
+    } else if (event is MarkersUpdated) {
+      yield state.copyWith(markers: event.markers);
     }
   }
 

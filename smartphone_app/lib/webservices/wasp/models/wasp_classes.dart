@@ -180,12 +180,22 @@ class Municipality {
   Map<String, dynamic> toJson() => _$MunicipalityToJson(this);
 }
 
-enum IssueStates {
-  created,
-  approved,
-  resolved,
-  notResolved
+@JsonSerializable()
+class ReportCategory {
+  @JsonKey(name: "Id")
+  late int id;
+  @JsonKey(name: "Name")
+  late String? name;
+
+  ReportCategory({this.id = 0, this.name});
+
+  factory ReportCategory.fromJson(Map<String, dynamic> json) =>
+      _$ReportCategoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReportCategoryToJson(this);
 }
+
+enum IssueStates { created, approved, resolved, notResolved }
 
 @JsonSerializable()
 class IssueState {
@@ -292,23 +302,26 @@ class IssuesOverviewFilter {
   @JsonKey(name: "ToTime")
   late DateTime? toTime;
   @JsonKey(name: "MunicipalityId")
-  late int? municipalityId;
+  late List<int>? municipalityIds;
   @JsonKey(name: "IssueStateId")
-  late int? issueStateId;
+  late List<int>? issueStateIds;
   @JsonKey(name: "CategoryId")
-  late int? categoryId;
+  late List<int>? categoryIds;
   @JsonKey(name: "SubCategoryId")
-  late int? subCategoryId;
+  late List<int>? subCategoryIds;
+  @JsonKey(name: "CitizenIds")
+  late List<int>? citizenIds;
   @JsonKey(name: "IsBlocked")
   late bool? isBlocked;
 
   IssuesOverviewFilter(
       {this.fromTime,
       this.toTime,
-      this.municipalityId,
-      this.issueStateId,
-      this.categoryId,
-      this.subCategoryId,
+      this.municipalityIds,
+      this.issueStateIds,
+      this.categoryIds,
+      this.citizenIds,
+      this.subCategoryIds,
       this.isBlocked});
 
   factory IssuesOverviewFilter.fromJson(Map<String, dynamic> json) =>

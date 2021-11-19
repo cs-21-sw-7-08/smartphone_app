@@ -49,21 +49,21 @@ class CustomHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(gradient: background),
-        margin: margin,
-        padding: padding,
-        child: Align(
-          alignment: alignmentGeometry,
-          child: Text(
-            title,
-            textAlign: textAlign,
-            style: GoogleFonts.roboto(
-                textStyle: TextStyle(
-                    color: textColor,
-                    fontWeight: fontWeight,
-                    fontSize: fontSize)),
-          ),
-        ));
+            decoration: BoxDecoration(gradient: background),
+            margin: margin,
+            padding: padding,
+            child: Align(
+              alignment: alignmentGeometry,
+              child: Text(
+                title,
+                textAlign: textAlign,
+                style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                        color: textColor,
+                        fontWeight: fontWeight,
+                        fontSize: fontSize)),
+              ),
+            ));
   }
 
 //endregion

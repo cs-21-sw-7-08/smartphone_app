@@ -11,15 +11,18 @@ class CustomListTile extends StatefulWidget {
   final Gradient pressedBackground;
   final VoidCallback onPressed;
   final Widget widget;
+  late BorderRadiusGeometry? borderRadius;
 
   // ignore: prefer_const_constructors_in_immutables
-  CustomListTile(
-      {Key? key,
-      required this.widget,
-      required this.onPressed,
-      this.defaultBackground = custom_colors.whiteGradient,
-      this.pressedBackground = custom_colors.greyGradient})
-      : super(key: key);
+  CustomListTile({Key? key,
+    required this.widget,
+    required this.onPressed,
+    this.borderRadius,
+    this.defaultBackground = custom_colors.whiteGradient,
+    this.pressedBackground = custom_colors.greyGradient})
+      : super(key: key) {
+    borderRadius ??= const BorderRadius.all(Radius.circular(0));
+  }
 
   @override
   State<StatefulWidget> createState() => _CustomListTileState();
@@ -55,8 +58,9 @@ class _CustomListTileState extends State<CustomListTile> {
       onTapCancel: _onTapCancel,
       child: Container(
         decoration: BoxDecoration(
+          borderRadius: widget.borderRadius,
           gradient:
-              _isPressed ? widget.pressedBackground : widget.defaultBackground,
+          _isPressed ? widget.pressedBackground : widget.defaultBackground,
         ),
         child: widget.widget,
       ),
@@ -82,7 +86,7 @@ class _CustomListTileState extends State<CustomListTile> {
     // On a quick tap the pressed state is not shown, because the state
     // changes too fast, hence we introduce a delay.
     _timer = Timer(const Duration(milliseconds: 100),
-        () => setState(() => _isPressed = false));
+            () => setState(() => _isPressed = false));
   }
 
   void _onTapCancel() {

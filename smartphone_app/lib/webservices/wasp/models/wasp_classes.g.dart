@@ -161,6 +161,19 @@ Map<String, dynamic> _$MunicipalityToJson(Municipality instance) =>
       'Name': instance.name,
     };
 
+ReportCategory _$ReportCategoryFromJson(Map<String, dynamic> json) {
+  return ReportCategory(
+    id: json['Id'] as int,
+    name: json['Name'] as String?,
+  );
+}
+
+Map<String, dynamic> _$ReportCategoryToJson(ReportCategory instance) =>
+    <String, dynamic>{
+      'Id': instance.id,
+      'Name': instance.name,
+    };
+
 IssueState _$IssueStateFromJson(Map<String, dynamic> json) {
   return IssueState(
     id: json['Id'] as int,
@@ -259,10 +272,18 @@ IssuesOverviewFilter _$IssuesOverviewFilterFromJson(Map<String, dynamic> json) {
     toTime: json['ToTime'] == null
         ? null
         : DateTime.parse(json['ToTime'] as String),
-    municipalityId: json['MunicipalityId'] as int?,
-    issueStateId: json['IssueStateId'] as int?,
-    categoryId: json['CategoryId'] as int?,
-    subCategoryId: json['SubCategoryId'] as int?,
+    municipalityIds: (json['MunicipalityId'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(),
+    issueStateIds:
+        (json['IssueStateId'] as List<dynamic>?)?.map((e) => e as int).toList(),
+    categoryIds:
+        (json['CategoryId'] as List<dynamic>?)?.map((e) => e as int).toList(),
+    citizenIds:
+        (json['CitizenIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+    subCategoryIds: (json['SubCategoryId'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(),
     isBlocked: json['IsBlocked'] as bool?,
   );
 }
@@ -272,10 +293,11 @@ Map<String, dynamic> _$IssuesOverviewFilterToJson(
     <String, dynamic>{
       'FromTime': instance.fromTime?.toIso8601String(),
       'ToTime': instance.toTime?.toIso8601String(),
-      'MunicipalityId': instance.municipalityId,
-      'IssueStateId': instance.issueStateId,
-      'CategoryId': instance.categoryId,
-      'SubCategoryId': instance.subCategoryId,
+      'MunicipalityId': instance.municipalityIds,
+      'IssueStateId': instance.issueStateIds,
+      'CategoryId': instance.categoryIds,
+      'SubCategoryId': instance.subCategoryIds,
+      'CitizenIds': instance.citizenIds,
       'IsBlocked': instance.isBlocked,
     };
 

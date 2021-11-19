@@ -3,7 +3,13 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
-enum AppValuesKey { citizenId, municipalities, categories }
+enum AppValuesKey {
+  citizenId,
+  municipalities,
+  categories,
+  reportCategories,
+  defaultMunicipality
+}
 
 class AppValuesHelper {
   ///
@@ -52,18 +58,21 @@ class AppValuesHelper {
         AppValuesKey.categories, (model) => Category.fromJson(model));
   }
 
+  List<Category> getReportCategories() {
+    return _getList<Category>(AppValuesKey.reportCategories,
+        (model) => ReportCategory.fromJson(model));
+  }
+
   _saveList(AppValuesKey appValuesKey, List<dynamic> list) {
     var json = jsonEncode(list.map((e) => e.toJson()).toList());
     saveString(appValuesKey, json);
   }
 
   saveMunicipalities(List<Municipality> municipalities) {
-    // Save municipalities
     _saveList(AppValuesKey.municipalities, municipalities);
   }
 
   saveCategories(List<Category> categories) {
-    // Save categories
     _saveList(AppValuesKey.categories, categories);
   }
 

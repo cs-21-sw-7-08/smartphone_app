@@ -34,7 +34,6 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   late BuildContext _buildContext;
   late Issue? issue;
   late HashMap<String, int>? hashCodeMap;
-  final ImagePicker _imagePicker = ImagePicker();
 
   //endregion
 

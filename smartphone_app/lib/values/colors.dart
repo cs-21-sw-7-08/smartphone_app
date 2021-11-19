@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
@@ -18,6 +18,9 @@ const Color appSafeAreaColor = Color(0xFF202020);
 
 const Color yellow1 = Color(0xFFFCC62B);
 const Color yellow2 = Color(0xFFF0BC29);
+
+const Color yellowTransparent1 = Color(0x80FCC62B);
+const Color orangeTransparent3 = Color(0x80EB9800);
 
 const Color yellowWhite1 = Color(0xFFFCFCEF);
 const Color grey1 = Color(0xFFF0F0F0);
@@ -55,6 +58,17 @@ const Gradient orangeYellowGradient = LinearGradient(
   begin: Alignment(0.0, -1.0),
   end: Alignment(0.0, 1.0),
   colors: <Color>[yellow1, orange3],
+);
+const Gradient orangeYellowTransparentGradient = LinearGradient(
+  begin: Alignment(0.0, -1.0),
+  end: Alignment(0.0, 1.0),
+  colors: <Color>[yellowTransparent1, orangeTransparent3],
+);
+
+Shader orangeYellowShader = ui.Gradient.linear(
+  const Offset(0.0, 0),
+  const Offset(0.0, 125.0),
+  [yellow1, orange3]
 );
 
 const Gradient buttonDefaultGradient = LinearGradient(

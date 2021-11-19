@@ -35,6 +35,14 @@
   "@cancel": {
     "description": "Cancel task"
   },
+  "filter": "Filter",
+  "@filter": {
+    "description": "Title"
+  },
+  "apply": "Apply",
+  "@apply": {
+    "description": "Button text"
+  },
   "yes": "Yes",
   "@yes": {
     "description": "Button text"
@@ -54,6 +62,26 @@
   "settings": "Settings",
   "@settings": {
     "description": "Settings drawer title"
+  },
+  "add_picture": "Add picture",
+  "@add_picture": {
+    "description": "Button text"
+  },
+  "select_categories": "Select categories",
+  "@select_categories": {
+    "description": "Button text"
+  },
+  "select_subcategories": "Select subcategories",
+  "@select_subcategories": {
+    "description": "Button text"
+  },
+  "municipality": "Municipality",
+  "@municipality": {
+    "description": "Title"
+  },
+  "select_municipalities": "Select municipalities",
+  "@select_municipalities": {
+    "description": "Button text"
   },
   "please_select_a_location": "Please select a location",
   "@please_select_a_location": {

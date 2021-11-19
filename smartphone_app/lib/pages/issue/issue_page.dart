@@ -68,7 +68,6 @@ class IssuePage extends StatelessWidget {
                           child: Container(
                               constraints: const BoxConstraints.expand(),
                               decoration: const BoxDecoration(
-                                /*gradient: custom_colors.orangeYellowGradient,*/
                                 image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image: ExactAssetImage(
@@ -349,7 +348,7 @@ class IssuePage extends StatelessWidget {
                 margin: EdgeInsets.only(
                     top: (state.category != null && state.subCategory != null)
                         ? values.padding
-                        : values.smallPadding),
+                        : 0),
                 fontWeight: FontWeight.bold,
                 text: state.category == null
                     ? AppLocalizations.of(context)!.select_category
@@ -382,7 +381,7 @@ class IssuePage extends StatelessWidget {
         children: [
           CustomTextField(
             alignment: Alignment.topCenter,
-            margin: const EdgeInsets.only(bottom: values.padding),
+            margin: const EdgeInsets.all(0),
             text: state.description,
             initialValue: state.description,
             onChanged: (value) => bloc.add(TextChanged(
@@ -392,57 +391,50 @@ class IssuePage extends StatelessWidget {
             height: 110,
             maxLines: null,
           ),
-          GridView.count(
-            crossAxisCount: 2,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: values.padding,
-            shrinkWrap: true,
-            mainAxisSpacing: values.padding,
-            children: List.generate(
-                (state.pictures == null ? 0 : state.pictures!.length) + 1,
-                (index) {
-              if (index ==
-                  (state.pictures == null ? 0 : state.pictures!.length)) {
-                return AspectRatio(
-                    aspectRatio: 1,
-                    child: CustomButton(
-                      height: null,
-                      onPressed: () => bloc.add(ButtonPressed(
-                          issueButtonEvent: IssueButtonEvent.selectPicture)),
-                      icon: Icon(
-                        Icons.add_photo_alternate_outlined,
-                        color: Colors.black,
-                        size: (MediaQuery.of(context).size.width / 5),
-                      ),
-                    ));
-              } else {
-                return AspectRatio(
-                    aspectRatio: 1,
-                    child: Stack(
-                      children: [
-                        ImageFullScreenWrapper(child: state.pictures![index]),
-                        Align(
-                          child: CustomButton(
-                              height: 50,
-                              width: 50,
-                              margin: const EdgeInsets.only(
-                                  right: values.smallPadding,
-                                  top: values.smallPadding),
-                              imagePadding:
-                                  const EdgeInsets.all(values.padding),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(25)),
-                              icon:
-                                  const Icon(Icons.clear, color: Colors.black),
-                              onPressed: () => bloc.add(DeletePicture(
-                                  picture: state.pictures![index]))),
-                          alignment: Alignment.topRight,
-                        ),
-                      ],
-                    ));
-              }
-            }),
-          )
+          CustomButton(
+            onPressed: () => bloc.add(ButtonPressed(
+                issueButtonEvent: IssueButtonEvent.selectPicture)),
+            margin: const EdgeInsets.only(top: values.padding),
+            fontWeight: FontWeight.bold,
+            text: AppLocalizations.of(context)!.add_picture,
+          ),
+          if (state.pictures!.isNotEmpty)
+            Container(
+                margin: const EdgeInsets.only(top: values.padding),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: values.padding,
+                  shrinkWrap: true,
+                  mainAxisSpacing: values.padding,
+                  children: List.generate(state.pictures!.length, (index) {
+                    return AspectRatio(
+                        aspectRatio: 1,
+                        child: Stack(
+                          children: [
+                            ImageFullScreenWrapper(
+                                child: state.pictures![index]),
+                            Align(
+                              child: CustomButton(
+                                  height: 50,
+                                  width: 50,
+                                  margin: const EdgeInsets.only(
+                                      right: values.smallPadding,
+                                      top: values.smallPadding),
+                                  imagePadding:
+                                      const EdgeInsets.all(values.padding),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(25)),
+                                  icon: const Icon(Icons.clear,
+                                      color: Colors.black),
+                                  onPressed: () => bloc.add(DeletePicture(
+                                      picture: state.pictures![index]))),
+                              alignment: Alignment.topRight,
+                            ),
+                          ],
+                        ));
+                  }),
+                ))
         ],
       ),
     );

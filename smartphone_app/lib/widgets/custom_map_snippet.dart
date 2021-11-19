@@ -33,7 +33,7 @@ class GoogleMapSnippet extends StatefulWidget {
       this.zoom = 14,
       this.mapType = MapType.normal,
       this.cameraPosition})
-      : super(key: key) {}
+      : super(key: key);
 
   //endregion
 
