@@ -7,7 +7,7 @@ import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_text_field.dart';
 
 import 'sign_up_bloc.dart';
@@ -83,7 +83,7 @@ class SignUpPage extends StatelessWidget {
           return Container(
             child: Column(
               children: [
-                CustomHeader(title: AppLocalizations.of(context)!.phone_number),
+                CustomLabel(title: AppLocalizations.of(context)!.phone_number),
                 BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
                   return CustomTextField(
                     maxLength: 8,
@@ -105,7 +105,7 @@ class SignUpPage extends StatelessWidget {
           return Container(
             child: Column(
               children: [
-                CustomHeader(title: AppLocalizations.of(context)!.name),
+                CustomLabel(title: AppLocalizations.of(context)!.name),
                 BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
                   return CustomTextField(
                     keyBoardType: TextInputType.text,
@@ -126,7 +126,7 @@ class SignUpPage extends StatelessWidget {
           return Container(
             child: Column(
               children: [
-                CustomHeader(title: AppLocalizations.of(context)!.sms_code),
+                CustomLabel(title: AppLocalizations.of(context)!.sms_code),
                 BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
                   return CustomTextField(
                     maxLength: 6,

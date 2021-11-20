@@ -74,21 +74,28 @@ class IssuesOverviewState {
   MapType? mapType;
   List<Issue>? issues;
   List<Place>? places;
+  IssuesOverviewFilter? filter;
 
   IssuesOverviewState(
-      {this.mapType, this.places, this.markers, this.devicePosition, this.issues});
+      {this.mapType,
+      this.places,
+      this.markers,
+      this.devicePosition,
+      this.issues,
+      this.filter});
 
-  IssuesOverviewState copyWith({
-    Set<Marker>? markers,
-    Position? devicePosition,
-    MapType? mapType,
-    List<Issue>? issues,
-    List<Place>? places,
-  }) {
+  IssuesOverviewState copyWith(
+      {Set<Marker>? markers,
+      Position? devicePosition,
+      MapType? mapType,
+      List<Issue>? issues,
+      List<Place>? places,
+      IssuesOverviewFilter? issuesOverviewFilter}) {
     return IssuesOverviewState(
         mapType: mapType ?? this.mapType,
         issues: issues ?? this.issues,
         places: places ?? this.places,
+        filter: issuesOverviewFilter ?? this.filter,
         markers: markers ?? this.markers,
         devicePosition: devicePosition ?? this.devicePosition);
   }

@@ -33,6 +33,13 @@
         "MunicipalityUserId": 4,
         "Response": "Der er blevet anskaffet en ny bænk. En kommer ud og erstatter den",
         "DateCreated": "2021-10-22T13:44:15"
+      },
+      {
+        "Id": 3,
+        "IssueId": 3,
+        "MunicipalityUserId": 4,
+        "Response": "Bænket er blevet flyttet",
+        "DateCreated": "2021-10-22T13:46:14"
       }
     ],
     "IssueVerificationCitizenIds": [

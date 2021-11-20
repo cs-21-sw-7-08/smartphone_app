@@ -21,6 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppValuesHelper.getInstance().init();
   await Firebase.initializeApp();
+  //WASPService.init(WASPService(url: "https://192.168.0.108:5001"));
   WASPService.init(MockWASPService());
   GoogleService.init(GoogleService());
 

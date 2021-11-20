@@ -117,20 +117,21 @@ class CustomButtonState extends State<CustomButton> {
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
       child: Container(
-        margin: widget.margin,
-        width: widget.width,
-        height: widget.height,
-        padding: widget.padding,
-        decoration: BoxDecoration(
-          gradient:
-              _isPressed ? widget.pressedBackground : widget.defaultBackground,
-          borderRadius: widget.borderRadius,
-          border: !widget.showBorder
-              ? null
-              : widget.border ?? Border.all(color: _border, width: 1),
-        ),
-        child: buildWidgetsOnButton(),
-      ),
+            margin: widget.margin,
+            width: widget.width,
+            height: widget.height,
+            padding: widget.padding,
+            decoration: BoxDecoration(
+              gradient: _isPressed
+                  ? widget.pressedBackground
+                  : widget.defaultBackground,
+              borderRadius: widget.borderRadius,
+              border: !widget.showBorder
+                  ? null
+                  : widget.border ?? Border.all(color: _border, width: 1),
+            ),
+            child: buildWidgetsOnButton(),
+          ),
     );
   }
 

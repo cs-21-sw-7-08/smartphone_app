@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
-import 'package:smartphone_app/widgets/custom_list_dialog/custom_list_dialog.dart';
-import 'package:smartphone_app/widgets/custom_list_dialog/custom_list_dialog_events_states.dart';
 import 'package:darq/darq.dart';
+
+import 'custom_list_dialog.dart';
+import 'custom_list_dialog_events_states.dart';
 
 class CustomListDialogBloc
     extends Bloc<CustomListDialogEvent, CustomListDialogState> {
@@ -14,6 +15,7 @@ class CustomListDialogBloc
 
   late BuildContext _buildContext;
   late SearchPredicate _searchPredicate;
+  ConfirmPressedCallBack? _confirmPressedCallBack;
 
   //endregion
 
@@ -25,6 +27,7 @@ class CustomListDialogBloc
   CustomListDialogBloc(
       {required BuildContext buildContext,
       required List<dynamic> items,
+      required ConfirmPressedCallBack? confirmPressedCallBack,
       required SearchPredicate searchPredicate})
       : super(CustomListDialogState(
             showSearchBar: false,
@@ -34,6 +37,7 @@ class CustomListDialogBloc
             selectedItemTree: List.empty(growable: true))) {
     _buildContext = buildContext;
     _searchPredicate = searchPredicate;
+    _confirmPressedCallBack = confirmPressedCallBack;
   }
 
   //endregion
@@ -79,6 +83,14 @@ class CustomListDialogBloc
                 selectedItemTree: newSelectedItemTree);
           }
           break;
+        case CustomListDialogButtonEvent.confirm:
+          if (_confirmPressedCallBack == null) {
+            Navigator.of(_buildContext).pop(null);
+            return;
+          }
+          List<dynamic> list = _confirmPressedCallBack!(state.rootItems!);
+          Navigator.of(_buildContext).pop(list);
+          break;
       }
     } else if (event is TextChanged) {
       switch (event.customListDialogTextChangedEvent) {
@@ -111,6 +123,9 @@ class CustomListDialogBloc
           items: newItems,
           filteredItems: _getFilteredItems(items: newItems!),
           selectedItemTree: newSelectedItemTree);
+    } else if (event is ItemWasUpdated) {
+      // Yield new state
+      yield state.copyWith(filteredItems: state.filteredItems);
     }
   }
 

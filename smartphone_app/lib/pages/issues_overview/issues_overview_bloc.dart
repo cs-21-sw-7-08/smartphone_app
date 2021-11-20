@@ -36,7 +36,9 @@ class IssuesOverviewBloc
   //region Constructor
 
   IssuesOverviewBloc({required BuildContext context})
-      : super(IssuesOverviewState(mapType: MapType.hybrid)) {
+      : super(IssuesOverviewState(
+            mapType: MapType.hybrid,
+            filter: getDefaultIssuesOverviewFilter())) {
     _buildContext = context;
   }
 
@@ -59,7 +61,7 @@ class IssuesOverviewBloc
               _buildContext, IssuePage(mapType: state.mapType!));
           flag ??= false;
           if (flag) {
-            await getListOfIssues();
+            await getListOfIssues(state.filter!);
           }
           break;
         case IssuesOverviewButtonEvent.logOut:
@@ -72,11 +74,16 @@ class IssuesOverviewBloc
                   : MapType.hybrid);
           break;
         case IssuesOverviewButtonEvent.getListOfIssues:
-          await getListOfIssues();
+          await getListOfIssues(state.filter!);
           break;
         case IssuesOverviewButtonEvent.showFilter:
-          await GeneralUtil.showPageAsDialog(
-              _buildContext, IssuesOverviewFilterPage());
+          IssuesOverviewFilter? filter =
+              await GeneralUtil.showPageAsDialog<IssuesOverviewFilter?>(
+                  _buildContext,
+                  IssuesOverviewFilterPage(filter: state.filter!));
+          if (filter == null) return;
+          await getListOfIssues(filter);
+          yield state.copyWith(issuesOverviewFilter: filter);
           break;
       }
     } else if (event is IssueDetailsRetrieved) {
@@ -88,7 +95,7 @@ class IssuesOverviewBloc
           ));
       flag ??= false;
       if (flag) {
-        await getListOfIssues();
+        await getListOfIssues(state.filter!);
       }
     } else if (event is ListOfIssuesRetrieved) {
       List<Place> places = event.issues
@@ -108,6 +115,29 @@ class IssuesOverviewBloc
   /// METHODS
   ///
   //region Methods
+
+  static IssuesOverviewFilter getDefaultIssuesOverviewFilter() {
+    // Get municipalities
+    List<Municipality?> municipalities =
+        AppValuesHelper.getInstance().getMunicipalities();
+    // Get default municipality ID
+    int defaultMunicipalityId = AppValuesHelper.getInstance()
+        .getInteger(AppValuesKey.defaultMunicipality)!;
+    // Get municipality
+    Municipality? municipality;
+    try {
+      municipality = municipalities
+          .firstWhere((element) => element!.id == defaultMunicipalityId);
+    } on StateError catch (_) {}
+
+    return IssuesOverviewFilter(
+        municipalityIds: municipality == null ? null : [municipality.id],
+        issueStateIds: [1, 2],
+        citizenIds: null,
+        subCategoryIds: null,
+        isBlocked: false,
+        categoryIds: null);
+  }
 
   Set<Marker> getMarkersFromIssues(List<Issue> issues) {
     Set<Marker> markers = <Marker>{};
@@ -157,7 +187,7 @@ class IssuesOverviewBloc
           AppValuesHelper.getInstance().saveMunicipalities(
               getListOfMunicipalitiesResponse.waspResponse!.result!);
 
-          // Get list of municipalities
+          // Get list of categories
           WASPServiceResponse<GetListOfCategories_WASPResponse>
               getListOfCategoriesResponse =
               await WASPService.getInstance().getListOfCategories();
@@ -168,9 +198,20 @@ class IssuesOverviewBloc
           AppValuesHelper.getInstance().saveCategories(
               getListOfCategoriesResponse.waspResponse!.result!);
 
+          // Get list of report categories
+          WASPServiceResponse<GetListOfReportCategories_WASPResponse>
+          getListOfReportCategoriesResponse =
+          await WASPService.getInstance().getListOfReportCategories();
+          if (!getListOfReportCategoriesResponse.isSuccess) {
+            GeneralUtil.showToast(getListOfReportCategoriesResponse.exception!);
+            return false;
+          }
+          AppValuesHelper.getInstance().saveReportCategories(
+              getListOfReportCategoriesResponse.waspResponse!.result!);
+
           // Get list of issues
           var response = await WASPService.getInstance()
-              .getListOfIssues(filter: IssuesOverviewFilter());
+              .getListOfIssues(filter: state.filter!);
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);
@@ -184,17 +225,18 @@ class IssuesOverviewBloc
           return true;
         },
         taskCancelled: () {});
-    return flag!;
+    flag ??= false;
+    return flag;
   }
 
-  Future<void> getListOfIssues() async {
+  Future<void> getListOfIssues(IssuesOverviewFilter filter) async {
     await TaskUtil.runTask(
         buildContext: _buildContext,
         progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
         doInBackground: (runTask) async {
           // Get list of issues
-          var response = await WASPService.getInstance()
-              .getListOfIssues(filter: IssuesOverviewFilter());
+          var response =
+              await WASPService.getInstance().getListOfIssues(filter: filter);
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);

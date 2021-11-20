@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/pages/custom_list_dialog/custom_list_dialog.dart';
+import 'package:smartphone_app/pages/report/report_page.dart';
 import 'package:smartphone_app/pages/select_location/select_location_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
@@ -16,9 +18,9 @@ import 'package:smartphone_app/webservices/google_reverse_geocoding/service/goog
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
-import 'package:smartphone_app/widgets/custom_header.dart';
-import 'package:smartphone_app/widgets/custom_list_dialog/custom_list_dialog.dart';
+import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:smartphone_app/widgets/image_picker_dialog.dart';
 import 'package:smartphone_app/widgets/question_dialog.dart';
@@ -65,6 +67,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   Stream<IssuePageState> mapEventToState(IssuePageEvent event) async* {
     if (event is ButtonPressed) {
       switch (event.issueButtonEvent) {
+      /// Select location
         case IssueButtonEvent.selectLocation:
           LatLng? position = await GeneralUtil.showPageAsDialog<LatLng?>(
               _buildContext, SelectLocationPage(mapType: state.mapType!));
@@ -73,11 +76,15 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           if (newState == null) return;
           yield newState;
           break;
+
+      /// Select category
         case IssueButtonEvent.selectCategory:
           IssuePageState? newState = await _selectCategory();
           if (newState == null) return;
           yield newState;
           break;
+
+      /// Select picture
         case IssueButtonEvent.selectPicture:
         // Hide keyboard
           GeneralUtil.hideKeyboard();
@@ -96,6 +103,8 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           pictures.add(image);
           yield state.copyWith(pictures: pictures);
           break;
+
+      /// Save changes
         case IssueButtonEvent.saveChanges:
         // ignore: missing_enum_constant_in_switch
           switch (state.issuePageView!) {
@@ -106,12 +115,15 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
               List<String> names = state.getNamesOfChangedProperties(
                   hashCodeMap!);
               IssuePageState? newState = await _updateIssue(names);
-              if (newState == null) return;
-              yield newState;
+              if (newState != null) {
+                yield newState;
+              }
               break;
           }
           break;
-        case IssueButtonEvent.backPressed:
+
+      /// Back
+        case IssueButtonEvent.back:
           switch (state.issuePageView!) {
             case IssuePageView.see:
             case IssuePageView.create:
@@ -139,22 +151,41 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
               break;
           }
           break;
+
+      /// Edit issue
         case IssueButtonEvent.editIssue:
+        // You can only edit an issue with the status "Created"
+          if (issue!.issueState!.id != 1) {
+            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+                .you_can_only_edit_an_issue_with_the_status_created);
+            return;
+          }
+          // Go into edit mode
           yield state.copyWith(issuePageView: IssuePageView.edit);
           break;
+
+      /// Verify issue
         case IssueButtonEvent.verifyIssue:
+        // Ask user if they want to verify issue
           DialogQuestionResponse questionResponse = await QuestionDialog
               .show(context: _buildContext,
               question: AppLocalizations.of(_buildContext)!
                   .by_verifying);
+          // Yes was selected by the user
           if (questionResponse == DialogQuestionResponse.yes) {
+            // Verify issue
             IssuePageState? newState = await _verifyIssue();
             if (newState == null) return;
             yield newState;
           }
           break;
+
+      /// Report issue
         case IssueButtonEvent.reportIssue:
-        // TODO: Handle this case.
+          ReportCategory? reportCategory = await GeneralUtil.showPageAsDialog<
+              ReportCategory>(_buildContext, ReportPage());
+          if (reportCategory == null) return;
+          _reportIssue(reportCategory);
           break;
       }
     } else if (event is TextChanged) {
@@ -182,6 +213,9 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         description: event.description,
         issueState: event.issueState,
         isCreator: event.isCreator,
+        dateEdited: event.dateEdited,
+        dateCreated: event.dateCreated,
+        municipalityResponses: event.municipalityResponses,
         issuePageView: IssuePageView.see,
         address: event.address,);
       hashCodeMap = state.getCurrentHashCodes(state: newState);
@@ -195,6 +229,10 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   /// METHODS
   ///
   //region Methods
+
+  DateFormat getDateFormat() {
+    return DateFormat("dd-MM-yyyy HH:mm");
+  }
 
   Future<String?> _getPictureAsBase64FromNumber(int number) async {
     switch (number) {
@@ -226,9 +264,35 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     return null;
   }
 
+  Future<void> _reportIssue(ReportCategory reportCategory) async {
+    // Report issue
+    bool? flag = await TaskUtil.runTask(
+        buildContext: _buildContext,
+        progressMessage:
+        AppLocalizations.of(_buildContext)!.reporting_issue,
+        doInBackground: (runTask) async {
+          var response = await WASPService.getInstance().reportIssue(
+              issueId: issue!.id!,
+              reportCategoryId: reportCategory.id
+          )
+          if (!response.isSuccess) {
+            GeneralUtil.showToast(response.exception!);
+            return false;
+          }
+          return true;
+        },
+        taskCancelled: () {});
+    flag ??= false;
+    if (!flag) return;
+    // Close dialog
+    Navigator.pop(_buildContext);
+  }
+
   Future<IssuePageState?> _updateIssue(
       List<String> namesOfChangedProperties) async {
-    if (namesOfChangedProperties.isEmpty) return null;
+    if (namesOfChangedProperties.isEmpty) {
+      return state.copyWith(issuePageView: IssuePageView.see);
+    }
 
     // Verify issue
     IssuePageState? newState = await TaskUtil.runTask(
@@ -346,10 +410,15 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                 break;
             }
           }
-
+          // New date edited
+          issue!.dateEdited = DateTime.now();
+          var dateFormat = getDateFormat();
+          String? dateEdited = dateFormat.format(issue!.dateEdited!);
           // Return new state
           return state.copyWith(
-              hasChanges: true, issuePageView: IssuePageView.see);
+              hasChanges: true,
+              issuePageView: IssuePageView.see,
+              dateEdited: dateEdited);
         },
         taskCancelled: () {});
     return newState;
@@ -418,15 +487,18 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           String? picture3 = await _getPictureAsBase64FromNumber(3);
 
           var response = await WASPService.getInstance().createIssue(
-              citizenId: AppValuesHelper.getInstance().getInteger(
-                  AppValuesKey.citizenId)!,
-              municipalityId: municipalityId,
-              subCategoryId: state.subCategory!.id,
-              description: state.description ?? "",
-              picture1: picture1,
-              picture2: picture2,
-              picture3: picture3,
-              location: Location.fromLatLng(state.marker!.position))
+              issueCreateDTO:
+              IssueCreateDTO(
+                  citizenId: AppValuesHelper.getInstance().getInteger(
+                      AppValuesKey.citizenId)!,
+                  municipalityId: municipalityId,
+                  subCategoryId: state.subCategory!.id,
+                  description: state.description ?? "",
+                  picture1: picture1,
+                  picture2: picture2,
+                  picture3: picture3,
+                  location: Location.fromLatLng(state.marker!.position)
+              ));
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);
             return false;
@@ -444,53 +516,72 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   Future<IssuePageState?> _selectCategory() async {
     List<Category> categories = AppValuesHelper.getInstance().getCategories();
     List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
-        items: categories, itemBuilder: (item, itemSelected) {
+        items: categories,
+        itemBuilder: (index, item, list, showSearchBar, itemSelected,
+            itemUpdated) {
           if (item is Category) {
-            return CustomListTile(
-                widget: Container(
-                  color: Colors.transparent,
-                  child: Column(
-                    children: [
-                      CustomHeader(
-                        title: item.name!,
-                        margin: const EdgeInsets.only(
-                            left: 10, top: 20, right: 10, bottom: 20),
-                      )
-                    ],
-                  ),
-                ),
-                onPressed: () {
-                  itemSelected(item.subCategories);
-                });
+            return Container(
+                margin: EdgeInsets.only(
+                    top: index == 0 && showSearchBar ? 0 : values.padding,
+                    left: values.padding,
+                    right: values.padding,
+                    bottom: index == list.length - 1 ? values.padding : 0),
+                child: CustomListTile(
+                    widget: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          CustomLabel(
+                            title: item.name!,
+                            margin: const EdgeInsets.only(
+                                left: values.padding,
+                                top: values.padding * 2,
+                                right: values.padding,
+                                bottom: values.padding * 2),
+                          )
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      itemSelected(item.subCategories);
+                    }));
           } else if (item is SubCategory) {
-            return CustomListTile(
-                widget: Container(
-                  color: Colors.transparent,
-                  child: Column(
-                    children: [
-                      CustomHeader(
-                        title: item.name!,
-                        margin: const EdgeInsets.only(
-                            left: 10, top: 20, right: 10, bottom: 20),
-                      )
-                    ],
-                  ),
-                ),
-                onPressed: () {
-                  itemSelected(null);
-                });
+            return Container(
+                margin: EdgeInsets.only(
+                    top: index == 0 && showSearchBar ? 0 : values.padding,
+                    left: values.padding,
+                    right: values.padding,
+                    bottom: index == list.length - 1 ? values.padding : 0),
+                child: CustomListTile(
+                    widget: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          CustomLabel(
+                            title: item.name!,
+                            margin: const EdgeInsets.only(
+                                left: values.padding,
+                                top: values.padding * 2,
+                                right: values.padding,
+                                bottom: values.padding * 2),
+                          )
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      itemSelected(null);
+                    }));
           }
-          return Container(
-            height: 50,
-          );
-        }, searchPredicate: (item, searchString) {
+        },
+        searchPredicate: (item, searchString) {
           if (item is Category) {
             return item.name!.toLowerCase().contains(searchString);
           } else if (item is SubCategory) {
             return item.name!.toLowerCase().contains(searchString);
           }
           return false;
-        }, titleBuilder: (item) {
+        },
+        titleBuilder: (item) {
           if (item == null) {
             return AppLocalizations.of(_buildContext)!.category;
           } else if (item is Category) {
@@ -591,10 +682,24 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         pictures.add(Image.memory(base64Decode(issue!.picture3!)));
       }
 
+      // DateCreated, DateEdited
+      var dateFormat = getDateFormat();
+      String? dateCreated = dateFormat.format(issue!.dateCreated!);
+      String? dateEdited = issue!.dateEdited == null ? null : dateFormat.format(
+          issue!.dateEdited!);
+
+      if (issue!.municipalityResponses != null) {
+        issue!.municipalityResponses!.sort((a, b) =>
+            b.dateCreated!.compareTo(a.dateCreated!));
+      }
+
       // Fire event
       add(PageContentLoaded(
           marker: marker,
           isCreator: isCreator,
+          municipalityResponses: issue!.municipalityResponses,
+          dateCreated: dateCreated,
+          dateEdited: dateEdited,
           hasVerified: hasVerified,
           description: issue!.description ?? "",
           pictures: pictures,

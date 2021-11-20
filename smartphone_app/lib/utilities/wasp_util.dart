@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
@@ -29,5 +31,14 @@ class WASPUtil {
       case IssueStates.notResolved:
         return custom_colors.issueStateNotResolved;
     }
+  }
+
+  static Map<String, dynamic> removeNullValues(Map<String, dynamic> jsonMap) {
+    jsonMap.removeWhere((key, value) => value == null);
+    return jsonMap;
+  }
+
+  static String encodeToJson(Map<String, dynamic> jsonMap) {
+    return jsonEncode(removeNullValues(jsonMap));
   }
 }

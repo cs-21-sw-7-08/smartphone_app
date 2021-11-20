@@ -71,6 +71,46 @@
   "@select_categories": {
     "description": "Button text"
   },
+  "only_own_issues": "Only own issues",
+  "@only_own_issues": {
+    "description": "Title"
+  },
+  "general": "General",
+  "@general": {
+    "description": "Title"
+  },
+  "created": "Created",
+  "@created": {
+    "description": "Title"
+  },
+  "edited": "Edited",
+  "@edited": {
+    "description": "Title"
+  },
+  "report": "Report",
+  "@report": {
+    "description": "Title"
+  },
+  "reporting_issue": "Reporting issue...",
+  "@reporting_issue": {
+    "description": "Progress message"
+  },
+  "report_category": "Report category",
+  "@report_category": {
+    "description": "Title"
+  },
+  "select_why_you_want_to_report_this_issue": "Select why you want to report this issue",
+  "@select_why_you_want_to_report_this_issue": {
+    "description": "Informative message to the user"
+  },
+  "you_can_only_edit_an_issue_with_the_status_created": "You can only edit an issue with the status \"Created\"",
+  "@you_can_only_edit_an_issue_with_the_status_created": {
+    "description": "Informative message to the user"
+  },
+  "from_municipality": "From municipality",
+  "@from_municipality": {
+    "description": "Title"
+  },
   "select_subcategories": "Select subcategories",
   "@select_subcategories": {
     "description": "Button text"

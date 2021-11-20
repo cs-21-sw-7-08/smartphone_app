@@ -46,6 +46,7 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
   //region Methods
 
   _updateMarkers(Set<Marker> markers) {
+    // ignore: avoid_print
     print('Updated ${markers.length} markers');
     bloc.add(MarkersUpdated(markers: markers));
   }
@@ -267,20 +268,6 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
           children: [
             _getOverview(bloc, state),
             Align(
-                alignment: Alignment.bottomLeft,
-                child: CustomButton(
-                  onPressed: () => bloc.add(ButtonPressed(
-                      issuesOverviewButtonEvent:
-                          IssuesOverviewButtonEvent.createIssue)),
-                  text: AppLocalizations.of(context)!.create_issue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  margin: const EdgeInsets.only(
-                      bottom: values.padding,
-                      left: values.padding,
-                      right: values.padding),
-                )),
-            Align(
               alignment: Alignment.topRight,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,10 +311,10 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
   }
 
   Widget _getOverview(IssuesOverviewBloc bloc, IssuesOverviewState state) {
-    return Container(
-        padding: const EdgeInsets.only(bottom: 55 + values.padding * 2),
-        color: custom_colors.black,
-        child: GoogleMap(
+    return Column(
+      children: [
+        Expanded(
+            child: GoogleMap(
           mapType: state.mapType!,
           initialCameraPosition: CameraPosition(
               target: LatLng(state.devicePosition!.latitude,
@@ -345,7 +332,20 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
             _googleMapCompleter.complete(controller);
             _clusterManager.setMapId(controller.mapId);
           },
-        ));
+        )),
+        Container(
+            color: custom_colors.black,
+            padding: const EdgeInsets.all(values.padding),
+            child: CustomButton(
+              onPressed: () => bloc.add(ButtonPressed(
+                  issuesOverviewButtonEvent:
+                      IssuesOverviewButtonEvent.createIssue)),
+              text: AppLocalizations.of(context)!.create_issue,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ))
+      ],
+    );
   }
 
 //endregion

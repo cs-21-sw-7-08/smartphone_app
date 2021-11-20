@@ -63,6 +63,26 @@ Map<String, dynamic> _$GetListOfMunicipalities_WASPResponseToJson(
       'Result': instance.result,
     };
 
+Citizen_WASPResponse _$Citizen_WASPResponseFromJson(Map<String, dynamic> json) {
+  return Citizen_WASPResponse(
+    result: json['Result'] == null
+        ? null
+        : Citizen.fromJson(json['Result'] as Map<String, dynamic>),
+  )
+    ..isSuccessful = json['IsSuccessful'] as bool
+    ..errorNo = json['ErrorNo'] as int
+    ..errorMessage = json['ErrorMessage'] as String?;
+}
+
+Map<String, dynamic> _$Citizen_WASPResponseToJson(
+        Citizen_WASPResponse instance) =>
+    <String, dynamic>{
+      'IsSuccessful': instance.isSuccessful,
+      'ErrorNo': instance.errorNo,
+      'ErrorMessage': instance.errorMessage,
+      'Result': instance.result,
+    };
+
 GetIssueDetails_WASPResponse _$GetIssueDetails_WASPResponseFromJson(
     Map<String, dynamic> json) {
   return GetIssueDetails_WASPResponse(
@@ -98,6 +118,28 @@ GetListOfCategories_WASPResponse _$GetListOfCategories_WASPResponseFromJson(
 
 Map<String, dynamic> _$GetListOfCategories_WASPResponseToJson(
         GetListOfCategories_WASPResponse instance) =>
+    <String, dynamic>{
+      'IsSuccessful': instance.isSuccessful,
+      'ErrorNo': instance.errorNo,
+      'ErrorMessage': instance.errorMessage,
+      'Result': instance.result,
+    };
+
+GetListOfReportCategories_WASPResponse
+    _$GetListOfReportCategories_WASPResponseFromJson(
+        Map<String, dynamic> json) {
+  return GetListOfReportCategories_WASPResponse(
+    result: (json['Result'] as List<dynamic>?)
+        ?.map((e) => ReportCategory.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  )
+    ..isSuccessful = json['IsSuccessful'] as bool
+    ..errorNo = json['ErrorNo'] as int
+    ..errorMessage = json['ErrorMessage'] as String?;
+}
+
+Map<String, dynamic> _$GetListOfReportCategories_WASPResponseToJson(
+        GetListOfReportCategories_WASPResponse instance) =>
     <String, dynamic>{
       'IsSuccessful': instance.isSuccessful,
       'ErrorNo': instance.errorNo,
@@ -191,6 +233,9 @@ MunicipalityResponse _$MunicipalityResponseFromJson(Map<String, dynamic> json) {
   return MunicipalityResponse(
     id: json['Id'] as int,
     issueId: json['IssueId'] as int,
+    dateEdited: json['DateEdited'] == null
+        ? null
+        : DateTime.parse(json['DateEdited'] as String),
     municipalityUserId: json['MunicipalityUserId'] as int,
     response: json['Response'] as String,
     dateCreated: json['DateCreated'] == null
@@ -207,6 +252,7 @@ Map<String, dynamic> _$MunicipalityResponseToJson(
       'MunicipalityUserId': instance.municipalityUserId,
       'Response': instance.response,
       'DateCreated': instance.dateCreated?.toIso8601String(),
+      'DateEdited': instance.dateEdited?.toIso8601String(),
     };
 
 Issue _$IssueFromJson(Map<String, dynamic> json) {
@@ -217,6 +263,9 @@ Issue _$IssueFromJson(Map<String, dynamic> json) {
     dateCreated: json['DateCreated'] == null
         ? null
         : DateTime.parse(json['DateCreated'] as String),
+    dateEdited: json['DateEdited'] == null
+        ? null
+        : DateTime.parse(json['DateEdited'] as String),
     location: json['Location'] == null
         ? null
         : Location.fromJson(json['Location'] as Map<String, dynamic>),
@@ -251,6 +300,7 @@ Map<String, dynamic> _$IssueToJson(Issue instance) => <String, dynamic>{
       'CitizenId': instance.citizenId,
       'Description': instance.description,
       'DateCreated': instance.dateCreated?.toIso8601String(),
+      'DateEdited': instance.dateEdited?.toIso8601String(),
       'Location': instance.location,
       'Address': instance.address,
       'Picture1': instance.picture1,
@@ -264,6 +314,53 @@ Map<String, dynamic> _$IssueToJson(Issue instance) => <String, dynamic>{
       'IssueVerificationCitizenIds': instance.issueVerificationCitizenIds,
     };
 
+IssueCreateDTO _$IssueCreateDTOFromJson(Map<String, dynamic> json) {
+  return IssueCreateDTO(
+    citizenId: json['CitizenId'] as int?,
+    description: json['Description'] as String?,
+    location: json['Location'] == null
+        ? null
+        : Location.fromJson(json['Location'] as Map<String, dynamic>),
+    address: json['Address'] as String?,
+    subCategoryId: json['SubCategoryId'] as int?,
+    municipalityId: json['MunicipalityId'] as int?,
+    picture1: json['Picture1'] as String?,
+    picture2: json['Picture2'] as String?,
+    picture3: json['Picture3'] as String?,
+  );
+}
+
+Map<String, dynamic> _$IssueCreateDTOToJson(IssueCreateDTO instance) =>
+    <String, dynamic>{
+      'CitizenId': instance.citizenId,
+      'Description': instance.description,
+      'Location': instance.location,
+      'Address': instance.address,
+      'Picture1': instance.picture1,
+      'Picture2': instance.picture2,
+      'Picture3': instance.picture3,
+      'SubCategoryId': instance.subCategoryId,
+      'MunicipalityId': instance.municipalityId,
+    };
+
+Citizen _$CitizenFromJson(Map<String, dynamic> json) {
+  return Citizen(
+    id: json['Id'] as int?,
+    email: json['Email'] as String?,
+    phoneNo: json['PhoneNo'] as String?,
+    name: json['Name'] as String?,
+    isBlocked: json['IsBlocked'] as bool?,
+  );
+}
+
+Map<String, dynamic> _$CitizenToJson(Citizen instance) => <String, dynamic>{
+      'Id': instance.id,
+      'Email': instance.email,
+      'PhoneNo': instance.phoneNo,
+      'Name': instance.name,
+      'IsBlocked': instance.isBlocked,
+    };
+
 IssuesOverviewFilter _$IssuesOverviewFilterFromJson(Map<String, dynamic> json) {
   return IssuesOverviewFilter(
     fromTime: json['FromTime'] == null
@@ -272,16 +369,17 @@ IssuesOverviewFilter _$IssuesOverviewFilterFromJson(Map<String, dynamic> json) {
     toTime: json['ToTime'] == null
         ? null
         : DateTime.parse(json['ToTime'] as String),
-    municipalityIds: (json['MunicipalityId'] as List<dynamic>?)
+    municipalityIds: (json['MunicipalityIds'] as List<dynamic>?)
         ?.map((e) => e as int)
         .toList(),
-    issueStateIds:
-        (json['IssueStateId'] as List<dynamic>?)?.map((e) => e as int).toList(),
+    issueStateIds: (json['IssueStateIds'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(),
     categoryIds:
-        (json['CategoryId'] as List<dynamic>?)?.map((e) => e as int).toList(),
+        (json['CategoryIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
     citizenIds:
         (json['CitizenIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
-    subCategoryIds: (json['SubCategoryId'] as List<dynamic>?)
+    subCategoryIds: (json['SubCategoryIds'] as List<dynamic>?)
         ?.map((e) => e as int)
         .toList(),
     isBlocked: json['IsBlocked'] as bool?,
@@ -293,10 +391,10 @@ Map<String, dynamic> _$IssuesOverviewFilterToJson(
     <String, dynamic>{
       'FromTime': instance.fromTime?.toIso8601String(),
       'ToTime': instance.toTime?.toIso8601String(),
-      'MunicipalityId': instance.municipalityIds,
-      'IssueStateId': instance.issueStateIds,
-      'CategoryId': instance.categoryIds,
-      'SubCategoryId': instance.subCategoryIds,
+      'MunicipalityIds': instance.municipalityIds,
+      'IssueStateIds': instance.issueStateIds,
+      'CategoryIds': instance.categoryIds,
+      'SubCategoryIds': instance.subCategoryIds,
       'CitizenIds': instance.citizenIds,
       'IsBlocked': instance.isBlocked,
     };

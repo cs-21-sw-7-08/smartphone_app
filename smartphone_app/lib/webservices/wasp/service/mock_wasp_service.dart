@@ -86,15 +86,16 @@ class MockWASPService extends WASPService {
   }
 
   @override
+  Future<WASPServiceResponse<GetListOfReportCategories_WASPResponse>>
+      getListOfReportCategories() async {
+    return WASPServiceResponse.success(
+        GetListOfReportCategories_WASPResponse.fromJson(
+            await getJsonData("get_list_of_report_categories_response.json")));
+  }
+
+  @override
   Future<WASPServiceResponse<WASPResponse>> createIssue(
-      {required int citizenId,
-      required int municipalityId,
-      required int subCategoryId,
-      required String description,
-      required Location location,
-      String? picture1,
-      String? picture2,
-      String? picture3}) {
+      {required IssueCreateDTO issueCreateDTO}) {
     return Future.value(WASPServiceResponse.success(WASPResponse()));
   }
 

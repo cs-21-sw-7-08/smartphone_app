@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
+import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -58,12 +59,16 @@ class ImagePickerDialog extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(2))),
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(values.borderRadius))),
               child: Wrap(alignment: WrapAlignment.center, children: [
                 Container(
                     margin: const EdgeInsets.all(0),
                     padding: const EdgeInsets.only(
-                        left: 10, right: 10, bottom: 25, top: 25),
+                        left: values.padding,
+                        right: values.padding,
+                        bottom: 25,
+                        top: 25),
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -86,9 +91,7 @@ class ImagePickerDialog extends StatelessWidget {
                     ),
                     textColor: Colors.black,
                     fontWeight: FontWeight.bold,
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(2),
-                        bottomRight: Radius.circular(2)),
+                    borderRadius: const BorderRadius.all(Radius.circular(0)),
                     showBorder: false,
                     onPressed: () async {
                       Image? image = await _pickImage(ImageSource.gallery);
@@ -107,9 +110,7 @@ class ImagePickerDialog extends StatelessWidget {
                     ),
                     textColor: Colors.black,
                     fontWeight: FontWeight.bold,
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(2),
-                        bottomRight: Radius.circular(2)),
+                    borderRadius: const BorderRadius.all(Radius.circular(0)),
                     showBorder: false,
                     onPressed: () async {
                       Image? image = await _pickImage(ImageSource.camera);
@@ -118,12 +119,12 @@ class ImagePickerDialog extends StatelessWidget {
                     }),
                 CustomButton(
                     text: AppLocalizations.of(context)!.cancel,
-                    defaultBackground: custom_colors.buttonBlackGradient,
+                    defaultBackground: custom_colors.blackGradient,
                     textColor: Colors.white,
                     fontWeight: FontWeight.bold,
                     borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(2),
-                        bottomRight: Radius.circular(2)),
+                        bottomLeft: Radius.circular(values.borderRadius),
+                        bottomRight: Radius.circular(values.borderRadius)),
                     showBorder: false,
                     onPressed: () => Navigator.of(context).pop(null))
               ])),

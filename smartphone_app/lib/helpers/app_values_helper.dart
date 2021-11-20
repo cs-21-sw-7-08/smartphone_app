@@ -58,9 +58,18 @@ class AppValuesHelper {
         AppValuesKey.categories, (model) => Category.fromJson(model));
   }
 
-  List<Category> getReportCategories() {
-    return _getList<Category>(AppValuesKey.reportCategories,
+  List<ReportCategory> getReportCategories() {
+    return _getList<ReportCategory>(AppValuesKey.reportCategories,
         (model) => ReportCategory.fromJson(model));
+  }
+
+  List<IssueState> getIssueStates() {
+    List<IssueState> list = List.empty(growable: true);
+    list.add(IssueState(id: 1, name: "Created"));
+    list.add(IssueState(id: 2, name: "Approved"));
+    list.add(IssueState(id: 3, name: "Resolved"));
+    list.add(IssueState(id: 4, name: "Not resolved"));
+    return list;
   }
 
   _saveList(AppValuesKey appValuesKey, List<dynamic> list) {
@@ -74,6 +83,10 @@ class AppValuesHelper {
 
   saveCategories(List<Category> categories) {
     _saveList(AppValuesKey.categories, categories);
+  }
+
+  saveReportCategories(List<ReportCategory> reportCategories) {
+    _saveList(AppValuesKey.reportCategories, reportCategories);
   }
 
   //endregion

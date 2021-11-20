@@ -13,22 +13,24 @@ import 'package:smartphone_app/pages/issues_overview_filter/issues_overview_filt
 import 'package:smartphone_app/utilities/wasp_util.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/values/values.dart' as values;
+import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
-import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 
 // ignore: must_be_immutable
 class IssuesOverviewFilterPage extends StatelessWidget {
   late IssuesOverviewFilterBloc bloc;
+  IssuesOverviewFilter filter;
 
-  IssuesOverviewFilterPage({Key? key}) : super(key: key);
+  IssuesOverviewFilterPage({Key? key, required this.filter}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     IssuesOverviewFilterBloc bloc =
-        IssuesOverviewFilterBloc(buildContext: context);
+        IssuesOverviewFilterBloc(buildContext: context, filter: filter);
 
     return WillPopScope(
         onWillPop: () async {
@@ -115,6 +117,10 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    _getCard(null,
+                                        AppLocalizations.of(context)!.general, [
+                                      _getOnlyOwnIssues(context, bloc, state)
+                                    ]),
                                     _getCard(
                                         () => bloc.add(ButtonPressed(
                                             issuesOverviewFilterButtonEvent:
@@ -166,7 +172,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                     )))));
   }
 
-  Widget _getCard(VoidCallback resetPressed, String title, List<Widget> widgets,
+  Widget _getCard(
+      VoidCallback? resetPressed, String title, List<Widget> widgets,
       {bool isBottom = false}) {
     List<Widget> defaultWidgets = [
       _getHeader(title),
@@ -184,17 +191,18 @@ class IssuesOverviewFilterPage extends StatelessWidget {
             child: Column(
               children: defaultWidgets,
             )),
-        Align(
-            alignment: Alignment.topRight,
-            child: CustomButton(
-                height: 50,
-                width: 50,
-                margin: const EdgeInsets.only(
-                    right: values.smallPadding, top: values.smallPadding),
-                imagePadding: const EdgeInsets.all(10),
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
-                icon: const Icon(Icons.refresh_outlined, color: Colors.black),
-                onPressed: resetPressed)),
+        if (resetPressed != null)
+          Align(
+              alignment: Alignment.topRight,
+              child: CustomButton(
+                  height: 50,
+                  width: 50,
+                  margin: const EdgeInsets.only(
+                      right: values.smallPadding, top: values.smallPadding),
+                  imagePadding: const EdgeInsets.all(10),
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                  icon: const Icon(Icons.refresh_outlined, color: Colors.black),
+                  onPressed: resetPressed)),
       ],
     );
   }
@@ -203,7 +211,7 @@ class IssuesOverviewFilterPage extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        CustomHeader(
+        CustomLabel(
           title: title,
           fontWeight: FontWeight.bold,
           margin: const EdgeInsets.all(0),
@@ -221,6 +229,42 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _getOnlyOwnIssues(BuildContext context, IssuesOverviewFilterBloc bloc,
+      IssuesOverviewFilterState state) {
+    return Container(
+        margin: const EdgeInsets.all(values.padding),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+                child: CustomLabel(
+              title: AppLocalizations.of(context)!.only_own_issues,
+              margin: const EdgeInsets.all(0),
+            )),
+            CustomButton(
+                height: 50,
+                width: 50,
+                showBorder: false,
+                margin: const EdgeInsets.all(0),
+                imagePadding: const EdgeInsets.only(left: 5),
+                borderRadius: const BorderRadius.all(Radius.circular(0)),
+                pressedBackground: null,
+                defaultBackground: null,
+                icon: state.isOnlyShowingOwnIssues!
+                    ? const Icon(
+                        Icons.check_box_outlined,
+                        color: Colors.black,
+                        size: 50,
+                      )
+                    : const Icon(Icons.check_box_outline_blank_outlined,
+                        color: Colors.black, size: 50),
+                onPressed: () => bloc.add(ButtonPressed(
+                    issuesOverviewFilterButtonEvent:
+                        IssuesOverviewFilterButtonEvent.onlyShowYourOwnIssues)))
+          ],
+        ));
   }
 
   Widget _getIssueState(BuildContext context, IssuesOverviewFilterBloc bloc,
@@ -266,7 +310,7 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                 ),
                               ),
                               Expanded(
-                                  child: CustomHeader(
+                                  child: CustomLabel(
                                       fontSize: 16,
                                       alignmentGeometry: Alignment.topCenter,
                                       margin: const EdgeInsets.all(0),
@@ -301,37 +345,47 @@ class IssuesOverviewFilterPage extends StatelessWidget {
             fontSize: 20,
           ),
           if (state.categories!.isNotEmpty)
-            Container(
-                margin: const EdgeInsets.only(top: values.padding),
-                child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: state.categories!.length,
-                    itemBuilder: (context, index) {
-                      CategoryFilterItem categoryFilterItem =
-                          state.categories![index];
-                      return CustomListTile(
-                          widget: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.black),
-                              borderRadius: const BorderRadius.all(
-                                  Radius.circular(values.borderRadius)),
-                              color: Colors.transparent,
-                            ),
-                            child: Column(
-                              children: [
-                                CustomHeader(
-                                  title: categoryFilterItem.category.name!,
-                                  margin: const EdgeInsets.only(
-                                      left: 10, top: 20, right: 10, bottom: 20),
-                                )
-                              ],
-                            ),
-                          ),
-                          onPressed: () => bloc.add(CategoryPressed(
-                              index: index,
-                              categoryFilterItem: categoryFilterItem)));
-                    }))
+            ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: state.categories!.length,
+                itemBuilder: (context, index) {
+                  CategoryFilterItem categoryFilterItem =
+                      state.categories![index];
+                  return Container(
+                    margin: const EdgeInsets.only(top: values.padding),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.black),
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(values.borderRadius)),
+                      color: Colors.transparent,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CustomLabel(
+                              title: categoryFilterItem.category.name!,
+                              margin: const EdgeInsets.all(values.padding)),
+                        ),
+                        CustomButton(
+                            height: 40,
+                            width: 40,
+                            defaultBackground:
+                                custom_colors.transparentGradient,
+                            pressedBackground: custom_colors.greyGradient,
+                            margin: const EdgeInsets.only(
+                                top: 5, right: 5, bottom: 5),
+                            imagePadding: const EdgeInsets.all(5),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                            icon: const Icon(Icons.clear, color: Colors.black),
+                            onPressed: () => bloc.add(CategoryPressed(
+                                index: index,
+                                categoryFilterItem: categoryFilterItem)))
+                      ],
+                    ),
+                  );
+                })
         ],
       ),
     );
@@ -339,6 +393,82 @@ class IssuesOverviewFilterPage extends StatelessWidget {
 
   Widget _getSubCategory(BuildContext context, IssuesOverviewFilterBloc bloc,
       IssuesOverviewFilterState state) {
+    List<Widget> listViewChildren = List.empty(growable: true);
+    if (state.subCategories!.isNotEmpty) {
+      for (var item in state.categories!) {
+        List<SubCategoryFilterItem> subCategoryFilterItems = state
+            .subCategories!
+            .where((element) => element.category == item.category)
+            .toList();
+        if (subCategoryFilterItems.isEmpty) continue;
+        // Add category header
+        listViewChildren.add(Container(
+          margin: const EdgeInsets.only(top: values.padding),
+          decoration: const BoxDecoration(
+            borderRadius:
+                BorderRadius.all(Radius.circular(values.borderRadius)),
+            gradient: custom_colors.buttonDefaultGradient,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                  child: CustomLabel(
+                fontWeight: FontWeight.bold,
+                title: item.category.name!,
+                margin: const EdgeInsets.all(values.padding),
+              )),
+              CustomButton(
+                  height: 40,
+                  width: 40,
+                  defaultBackground: custom_colors.transparentGradient,
+                  pressedBackground: custom_colors.greyGradient,
+                  margin: const EdgeInsets.only(top: 5, right: 5, bottom: 5),
+                  imagePadding: const EdgeInsets.all(5),
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                  icon: const Icon(Icons.clear, color: Colors.black),
+                  onPressed: () => bloc.add(
+                      CategoryInSubCategoryPressed(categoryFilterItem: item)))
+            ],
+          ),
+        ));
+
+        for (var subCategoryFilterItem in subCategoryFilterItems) {
+          listViewChildren.add(
+            Container(
+              margin: const EdgeInsets.only(top: values.padding),
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.black),
+                borderRadius: const BorderRadius.all(
+                    Radius.circular(values.borderRadius)),
+                color: Colors.transparent,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: CustomLabel(
+                    title: subCategoryFilterItem.subCategory.name!,
+                    margin: const EdgeInsets.all(values.padding),
+                  )),
+                  CustomButton(
+                      height: 40,
+                      width: 40,
+                      defaultBackground: custom_colors.transparentGradient,
+                      pressedBackground: custom_colors.greyGradient,
+                      margin:
+                          const EdgeInsets.only(top: 5, right: 5, bottom: 5),
+                      imagePadding: const EdgeInsets.all(5),
+                      borderRadius: const BorderRadius.all(Radius.circular(25)),
+                      icon: const Icon(Icons.clear, color: Colors.black),
+                      onPressed: () => bloc.add(SubCategoryPressed(
+                          subCategoryFilterItem: subCategoryFilterItem)))
+                ],
+              ),
+            ),
+          );
+        }
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.all(values.padding),
       child: Column(
@@ -353,38 +483,10 @@ class IssuesOverviewFilterPage extends StatelessWidget {
             fontSize: 20,
           ),
           if (state.subCategories!.isNotEmpty)
-            Container(
-                margin: const EdgeInsets.only(top: values.padding),
-                child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: state.subCategories!.length,
-                    itemBuilder: (context, index) {
-                      SubCategoryFilterItem subCategoryFilterItem =
-                          state.subCategories![index];
-                      return CustomListTile(
-                          widget: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.black),
-                              borderRadius: const BorderRadius.all(
-                                  Radius.circular(values.borderRadius)),
-                              color: Colors.transparent,
-                            ),
-                            child: Column(
-                              children: [
-                                CustomHeader(
-                                  title:
-                                      subCategoryFilterItem.subCategory.name!,
-                                  margin: const EdgeInsets.only(
-                                      left: 10, top: 20, right: 10, bottom: 20),
-                                )
-                              ],
-                            ),
-                          ),
-                          onPressed: () => bloc.add(SubCategoryPressed(
-                              index: index,
-                              subCategoryFilterItem: subCategoryFilterItem)));
-                    }))
+            ListView(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                children: listViewChildren)
         ],
       ),
     );
@@ -406,37 +508,48 @@ class IssuesOverviewFilterPage extends StatelessWidget {
             fontSize: 20,
           ),
           if (state.municipalities!.isNotEmpty)
-            Container(
-                margin: const EdgeInsets.only(top: values.padding),
-                child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: state.municipalities!.length,
-                    itemBuilder: (context, index) {
-                      MunicipalityFilterItem municipalityFilterItem =
-                          state.municipalities![index];
-                      return CustomListTile(
-                          widget: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.black),
-                              borderRadius: const BorderRadius.all(
-                                  Radius.circular(values.borderRadius)),
-                              color: Colors.transparent,
-                            ),
-                            child: Column(
-                              children: [
-                                CustomHeader(
-                                  title:
-                                      municipalityFilterItem.municipality.name!,
-                                  margin: const EdgeInsets.all(values.padding),
-                                )
-                              ],
-                            ),
-                          ),
-                          onPressed: () => bloc.add(MunicipalityPressed(
-                              index: index,
-                              municipalityFilterItem: municipalityFilterItem)));
-                    }))
+            ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: state.municipalities!.length,
+                itemBuilder: (context, index) {
+                  MunicipalityFilterItem municipalityFilterItem =
+                      state.municipalities![index];
+                  return Container(
+                    margin: const EdgeInsets.only(top: values.padding),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.black),
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(values.borderRadius)),
+                      color: Colors.transparent,
+                    ),
+                    child: IntrinsicHeight(
+                        child: Row(
+                      children: [
+                        Expanded(
+                            child: CustomLabel(
+                          title: municipalityFilterItem.municipality.name!,
+                          margin: const EdgeInsets.all(values.padding),
+                        )),
+                        CustomButton(
+                            height: 40,
+                            width: 40,
+                            defaultBackground:
+                                custom_colors.transparentGradient,
+                            pressedBackground: custom_colors.greyGradient,
+                            margin: const EdgeInsets.only(
+                                top: 5, right: 5, bottom: 5),
+                            imagePadding: const EdgeInsets.all(5),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                            icon: const Icon(Icons.clear, color: Colors.black),
+                            onPressed: () => bloc.add(MunicipalityPressed(
+                                municipalityFilterItem:
+                                    municipalityFilterItem)))
+                      ],
+                    )),
+                  );
+                })
         ],
       ),
     );

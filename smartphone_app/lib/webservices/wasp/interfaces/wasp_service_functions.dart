@@ -2,50 +2,88 @@ import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 
 class IWASPServiceFunctions {
+
+  //region Municipality controller
+
+  // Get
+  Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>>
+  getListOfMunicipalities() async {
+    throw UnimplementedError();
+  }
+
+  //endregion
+
+  //region Issue controller
+
+  // Get
   Future<WASPServiceResponse<GetIssueDetails_WASPResponse>> getIssueDetails(
       int issueId) async {
     throw UnimplementedError();
   }
 
+  // Post
   Future<WASPServiceResponse<GetListOfIssues_WASPResponse>> getListOfIssues(
       {required IssuesOverviewFilter filter}) async {
     throw UnimplementedError();
   }
 
-  Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>>
-      getListOfMunicipalities() async {
-    throw UnimplementedError();
-  }
-
+  // Post
   Future<WASPServiceResponse<WASPResponse>> verifyIssue(
       {required int citizenId, required int issueId}) async {
     throw UnimplementedError();
   }
 
+  // Put
   Future<WASPServiceResponse<WASPResponse>> updateIssue(
       {required int issueId, required List<WASPUpdate> updates}) async {
     throw UnimplementedError();
   }
 
+  // Post
   Future<WASPServiceResponse<WASPResponse>> reportIssue(
       {required int reportCategoryId, required int issueId}) async {
     throw UnimplementedError();
   }
 
+  // Get
   Future<WASPServiceResponse<GetListOfCategories_WASPResponse>>
       getListOfCategories() async {
     throw UnimplementedError();
   }
 
-  Future<WASPServiceResponse<WASPResponse>> createIssue({
-      required int citizenId,
-      required int municipalityId,
-      required int subCategoryId,
-      required String description,
-      required Location location,
-      String? picture1,
-      String? picture2,
-      String? picture3}) async {
+  // Get
+  Future<WASPServiceResponse<GetListOfReportCategories_WASPResponse>>
+      getListOfReportCategories() async {
     throw UnimplementedError();
   }
+
+  // Post
+  Future<WASPServiceResponse<WASPResponse>> createIssue(
+      {required IssueCreateDTO issueCreateDTO}) async {
+    throw UnimplementedError();
+  }
+
+  //endregion
+
+  //region Citizen controller
+
+  // Post
+  Future<WASPServiceResponse<Citizen_WASPResponse>> signUpCitizen(
+      {required Citizen citizen}) async {
+    throw UnimplementedError();
+  }
+
+  // Post
+  Future<WASPServiceResponse<Citizen_WASPResponse>> logInCitizen(
+      {required Citizen citizen}) async {
+    throw UnimplementedError();
+  }
+
+  // Delete
+  Future<WASPServiceResponse<WASPResponse>> deleteCitizen(
+      {required int citizenId}) async {
+    throw UnimplementedError();
+  }
+
+  //endregion
 }

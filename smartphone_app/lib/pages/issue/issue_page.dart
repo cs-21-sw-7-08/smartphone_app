@@ -4,13 +4,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
-import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_map_snippet.dart';
 import 'package:smartphone_app/widgets/custom_text_field.dart';
 import 'package:smartphone_app/widgets/image_fullscreen_wrapper.dart';
@@ -35,6 +36,7 @@ class IssuePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Create bloc
     IssuePageBloc bloc = IssuePageBloc(
       buildContext: context,
       mapType: mapType,
@@ -43,8 +45,7 @@ class IssuePage extends StatelessWidget {
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(
-              ButtonPressed(issueButtonEvent: IssueButtonEvent.backPressed));
+          bloc.add(ButtonPressed(issueButtonEvent: IssueButtonEvent.back));
           return false;
         },
         child: FutureBuilder<bool>(
@@ -83,11 +84,14 @@ class IssuePage extends StatelessWidget {
                                       titleColor: Colors.white,
                                       background:
                                           custom_colors.appBarBackground,
-                                      appBarLeftButton: AppBarLeftButton.back,
+                                      appBarLeftButton: state.issuePageView ==
+                                              IssuePageView.edit
+                                          ? AppBarLeftButton.back
+                                          : AppBarLeftButton.close,
                                       leftButtonPressed: () => bloc.add(
                                           ButtonPressed(
-                                              issueButtonEvent: IssueButtonEvent
-                                                  .backPressed)),
+                                              issueButtonEvent:
+                                                  IssueButtonEvent.back)),
                                       onButton1Pressed: () {
                                         IssueButtonEvent? buttonEvent;
                                         switch (state.issuePageView!) {
@@ -172,9 +176,8 @@ class IssuePage extends StatelessWidget {
                                             children: [
                                               _getHeader(
                                                   AppLocalizations.of(context)!
-                                                      .status),
-                                              _getIssueState(
-                                                  context, bloc, state),
+                                                      .general),
+                                              _getGeneral(context, bloc, state),
                                             ],
                                           )),
                                     Card(
@@ -208,8 +211,7 @@ class IssuePage extends StatelessWidget {
                                         margin: const EdgeInsets.only(
                                             top: values.padding,
                                             left: values.padding,
-                                            right: values.padding,
-                                            bottom: values.padding),
+                                            right: values.padding),
                                         child: Column(
                                           children: [
                                             _getHeader(
@@ -219,6 +221,23 @@ class IssuePage extends StatelessWidget {
                                                 context, bloc, state)
                                           ],
                                         )),
+                                    if (state.municipalityResponses != null &&
+                                        state.municipalityResponses!.isNotEmpty)
+                                      Card(
+                                          margin: const EdgeInsets.only(
+                                              top: values.padding,
+                                              left: values.padding,
+                                              right: values.padding,
+                                              bottom: values.padding),
+                                          child: Column(
+                                            children: [
+                                              _getHeader(
+                                                  AppLocalizations.of(context)!
+                                                      .from_municipality),
+                                              _getFromMunicipality(
+                                                  context, bloc, state)
+                                            ],
+                                          )),
                                   ],
                                 ))),
                         if (state.issuePageView == IssuePageView.see &&
@@ -241,7 +260,7 @@ class IssuePage extends StatelessWidget {
   Widget _getHeader(String title) {
     return Column(
       children: [
-        CustomHeader(
+        CustomLabel(
           title: title,
           fontWeight: FontWeight.bold,
           margin: const EdgeInsets.all(0),
@@ -261,20 +280,48 @@ class IssuePage extends StatelessWidget {
     );
   }
 
-  Widget _getIssueState(
+  Widget _getGeneral(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
     return Container(
-      margin: const EdgeInsets.only(
-          left: values.padding,
-          right: values.padding,
-          top: values.smallPadding,
-          bottom: values.padding),
-      child: CustomHeader(
-        title: LocalizationHelper.getInstance()
-            .getLocalizedIssueState(context, state.issueState),
-        margin: const EdgeInsets.all(0),
-      ),
-    );
+        margin: const EdgeInsets.only(
+            left: values.padding,
+            right: values.padding,
+            top: values.padding,
+            bottom: values.padding),
+        child: Column(
+          children: [
+            CustomLabel(
+              title: AppLocalizations.of(context)!.status,
+              fontWeight: FontWeight.bold,
+              margin: const EdgeInsets.all(0),
+            ),
+            CustomLabel(
+              title: LocalizationHelper.getInstance()
+                  .getLocalizedIssueState(context, state.issueState),
+              margin: const EdgeInsets.only(top: values.smallPadding),
+            ),
+            CustomLabel(
+              title: AppLocalizations.of(context)!.created,
+              fontWeight: FontWeight.bold,
+              margin: const EdgeInsets.only(top: values.padding),
+            ),
+            CustomLabel(
+              title: state.dateCreated!,
+              margin: const EdgeInsets.only(top: values.smallPadding),
+            ),
+            if (state.dateEdited != null)
+              CustomLabel(
+                title: AppLocalizations.of(context)!.edited,
+                fontWeight: FontWeight.bold,
+                margin: const EdgeInsets.only(top: values.padding),
+              ),
+            if (state.dateEdited != null)
+              CustomLabel(
+                title: state.dateEdited!,
+                margin: const EdgeInsets.only(top: values.smallPadding),
+              ),
+          ],
+        ));
   }
 
   Widget _getLocationSnippet(
@@ -282,7 +329,7 @@ class IssuePage extends StatelessWidget {
     return Container(
         margin: const EdgeInsets.only(
             left: values.padding,
-            top: values.smallPadding,
+            top: values.padding,
             right: values.padding,
             bottom: values.padding),
         child: Column(
@@ -295,7 +342,7 @@ class IssuePage extends StatelessWidget {
                 marker: state.marker,
               ),
             if (state.marker != null)
-              CustomHeader(
+              CustomLabel(
                 title:
                     "${AppLocalizations.of(context)!.near} ${(state.address ?? "")}",
                 margin: const EdgeInsets.only(bottom: values.padding),
@@ -320,7 +367,7 @@ class IssuePage extends StatelessWidget {
     return Container(
         margin: const EdgeInsets.only(
             left: values.padding,
-            top: values.smallPadding,
+            top: values.padding,
             right: values.padding,
             bottom: values.padding),
         child: Column(
@@ -328,12 +375,12 @@ class IssuePage extends StatelessWidget {
             if (state.category != null && state.subCategory != null)
               Column(
                 children: [
-                  CustomHeader(
+                  CustomLabel(
                     title: LocalizationHelper.getInstance()
                         .getLocalizedCategory(context, state.category),
                     margin: const EdgeInsets.all(0),
                   ),
-                  CustomHeader(
+                  CustomLabel(
                     title: LocalizationHelper.getInstance()
                         .getLocalizedSubCategory(context, state.subCategory),
                     margin: const EdgeInsets.only(top: values.padding),
@@ -375,7 +422,7 @@ class IssuePage extends StatelessWidget {
       margin: const EdgeInsets.only(
           left: values.padding,
           right: values.padding,
-          top: values.smallPadding,
+          top: values.padding,
           bottom: values.padding),
       child: Column(
         children: [
@@ -443,23 +490,27 @@ class IssuePage extends StatelessWidget {
   Widget _getSeeDescription(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
     return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+      margin: const EdgeInsets.only(
+          left: values.padding,
+          right: values.padding,
+          top: values.padding,
+          bottom: values.padding),
       child: Column(
         children: [
           if (state.description != null && state.description!.isNotEmpty)
-            CustomHeader(
+            CustomLabel(
               title: state.description!,
               margin: const EdgeInsets.only(bottom: 0),
             ),
           if (state.pictures!.isNotEmpty)
             Container(
-                margin: const EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: values.padding),
                 child: GridView.count(
                   crossAxisCount: 2,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 10,
+                  crossAxisSpacing: values.padding,
                   shrinkWrap: true,
-                  mainAxisSpacing: 10,
+                  mainAxisSpacing: values.padding,
                   children: List.generate(
                       (state.pictures ?? List.empty()).length, (index) {
                     return AspectRatio(
@@ -471,5 +522,51 @@ class IssuePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _getFromMunicipality(
+      BuildContext context, IssuePageBloc bloc, IssuePageState state) {
+    DateFormat dateFormat = DateFormat("dd-MM-yyyy HH:mm");
+    return Container(
+        margin: const EdgeInsets.all(values.padding),
+        child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: state.municipalityResponses!.length,
+            itemBuilder: (context, index) {
+              MunicipalityResponse municipalityResponse =
+                  state.municipalityResponses![index];
+              DateTime date = municipalityResponse.dateEdited == null
+                  ? municipalityResponse.dateCreated!
+                  : municipalityResponse.dateEdited!;
+
+              return Card(
+                color: custom_colors.grey1,
+                child: Column(
+                  children: [
+                    CustomLabel(
+                      fontSize: 12,
+                      title: dateFormat.format(date),
+                      textColor: custom_colors.darkGrey,
+                      alignmentGeometry: Alignment.centerRight,
+                      margin: const EdgeInsets.only(
+                          top: values.padding,
+                          left: values.padding,
+                          right: values.padding,
+                          bottom: values.padding),
+                      padding: const EdgeInsets.all(0),
+                    ),
+                    CustomLabel(
+                      textAlign: TextAlign.left,
+                      title: municipalityResponse.response,
+                      margin: const EdgeInsets.only(
+                          left: values.padding,
+                          right: values.padding,
+                          bottom: values.padding),
+                    )
+                  ],
+                ),
+              );
+            }));
   }
 }

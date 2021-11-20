@@ -24,6 +24,7 @@ const Color orangeTransparent3 = Color(0x80EB9800);
 
 const Color yellowWhite1 = Color(0xFFFCFCEF);
 const Color grey1 = Color(0xFFF0F0F0);
+const Color grey2 = Color(0xFFE0E0E0);
 
 const Color issueStateCreated = Color(0xFFD93534);
 const Color issueStateApproved = Color(0xFFDA9135);
@@ -47,6 +48,10 @@ const Gradient whiteGradient = LinearGradient(
     end: Alignment(0.0, 1.0));
 const Gradient greyGradient = LinearGradient(
     colors: <Color>[grey1, grey1],
+    begin: Alignment(0.0, -1.0),
+    end: Alignment(0.0, 1.0));
+const Gradient greyGradient2 = LinearGradient(
+    colors: <Color>[grey2, grey2],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 const Gradient orangeGradient = LinearGradient(
@@ -75,7 +80,7 @@ const Gradient buttonDefaultGradient = LinearGradient(
     colors: <Color>[yellow1, orange3],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
-const Gradient buttonBlackGradient = LinearGradient(
+const Gradient blackGradient = LinearGradient(
     colors: <Color>[black, black],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));

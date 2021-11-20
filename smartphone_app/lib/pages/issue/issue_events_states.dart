@@ -14,7 +14,7 @@ enum IssueButtonEvent {
   selectCategory,
   selectPicture,
   saveChanges,
-  backPressed,
+  back,
   editIssue,
   verifyIssue,
   reportIssue
@@ -73,11 +73,17 @@ class PageContentLoaded extends IssuePageEvent {
   final bool? isCreator;
   final bool? hasVerified;
   final IssueState? issueState;
+  final String? dateCreated;
+  final String? dateEdited;
+  final List<MunicipalityResponse>? municipalityResponses;
 
   PageContentLoaded(
       {required this.marker,
       required this.issueState,
+      required this.municipalityResponses,
       required this.address,
+      required this.dateCreated,
+      required this.dateEdited,
       required this.hasVerified,
       required this.isCreator,
       required this.description,
@@ -107,6 +113,9 @@ class IssuePageState {
   IssuePageView? issuePageView;
   IssueState? issueState;
   bool? hasChanges;
+  String? dateCreated;
+  String? dateEdited;
+  List<MunicipalityResponse>? municipalityResponses;
 
   IssuePageState(
       {this.marker,
@@ -116,7 +125,10 @@ class IssuePageState {
       this.issueState,
       this.hasVerified,
       this.description,
+      this.dateCreated,
+      this.dateEdited,
       this.pictures,
+      this.municipalityResponses,
       this.issuePageView,
       this.category,
       this.hasChanges,
@@ -130,6 +142,9 @@ class IssuePageState {
       String? address,
       bool? hasVerified,
       IssueState? issueState,
+      List<MunicipalityResponse>? municipalityResponses,
+      String? dateCreated,
+      String? dateEdited,
       String? description,
       String? municipalityName,
       IssuePageView? issuePageView,
@@ -141,7 +156,11 @@ class IssuePageState {
         marker: marker ?? this.marker,
         isCreator: isCreator ?? this.isCreator,
         mapType: mapType ?? this.mapType,
+        municipalityResponses:
+            municipalityResponses ?? this.municipalityResponses,
         address: address ?? this.address,
+        dateCreated: dateCreated ?? this.dateCreated,
+        dateEdited: dateEdited ?? this.dateEdited,
         hasVerified: hasVerified ?? this.hasVerified,
         hasChanges: hasChanges ?? this.hasChanges,
         issueState: issueState ?? this.issueState,

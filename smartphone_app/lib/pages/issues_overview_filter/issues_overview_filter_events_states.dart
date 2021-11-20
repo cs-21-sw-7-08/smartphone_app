@@ -51,20 +51,37 @@ class CategoryPressed extends IssuesOverviewFilterEvent {
   CategoryPressed({required this.index, required this.categoryFilterItem});
 }
 
+class CategoryInSubCategoryPressed extends IssuesOverviewFilterEvent {
+  final CategoryFilterItem categoryFilterItem;
+
+  CategoryInSubCategoryPressed({required this.categoryFilterItem});
+}
+
 class SubCategoryPressed extends IssuesOverviewFilterEvent {
-  final int index;
   final SubCategoryFilterItem subCategoryFilterItem;
 
-  SubCategoryPressed(
-      {required this.index, required this.subCategoryFilterItem});
+  SubCategoryPressed({required this.subCategoryFilterItem});
 }
 
 class MunicipalityPressed extends IssuesOverviewFilterEvent {
-  final int index;
   final MunicipalityFilterItem municipalityFilterItem;
 
-  MunicipalityPressed(
-      {required this.index, required this.municipalityFilterItem});
+  MunicipalityPressed({required this.municipalityFilterItem});
+}
+
+class FilterUpdated extends IssuesOverviewFilterEvent {
+  final List<CategoryFilterItem> categories;
+  final List<SubCategoryFilterItem> subCategories;
+  final List<MunicipalityFilterItem> municipalities;
+  final List<IssueStateFilterItem> issueStates;
+  final bool isOnlyShowingOwnIssues;
+
+  FilterUpdated(
+      {required this.categories,
+      required this.subCategories,
+      required this.municipalities,
+      required this.issueStates,
+      required this.isOnlyShowingOwnIssues});
 }
 
 //endregion
