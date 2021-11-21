@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
+import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -59,17 +60,16 @@ class CustomProgressDialog extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(2))),
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(values.borderRadius))),
               child: Wrap(alignment: WrapAlignment.center, children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 30, bottom: 10),
-                  child: Container(
-                      height: 50,
-                      width: 50,
-                      child: const CircularProgressIndicator(
-                        color: custom_colors.black,
-                      )),
-                ),
+                    margin: const EdgeInsets.only(top: 30, bottom: 10),
+                    height: 50,
+                    width: 50,
+                    child: const CircularProgressIndicator(
+                      color: custom_colors.black,
+                    )),
                 Container(
                     margin: const EdgeInsets.all(0),
                     padding: const EdgeInsets.only(
@@ -85,11 +85,12 @@ class CustomProgressDialog extends StatelessWidget {
                     )),
                 CustomButton(
                     text: AppLocalizations.of(context)!.cancel,
-                    defaultBackground: custom_colors.buttonGradientDefault2,
+                    defaultBackground: custom_colors.blackGradient,
                     textColor: Colors.white,
+                    fontWeight: FontWeight.bold,
                     borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(2),
-                        bottomRight: Radius.circular(2)),
+                        bottomLeft: Radius.circular(values.borderRadius),
+                        bottomRight: Radius.circular(values.borderRadius)),
                     showBorder: false,
                     onPressed: () => {
                           if (onCancelPressed != null) {onCancelPressed!(this)}

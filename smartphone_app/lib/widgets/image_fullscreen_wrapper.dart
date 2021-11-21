@@ -28,7 +28,7 @@ class ImageFullScreenWrapper extends StatelessWidget {
           ),
         );
       },
-      child: child,
+      child: Align(child: child, alignment: Alignment.center),
     );
   }
 }

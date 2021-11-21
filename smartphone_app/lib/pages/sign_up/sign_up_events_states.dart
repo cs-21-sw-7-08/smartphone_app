@@ -1,3 +1,4 @@
+import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
 /// ENUMS
@@ -5,7 +6,13 @@
 //region Enums
 
 enum SignUpPageView { phoneNo, name, smsCode }
-enum SignUpButtonEvent { verifyPhoneNo, verifySmsCode, confirmName }
+enum SignUpButtonEvent {
+  verifyPhoneNo,
+  verifySmsCode,
+  confirmName,
+  back,
+  selectMunicipality
+}
 enum SignUpTextChangedEvent { name, phoneNo, smsCode }
 enum SignUpViewChangeEvent { name, phoneNo, smsCode }
 
@@ -56,10 +63,12 @@ class SignUpState {
   String? phoneNo;
   String? smsCode;
   String? verificationId;
+  Municipality? municipality;
 
   SignUpState(
       {this.name,
       this.smsCode,
+      this.municipality,
       this.verificationId,
       this.phoneNo,
       this.signUpPageView});
@@ -68,12 +77,14 @@ class SignUpState {
       {String? name,
       String? phoneNo,
       String? smsCode,
+      Municipality? municipality,
       String? verificationId,
       SignUpPageView? signUpPageView}) {
     return SignUpState(
         name: name ?? this.name,
         phoneNo: phoneNo ?? this.phoneNo,
         smsCode: smsCode ?? this.smsCode,
+        municipality: municipality ?? this.municipality,
         verificationId: verificationId ?? this.verificationId,
         signUpPageView: signUpPageView ?? this.signUpPageView);
   }

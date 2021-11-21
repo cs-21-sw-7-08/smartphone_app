@@ -10,7 +10,7 @@ import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/widgets/custom_button.dart';
-import 'package:smartphone_app/widgets/custom_header.dart';
+import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: must_be_immutable, use_key_in_widget_constructors
@@ -62,12 +62,12 @@ class LoginPage extends StatelessWidget {
                                         ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                                     child: Container(
                                         color: Colors.white.withOpacity(0.5),
-                                        child: getContent(context, bloc)),
+                                        child: _getContent(context, bloc)),
                                   ))))));
             }));
   }
 
-  Widget getContent(BuildContext context, LoginBloc bloc) {
+  Widget _getContent(BuildContext context, LoginBloc bloc) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,7 +79,7 @@ class LoginPage extends StatelessWidget {
               fit: BoxFit.contain,
               height: 150,
             )),
-        CustomHeader(
+        CustomLabel(
           title: AppLocalizations.of(context)!.app_name,
           fontSize: 25,
           margin: const EdgeInsets.only(top: 30, left: 10, right: 10),

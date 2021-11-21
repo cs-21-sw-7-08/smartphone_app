@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 
 import 'custom_button.dart';
 
-enum AppBarLeftButton { menu, back }
+enum AppBarLeftButton { menu, back, close }
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -39,8 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   ///
   //region Constructor
 
-  // ignore: prefer_const_constructors_in_immutables
-  CustomAppBar(
+  const CustomAppBar(
       {Key? key,
       required this.title,
       required this.titleColor,
@@ -88,8 +86,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           )),
           Row(
             children: [
-              if (appBarLeftButton == AppBarLeftButton.back &&
-                  leftButtonPressed != null)
                 CustomButton(
                     height: preferredSize.height - 12,
                     width: preferredSize.height - 12,
@@ -100,21 +96,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     defaultBackground: custom_colors.transparentGradient,
                     pressedBackground:
                         custom_colors.backButtonGradientPressedDefault,
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: leftButtonPressed!),
-              if (appBarLeftButton == AppBarLeftButton.menu &&
-                  leftButtonPressed != null)
-                CustomButton(
-                    height: preferredSize.height - 12,
-                    width: preferredSize.height - 12,
-                    margin: const EdgeInsets.only(left: 8),
-                    imagePadding: const EdgeInsets.all(10),
-                    showBorder: false,
-                    borderRadius: const BorderRadius.all(Radius.circular(22)),
-                    defaultBackground: custom_colors.transparentGradient,
-                    pressedBackground:
-                        custom_colors.backButtonGradientPressedDefault,
-                    icon: const Icon(Icons.menu, color: Colors.white),
+                    icon: _getLeftButtonIcon(appBarLeftButton),
                     onPressed: leftButtonPressed!),
               Expanded(child: Container()),
               if (onButton2Pressed != null)
@@ -151,6 +133,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       decoration: BoxDecoration(gradient: background),
     );
+  }
+
+  Icon _getLeftButtonIcon(AppBarLeftButton appBarLeftButton) {
+    switch (appBarLeftButton) {
+      case AppBarLeftButton.menu:
+        return const Icon(Icons.menu, color: Colors.white);
+      case AppBarLeftButton.back:
+        return const Icon(Icons.arrow_back, color: Colors.white);
+      case AppBarLeftButton.close:
+        return const Icon(Icons.clear, color: Colors.white);
+    }
   }
 
 //endregion

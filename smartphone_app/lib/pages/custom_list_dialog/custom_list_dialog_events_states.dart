@@ -1,11 +1,13 @@
-import 'package:smartphone_app/widgets/custom_list_dialog/custom_list_dialog.dart';
+
+
+import 'custom_list_dialog.dart';
 
 ///
 /// ENUMS
 ///
 //region Enums
 
-enum CustomListDialogButtonEvent { changeSearchBarVisibility, backPressed }
+enum CustomListDialogButtonEvent { changeSearchBarVisibility, backPressed, confirm }
 enum CustomListDialogTextChangedEvent { searchText }
 
 //endregion
@@ -35,6 +37,10 @@ class ItemWasSelected extends CustomListDialogEvent {
   SelectedItem selectedItem;
 
   ItemWasSelected({required this.selectedItem});
+}
+
+class ItemWasUpdated extends CustomListDialogEvent {
+  ItemWasUpdated();
 }
 
 //endregion

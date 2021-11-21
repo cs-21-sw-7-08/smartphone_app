@@ -9,7 +9,6 @@ class CustomTextField extends StatefulWidget {
   final bool readOnly;
   final TextInputType keyBoardType;
 
-  Key? key;
   final double? height;
   final double fontSize;
   final String? initialValue;
@@ -20,13 +19,15 @@ class CustomTextField extends StatefulWidget {
   final int? maxLength;
   final int? maxLines;
   Alignment alignment;
+  bool showClearButton;
 
   List<TextInputFormatter>? inputFormatters = [];
   final EdgeInsetsGeometry margin;
   final ValueChanged<String>? onChanged;
 
   CustomTextField(
-      {this.key,
+      {Key? key,
+      this.showClearButton = false,
       this.maxLength,
       this.height = 55,
       this.fontSize = 20,
@@ -85,7 +86,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.black),
-            borderRadius: const BorderRadius.all(Radius.circular(2))),
+            borderRadius: const BorderRadius.all(Radius.circular(5))),
         child: Align(
             alignment: widget.alignment,
             child: TextFormField(
@@ -105,9 +106,16 @@ class CustomTextFieldState extends State<CustomTextField> {
                   enabledBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  suffixIcon: widget.text != null && widget.text!.isNotEmpty
+                  suffixIcon: widget.showClearButton &&
+                          widget.text != null &&
+                          widget.text!.isNotEmpty
                       ? IconButton(
-                          onPressed: _textEditingController.clear,
+                          onPressed: () {
+                            _textEditingController.clear();
+                            if (widget.onChanged != null) {
+                              widget.onChanged!("");
+                            }
+                          },
                           icon: const Icon(
                             Icons.clear,
                             color: Colors.black,

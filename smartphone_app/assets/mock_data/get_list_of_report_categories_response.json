@@ -1,0 +1,42 @@
+{
+  "Result": [
+    {
+      "Id": 1,
+      "Name": "Nøgenhed"
+    },
+    {
+      "Id": 2,
+      "Name": "Vold"
+    },
+    {
+      "Id": 3,
+      "Name": "Chikane"
+    },
+    {
+      "Id": 4,
+      "Name": "Falske oplysninger"
+    },
+    {
+      "Id": 5,
+      "Name": "Spam"
+    },
+    {
+      "Id": 6,
+      "Name": "Uautoriseret salg"
+    },
+    {
+      "Id": 7,
+      "Name": "Hadefuld retorik"
+    },
+    {
+      "Id": 8,
+      "Name": "Terrorisme"
+    },
+    {
+      "Id": 9,
+      "Name": "Andet"
+    }
+  ],
+  "IsSuccessful": true,
+  "ErrorNo": 0
+}

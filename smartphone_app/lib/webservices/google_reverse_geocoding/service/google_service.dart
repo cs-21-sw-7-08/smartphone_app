@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/helpers/rest_helper.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/interfaces/google_service_functions.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/models/google_classes.dart';

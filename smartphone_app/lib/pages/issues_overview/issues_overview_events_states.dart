@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartphone_app/objects/place.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
@@ -7,13 +8,12 @@ import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 ///
 //region Enums
 
-enum IssuesOverviewPageView { map, list }
 enum IssuesOverviewButtonEvent {
   createIssue,
   logOut,
   changeMapType,
-  changeOverviewType,
-  getListOfIssues
+  getListOfIssues,
+  showFilter
 }
 
 //endregion
@@ -49,6 +49,18 @@ class IssueDetailsRetrieved extends IssuesOverviewEvent {
   IssueDetailsRetrieved({required this.issue});
 }
 
+class IssuePressed extends IssuesOverviewEvent {
+  final Issue issue;
+
+  IssuePressed({required this.issue});
+}
+
+class MarkersUpdated extends IssuesOverviewEvent {
+  final Set<Marker>? markers;
+
+  MarkersUpdated({required this.markers});
+}
+
 //endregion
 
 ///
@@ -59,28 +71,31 @@ class IssueDetailsRetrieved extends IssuesOverviewEvent {
 class IssuesOverviewState {
   Set<Marker>? markers;
   Position? devicePosition;
-  IssuesOverviewPageView? issuesOverviewPageView;
   MapType? mapType;
   List<Issue>? issues;
+  List<Place>? places;
+  IssuesOverviewFilter? filter;
 
   IssuesOverviewState(
-      {this.issuesOverviewPageView,
-      this.mapType,
+      {this.mapType,
+      this.places,
       this.markers,
       this.devicePosition,
-      this.issues});
+      this.issues,
+      this.filter});
 
   IssuesOverviewState copyWith(
       {Set<Marker>? markers,
       Position? devicePosition,
       MapType? mapType,
       List<Issue>? issues,
-      IssuesOverviewPageView? issuesOverviewPageView}) {
+      List<Place>? places,
+      IssuesOverviewFilter? issuesOverviewFilter}) {
     return IssuesOverviewState(
         mapType: mapType ?? this.mapType,
         issues: issues ?? this.issues,
-        issuesOverviewPageView:
-            issuesOverviewPageView ?? this.issuesOverviewPageView,
+        places: places ?? this.places,
+        filter: issuesOverviewFilter ?? this.filter,
         markers: markers ?? this.markers,
         devicePosition: devicePosition ?? this.devicePosition);
   }

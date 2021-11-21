@@ -10,14 +10,34 @@ import 'package:smartphone_app/pages/select_location/select_location_bloc.dart';
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
 // ignore: must_be_immutable
 class SelectLocationPage extends StatelessWidget {
+  ///
+  /// VARIABLES
+  ///
+  //region Variables
+
   final Completer<GoogleMapController> _googleMapCompleter = Completer();
   late SelectLocationBloc bloc;
   MapType mapType;
 
+  //endregion
+
+  ///
+  /// CONSTRUCTOR
+  ///
+  //region Constructor
+
   SelectLocationPage({Key? key, required this.mapType}) : super(key: key);
+
+  //endregion
+
+  ///
+  /// OVERRIDE METHODS
+  ///
+  //region Override methods
 
   @override
   Widget build(BuildContext context) {
@@ -44,54 +64,53 @@ class SelectLocationPage extends StatelessWidget {
                         builder: (context, state) {
                           return Scaffold(
                               appBar: CustomAppBar(
-                                title: AppLocalizations.of(context)!.overview,
+                                title: AppLocalizations.of(context)!
+                                    .select_location,
                                 titleColor: Colors.white,
                                 background: custom_colors.appBarBackground,
-                                appBarLeftButton: AppBarLeftButton.back,
+                                appBarLeftButton: AppBarLeftButton.close,
                                 leftButtonPressed: () => Navigator.pop(context),
                               ),
-                              body: getContent(context, bloc, state));
+                              body: _getContent(context, bloc, state));
                         },
                       ))));
             }));
   }
 
-  Widget getContent(BuildContext context, SelectLocationBloc bloc,
+  /// All the content shown below the action bar
+  Widget _getContent(BuildContext context, SelectLocationBloc bloc,
       SelectLocationState state) {
     return Stack(
       children: [
+        // Map with button at the bottom
         Column(
           children: [
             // Overview
             getMap(bloc, state),
             // 'Confirm' button
-            if (state.marker != null)
-              CustomButton(
-                onPressed: () => bloc.add(ButtonPressed(
-                    selectLocationButtonEvent:
-                        SelectLocationButtonEvent.confirm)),
-                text: AppLocalizations.of(context)!.confirm,
-                fontWeight: FontWeight.bold,
-                border: Border.all(color: Colors.black, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(0)),
-                fontSize: 20,
-                showBorder: true,
-                defaultBackground: custom_colors.whiteGradient,
-                pressedBackground: custom_colors.greyGradient,
-              )
+            Container(
+                padding: const EdgeInsets.all(values.padding),
+                color: custom_colors.black,
+                child: CustomButton(
+                  onPressed: () => bloc.add(ButtonPressed(
+                      selectLocationButtonEvent:
+                          SelectLocationButtonEvent.confirm)),
+                  text: AppLocalizations.of(context)!.confirm,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ))
           ],
         ),
+        // Circular button in top right corner on top of map
         Align(
           alignment: Alignment.topRight,
           child: CustomButton(
               height: 50,
               width: 50,
-              margin: const EdgeInsets.only(right: 8, top: 8),
+              margin: const EdgeInsets.only(
+                  right: values.padding, top: values.padding),
               imagePadding: const EdgeInsets.all(10),
-              showBorder: true,
               borderRadius: const BorderRadius.all(Radius.circular(25)),
-              defaultBackground: custom_colors.whiteGradient,
-              pressedBackground: custom_colors.greyGradient,
               icon: state.mapType == MapType.hybrid
                   ? const Icon(Icons.layers_outlined, color: Colors.black)
                   : const Icon(Icons.layers, color: Colors.black),
@@ -103,6 +122,7 @@ class SelectLocationPage extends StatelessWidget {
     );
   }
 
+  /// Map shown on the page
   Widget getMap(SelectLocationBloc bloc, SelectLocationState state) {
     return Expanded(
         child: GoogleMap(
@@ -124,4 +144,6 @@ class SelectLocationPage extends StatelessWidget {
       },
     ));
   }
+
+  //endregion
 }

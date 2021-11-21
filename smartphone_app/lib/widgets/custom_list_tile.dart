@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
+import 'package:smartphone_app/values/values.dart' as values;
 
 // ignore: must_be_immutable
 class CustomListTile extends StatefulWidget {
@@ -11,15 +10,20 @@ class CustomListTile extends StatefulWidget {
   final Gradient pressedBackground;
   final VoidCallback onPressed;
   final Widget widget;
+  late BorderRadiusGeometry? borderRadius;
 
   // ignore: prefer_const_constructors_in_immutables
   CustomListTile(
       {Key? key,
       required this.widget,
       required this.onPressed,
+      this.borderRadius,
       this.defaultBackground = custom_colors.whiteGradient,
       this.pressedBackground = custom_colors.greyGradient})
-      : super(key: key);
+      : super(key: key) {
+    borderRadius ??=
+        const BorderRadius.all(Radius.circular(values.borderRadius));
+  }
 
   @override
   State<StatefulWidget> createState() => _CustomListTileState();
@@ -55,6 +59,7 @@ class _CustomListTileState extends State<CustomListTile> {
       onTapCancel: _onTapCancel,
       child: Container(
         decoration: BoxDecoration(
+          borderRadius: widget.borderRadius,
           gradient:
               _isPressed ? widget.pressedBackground : widget.defaultBackground,
         ),

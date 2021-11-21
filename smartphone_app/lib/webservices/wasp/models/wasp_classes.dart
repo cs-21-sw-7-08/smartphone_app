@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'wasp_classes.g.dart';
@@ -20,7 +21,7 @@ class WASPResponse {
 
   String? getErrorMessage() {
     if (!isSuccessful && errorNo != 0) {
-      return "Error no. message";
+      return "WASP error: ${errorNo.toString()}";
     } else if (errorMessage != null) {
       return errorMessage;
     }
@@ -59,6 +60,34 @@ class GetListOfMunicipalities_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+class IsBlockedCitizen_WASPResponse extends WASPResponse {
+  @JsonKey(name: "Result")
+  late bool? result;
+
+  IsBlockedCitizen_WASPResponse({this.result});
+
+  factory IsBlockedCitizen_WASPResponse.fromJson(Map<String, dynamic> json) =>
+      _$IsBlockedCitizen_WASPResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$IsBlockedCitizen_WASPResponseToJson(this);
+}
+
+@JsonSerializable()
+class Citizen_WASPResponse extends WASPResponse {
+  @JsonKey(name: "Result")
+  late Citizen? result;
+
+  Citizen_WASPResponse({this.result});
+
+  factory Citizen_WASPResponse.fromJson(Map<String, dynamic> json) =>
+      _$Citizen_WASPResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$Citizen_WASPResponseToJson(this);
+}
+
+@JsonSerializable()
 class GetIssueDetails_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Issue? result;
@@ -80,12 +109,28 @@ class GetListOfCategories_WASPResponse extends WASPResponse {
   GetListOfCategories_WASPResponse({this.result});
 
   factory GetListOfCategories_WASPResponse.fromJson(
-      Map<String, dynamic> json) =>
+          Map<String, dynamic> json) =>
       _$GetListOfCategories_WASPResponseFromJson(json);
 
   @override
   Map<String, dynamic> toJson() =>
       _$GetListOfCategories_WASPResponseToJson(this);
+}
+
+@JsonSerializable()
+class GetListOfReportCategories_WASPResponse extends WASPResponse {
+  @JsonKey(name: "Result")
+  late List<ReportCategory>? result;
+
+  GetListOfReportCategories_WASPResponse({this.result});
+
+  factory GetListOfReportCategories_WASPResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$GetListOfReportCategories_WASPResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() =>
+      _$GetListOfReportCategories_WASPResponseToJson(this);
 }
 
 @JsonSerializable()
@@ -101,6 +146,9 @@ class Location {
       _$LocationFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocationToJson(this);
+
+  factory Location.fromLatLng(LatLng latLng) =>
+      Location(latitude: latLng.latitude, longitude: latLng.longitude);
 }
 
 @JsonSerializable()
@@ -118,6 +166,18 @@ class Category {
       _$CategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => id;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! Category) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
 
 @JsonSerializable()
@@ -135,6 +195,18 @@ class SubCategory {
       _$SubCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubCategoryToJson(this);
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => id;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! SubCategory) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
 
 @JsonSerializable()
@@ -150,7 +222,36 @@ class Municipality {
       _$MunicipalityFromJson(json);
 
   Map<String, dynamic> toJson() => _$MunicipalityToJson(this);
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => name.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! Municipality) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
+
+@JsonSerializable()
+class ReportCategory {
+  @JsonKey(name: "Id")
+  late int id;
+  @JsonKey(name: "Name")
+  late String? name;
+
+  ReportCategory({this.id = 0, this.name});
+
+  factory ReportCategory.fromJson(Map<String, dynamic> json) =>
+      _$ReportCategoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReportCategoryToJson(this);
+}
+
+enum IssueStates { created, approved, resolved, notResolved }
 
 @JsonSerializable()
 class IssueState {
@@ -165,6 +266,8 @@ class IssueState {
       _$IssueStateFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssueStateToJson(this);
+
+  IssueStates getEnum() => IssueStates.values[id - 1];
 }
 
 @JsonSerializable()
@@ -179,10 +282,13 @@ class MunicipalityResponse {
   late String response;
   @JsonKey(name: "DateCreated")
   late DateTime? dateCreated;
+  @JsonKey(name: "DateEdited")
+  late DateTime? dateEdited;
 
   MunicipalityResponse(
       {this.id = 0,
       this.issueId = 0,
+      this.dateEdited,
       this.municipalityUserId = 0,
       this.response = "",
       this.dateCreated});
@@ -196,15 +302,19 @@ class MunicipalityResponse {
 @JsonSerializable()
 class Issue {
   @JsonKey(name: "Id")
-  late int id;
+  late int? id;
   @JsonKey(name: "CitizenId")
-  late int citizenId;
+  late int? citizenId;
   @JsonKey(name: "Description")
   late String? description;
   @JsonKey(name: "DateCreated")
   late DateTime? dateCreated;
+  @JsonKey(name: "DateEdited")
+  late DateTime? dateEdited;
   @JsonKey(name: "Location")
   late Location? location;
+  @JsonKey(name: "Address")
+  late String? address;
   @JsonKey(name: "Picture1")
   late String? picture1;
   @JsonKey(name: "Picture2")
@@ -229,7 +339,9 @@ class Issue {
       this.citizenId = 0,
       this.description,
       this.dateCreated,
+      this.dateEdited,
       this.location,
+      this.address,
       this.category,
       this.subCategory,
       this.municipality,
@@ -243,4 +355,124 @@ class Issue {
   factory Issue.fromJson(Map<String, dynamic> json) => _$IssueFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssueToJson(this);
+}
+
+@JsonSerializable()
+class IssueCreateDTO {
+  @JsonKey(name: "CitizenId")
+  late int? citizenId;
+  @JsonKey(name: "Description")
+  late String? description;
+  @JsonKey(name: "Location")
+  late Location? location;
+  @JsonKey(name: "Address")
+  late String? address;
+  @JsonKey(name: "Picture1")
+  late String? picture1;
+  @JsonKey(name: "Picture2")
+  late String? picture2;
+  @JsonKey(name: "Picture3")
+  late String? picture3;
+  @JsonKey(name: "SubCategoryId")
+  late int? subCategoryId;
+  @JsonKey(name: "MunicipalityId")
+  late int? municipalityId;
+
+  IssueCreateDTO(
+      {this.citizenId = 0,
+      this.description,
+      this.location,
+      this.address,
+      this.subCategoryId,
+      this.municipalityId,
+      this.picture1,
+      this.picture2,
+      this.picture3});
+
+  factory IssueCreateDTO.fromJson(Map<String, dynamic> json) =>
+      _$IssueCreateDTOFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IssueCreateDTOToJson(this);
+}
+
+@JsonSerializable()
+class Citizen {
+  @JsonKey(name: "Id")
+  late int? id;
+  @JsonKey(name: "Email")
+  late String? email;
+  @JsonKey(name: "PhoneNo")
+  late String? phoneNo;
+  @JsonKey(name: "Name")
+  late String? name;
+  @JsonKey(name: "IsBlocked")
+  late bool? isBlocked;
+  @JsonKey(name: "Municipality")
+  late Municipality? municipality;
+  @JsonKey(name: "MunicipalityId")
+  late int? municipalityId;
+
+  Citizen(
+      {this.id,
+      this.email,
+      this.phoneNo,
+      this.name,
+      this.isBlocked,
+      this.municipality,
+      this.municipalityId});
+
+  factory Citizen.fromJson(Map<String, dynamic> json) =>
+      _$CitizenFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CitizenToJson(this);
+}
+
+@JsonSerializable()
+class IssuesOverviewFilter {
+  @JsonKey(name: "FromTime")
+  late DateTime? fromTime;
+  @JsonKey(name: "ToTime")
+  late DateTime? toTime;
+  @JsonKey(name: "MunicipalityIds")
+  late List<int>? municipalityIds;
+  @JsonKey(name: "IssueStateIds")
+  late List<int>? issueStateIds;
+  @JsonKey(name: "CategoryIds")
+  late List<int>? categoryIds;
+  @JsonKey(name: "SubCategoryIds")
+  late List<int>? subCategoryIds;
+  @JsonKey(name: "CitizenIds")
+  late List<int>? citizenIds;
+  @JsonKey(name: "IsBlocked")
+  late bool? isBlocked;
+
+  IssuesOverviewFilter(
+      {this.fromTime,
+      this.toTime,
+      this.municipalityIds,
+      this.issueStateIds,
+      this.categoryIds,
+      this.citizenIds,
+      this.subCategoryIds,
+      this.isBlocked});
+
+  factory IssuesOverviewFilter.fromJson(Map<String, dynamic> json) =>
+      _$IssuesOverviewFilterFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IssuesOverviewFilterToJson(this);
+}
+
+@JsonSerializable()
+class WASPUpdate {
+  @JsonKey(name: "Name")
+  late String? name;
+  @JsonKey(name: "Value")
+  late String? value;
+
+  WASPUpdate({this.name, this.value});
+
+  factory WASPUpdate.fromJson(Map<String, dynamic> json) =>
+      _$WASPUpdateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WASPUpdateToJson(this);
 }

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:smartphone_app/pages/issues_overview/issues_overview_page.dart';
 import 'package:smartphone_app/values/values.dart';
 
 enum PermissionState { granted, denied }

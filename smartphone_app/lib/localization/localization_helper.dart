@@ -88,5 +88,19 @@ class LocalizationHelper {
         : (issueState.name ?? "");
   }
 
+  String getLocalizedReportCategory(BuildContext context, ReportCategory? reportCategory) {
+    if (reportCategory == null) return "";
+    String localizedReportCategory = "";
+    switch (reportCategory.id) {
+      case 1:
+        //localizedCategory = AppLocalizations.of(context)!.category_id_1;
+        break;
+    }
+
+    return localizedReportCategory.isNotEmpty
+        ? localizedReportCategory
+        : (reportCategory.name ?? "");
+  }
+
 //endregion
 }

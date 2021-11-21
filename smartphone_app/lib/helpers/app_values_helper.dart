@@ -3,7 +3,13 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
-enum AppValuesKey { citizenId, municipalities, categories }
+enum AppValuesKey {
+  citizenId,
+  municipalities,
+  categories,
+  reportCategories,
+  defaultMunicipalityId
+}
 
 class AppValuesHelper {
   ///
@@ -52,19 +58,35 @@ class AppValuesHelper {
         AppValuesKey.categories, (model) => Category.fromJson(model));
   }
 
+  List<ReportCategory> getReportCategories() {
+    return _getList<ReportCategory>(AppValuesKey.reportCategories,
+        (model) => ReportCategory.fromJson(model));
+  }
+
+  List<IssueState> getIssueStates() {
+    List<IssueState> list = List.empty(growable: true);
+    list.add(IssueState(id: 1, name: "Created"));
+    list.add(IssueState(id: 2, name: "Approved"));
+    list.add(IssueState(id: 3, name: "Resolved"));
+    list.add(IssueState(id: 4, name: "Not resolved"));
+    return list;
+  }
+
   _saveList(AppValuesKey appValuesKey, List<dynamic> list) {
     var json = jsonEncode(list.map((e) => e.toJson()).toList());
     saveString(appValuesKey, json);
   }
 
   saveMunicipalities(List<Municipality> municipalities) {
-    // Save municipalities
     _saveList(AppValuesKey.municipalities, municipalities);
   }
 
   saveCategories(List<Category> categories) {
-    // Save categories
     _saveList(AppValuesKey.categories, categories);
+  }
+
+  saveReportCategories(List<ReportCategory> reportCategories) {
+    _saveList(AppValuesKey.reportCategories, reportCategories);
   }
 
   //endregion
@@ -106,8 +128,13 @@ class AppValuesHelper {
     return _sharedPreferences.setBool(appValuesKey.toString(), value);
   }
 
-  Future<bool> saveInteger(AppValuesKey appValuesKey, int value) async {
-    return _sharedPreferences.setInt(appValuesKey.toString(), value);
+  Future<bool> saveInteger(AppValuesKey appValuesKey, int? value) async {
+    if (value == null) {
+      _sharedPreferences.remove(appValuesKey.toString());
+      return true;
+    } else {
+      return _sharedPreferences.setInt(appValuesKey.toString(), value);
+    }
   }
 
 //endregion

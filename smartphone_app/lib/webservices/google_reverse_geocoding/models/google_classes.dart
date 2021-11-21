@@ -30,6 +30,24 @@ class AddressFromCoordinateResponse extends GoogleResponse {
 
   @override
   Map<String, dynamic> toJson() => _$AddressFromCoordinateResponseToJson(this);
+
+  String? getAddress() {
+    if (results == null || results!.isEmpty) return null;
+    AddressFromCoordinateResult addressFromCoordinateResult = results![0];
+    return addressFromCoordinateResult.formattedAddress!;
+  }
+
+  String? getMunicipalityName() {
+    AddressFromCoordinateResult addressFromCoordinateResult = results![0];
+    var addressComponents = addressFromCoordinateResult.addressComponents!
+        .where((element) => element.types.contains("locality"));
+    AddressComponent? addressComponent =
+        addressComponents.isNotEmpty ? addressComponents.first : null;
+    // Check for null value
+    if (addressComponent == null) return null;
+    // Return municipality name
+    return addressComponent.shortName;
+  }
 }
 
 @JsonSerializable()

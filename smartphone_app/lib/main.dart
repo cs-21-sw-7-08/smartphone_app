@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +22,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppValuesHelper.getInstance().init();
   await Firebase.initializeApp();
-  WASPService.init(MockWASPService());
+  WASPService.init(WASPService(url: "https://192.168.0.108:5001"));
+  //WASPService.init(MockWASPService());
   GoogleService.init(GoogleService());
 
   // Pre-cache SVG
@@ -33,10 +35,6 @@ void main() async {
     ),
     // other SVGs or images here
   ]);
-
-  /*try {
-    ThirdPartySignInUtil.signOut();
-  } on Exception catch (_) {}*/
 
   runApp(const MyApp());
 }
@@ -60,11 +58,11 @@ class MyApp extends StatelessWidget {
         .toList();
 
     bool isSignedIn = ThirdPartySignInUtil.isSignedIn();
+    User? user = ThirdPartySignInUtil.getUser();
     int? citizenId =
         AppValuesHelper.getInstance().getInteger(AppValuesKey.citizenId);
 
     return MaterialApp(
-        navigatorObservers: [MyNavigatorObserver()],
         builder: (context, child) {
           return ScrollConfiguration(
             behavior: MyBehavior(),
@@ -79,9 +77,10 @@ class MyApp extends StatelessWidget {
         ),
         home: isSignedIn
             ? (citizenId != null
-                ? IssuesOverviewPage()
+                ? const IssuesOverviewPage()
                 : SignUpPage(
-                    name: "",
+                    name: user!.displayName ?? "",
+                    email: user.email,
                   ))
             : LoginPage());
   }
@@ -92,34 +91,5 @@ class MyBehavior extends ScrollBehavior {
   Widget buildViewportChrome(
       BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
-  }
-}
-
-class MyNavigatorObserver extends NavigatorObserver {
-  List<Route<dynamic>> routeStack = List.empty(growable: true);
-
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    routeStack.add(route);
-    print("Push");
-  }
-
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    routeStack.removeLast();
-    print("Pop");
-  }
-
-  @override
-  void didRemove(Route route, Route? previousRoute) {
-    routeStack.removeLast();
-  }
-
-  @override
-  void didReplace({Route? newRoute, Route? oldRoute}) {
-    routeStack.removeLast();
-    if (newRoute != null) {
-      routeStack.add(newRoute);
-    }
   }
 }

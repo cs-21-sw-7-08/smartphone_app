@@ -3,20 +3,20 @@
     {
       "Id": 1,
       "CitizenId": 1,
-      "Description": "Jeg hader huller på fortorvet",
+      "Description": "Der er en løs flise",
       "DateCreated": "2021-10-21T13:44:15",
       "Location": {
         "Latitude": 57.012218,
         "Longitude": 9.99433
       },
       "Category": {
-        "Id": 1,
-        "Name": "Sidewalk"
+        "Id": 3,
+        "Name": "Fortov"
       },
       "SubCategory": {
-        "Id": 1,
-        "CategoryId": 1,
-        "Name": "Hole in sidewalk"
+        "Id": 11,
+        "CategoryId": 3,
+        "Name": "Løse filser"
       },
       "Municipality": {
         "Id": 1,
@@ -24,53 +24,107 @@
       },
       "IssueState": {
         "Id": 1,
-        "Name": "Created"
+        "Name": "Oprettet"
+      }
+    },
+    {
+      "Id": 2,
+      "CitizenId": 2,
+      "Description": "Der er en bjørneklo",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 56.952687,
+        "Longitude": 9.241946
+      },
+      "Category": {
+        "Id": 11,
+        "Name": "Bjørneklo og ander invasive arter"
+      },
+      "SubCategory": {
+        "Id": 56,
+        "CategoryId": 11,
+        "Name": "Kæmpe bjørneklo"
+      },
+      "Municipality": {
+        "Id": 3,
+        "Name": "Vesthimmerland"
+      },
+      "IssueState": {
+        "Id": 2,
+        "Name": "Godkendt"
+      }
+    },
+    {
+      "Id": 3,
+      "CitizenId": 3,
+      "Description": "Bænken er i stykker",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 56.884232,
+        "Longitude": 9.83825
+      },
+      "Category": {
+        "Id": 8,
+        "Name": "Parkinventar og lign."
+      },
+      "SubCategory": {
+        "Id": 36,
+        "CategoryId": 8,
+        "Name": "Borde / Bænke"
+      },
+      "Municipality": {
+        "Id": 4,
+        "Name": "Rebild"
+      },
+      "IssueState": {
+        "Id": 2,
+        "Name": "Godkendt"
       }
     },
     {
       "Id": 4,
-      "CitizenId": 1,
-      "Description": "This is a description",
-      "DateCreated": "2021-10-31T12:55:21.183",
+      "CitizenId": 5,
+      "Description": "Der er et træ på vejen",
+      "DateCreated": "2021-10-21T13:44:15",
       "Location": {
-        "Latitude": 5,
-        "Longitude": 5
+        "Latitude": 57.251672,
+        "Longitude": 9.963336
       },
       "Category": {
         "Id": 1,
-        "Name": "Sidewalk"
+        "Name": "Vej"
       },
       "SubCategory": {
-        "Id": 1,
+        "Id": 4,
         "CategoryId": 1,
-        "Name": "Hole in sidewalk"
+        "Name": "Vejtræer"
       },
       "Municipality": {
-        "Id": 1,
-        "Name": "Aalborg"
+        "Id": 2,
+        "Name": "Brønderslev"
       },
       "IssueState": {
-        "Id": 1,
-        "Name": "Created"
+        "Id": 2,
+        "Name": "Godkendt"
       }
     },
     {
-      "Id": 5,
-      "CitizenId": 1,
-      "Description": "This is a description",
-      "DateCreated": "2021-11-01T09:55:20.883",
+      "Id": 7,
+      "CitizenId": 11,
+      "Description": "Der er dårlig skiltning",
+      "DateCreated": "2021-10-21T13:44:15",
       "Location": {
-        "Latitude": 10,
-        "Longitude": 10
+        "Latitude": 57.015113,
+        "Longitude": 9.983903
       },
       "Category": {
-        "Id": 1,
-        "Name": "Sidewalk"
+        "Id": 5,
+        "Name": "Cykelsti"
       },
       "SubCategory": {
-        "Id": 1,
-        "CategoryId": 1,
-        "Name": "Hole in sidewalk"
+        "Id": 24,
+        "CategoryId": 5,
+        "Name": "Skiltning"
       },
       "Municipality": {
         "Id": 1,
@@ -78,7 +132,277 @@
       },
       "IssueState": {
         "Id": 1,
-        "Name": "Created"
+        "Name": "Oprettet"
+      }
+    },
+    {
+      "Id": 8,
+      "CitizenId": 11,
+      "Description": "Affaldsstativ er i stykker",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 57.014108,
+        "Longitude": 9.989868
+      },
+      "Category": {
+        "Id": 6,
+        "Name": "Byudstyr"
+      },
+      "SubCategory": {
+        "Id": 28,
+        "CategoryId": 6,
+        "Name": "Affaldsstativ / beholdere"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 3,
+        "Name": "Løst"
+      }
+    },
+    {
+      "Id": 9,
+      "CitizenId": 4,
+      "Description": "Gade lyset er gået i stykker",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 57.012168,
+        "Longitude": 9.989825
+      },
+      "Category": {
+        "Id": 7,
+        "Name": "Tekniske anlæg"
+      },
+      "SubCategory": {
+        "Id": 33,
+        "CategoryId": 7,
+        "Name": "Fejl på gadebelysning"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 1,
+        "Name": "Oprettet"
+      }
+    },
+    {
+      "Id": 10,
+      "CitizenId": 4,
+      "Description": "Der er graffiti på informations tavlen",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 57.012355,
+        "Longitude": 9.98622
+      },
+      "Category": {
+        "Id": 8,
+        "Name": "Parkinventar og lign."
+      },
+      "SubCategory": {
+        "Id": 40,
+        "CategoryId": 8,
+        "Name": "Infotavler"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 2,
+        "Name": "Godkendt"
+      }
+    },
+    {
+      "Id": 11,
+      "CitizenId": 4,
+      "Description": "Søen lugter",
+      "DateCreated": "2021-10-21T13:44:15",
+      "Location": {
+        "Latitude": 57.012542,
+        "Longitude": 9.982057
+      },
+      "Category": {
+        "Id": 9,
+        "Name": "Parker og grønne områder"
+      },
+      "SubCategory": {
+        "Id": 47,
+        "CategoryId": 9,
+        "Name": "Søer"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 4,
+        "Name": "Ikke løst"
+      }
+    },
+    {
+      "Id": 12,
+      "CitizenId": 4,
+      "Description": "Dyrehegnet er i stykker",
+      "DateCreated": "2021-09-21T13:44:15",
+      "Location": {
+        "Latitude": 57.01364,
+        "Longitude": 9.974161
+      },
+      "Category": {
+        "Id": 10,
+        "Name": "Skove og naturområder"
+      },
+      "SubCategory": {
+        "Id": 53,
+        "CategoryId": 10,
+        "Name": "Dyrehegn"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 1,
+        "Name": "Oprettet"
+      }
+    },
+    {
+      "Id": 13,
+      "CitizenId": 4,
+      "Description": "Der er meget ukrudt",
+      "DateCreated": "2021-09-21T13:44:15",
+      "Location": {
+        "Latitude": 57.014971,
+        "Longitude": 9.975491
+      },
+      "Category": {
+        "Id": 11,
+        "Name": "Bjørneklo og ander invasive arter"
+      },
+      "SubCategory": {
+        "Id": 57,
+        "CategoryId": 11,
+        "Name": "Andet"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 2,
+        "Name": "Godkendt"
+      }
+    },
+    {
+      "Id": 14,
+      "CitizenId": 4,
+      "Description": "Der er en løs flise",
+      "DateCreated": "2021-09-21T13:44:15",
+      "Location": {
+        "Latitude": 57.017704,
+        "Longitude": 9.9821
+      },
+      "Category": {
+        "Id": 3,
+        "Name": "Fortov"
+      },
+      "SubCategory": {
+        "Id": 11,
+        "CategoryId": 3,
+        "Name": "Løse filser"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 2,
+        "Name": "Godkendt"
+      }
+    },
+    {
+      "Id": 15,
+      "CitizenId": 4,
+      "Description": "Der er en løs flise",
+      "DateCreated": "2021-09-21T13:44:15",
+      "Location": {
+        "Latitude": 57.014643,
+        "Longitude": 9.988966
+      },
+      "Category": {
+        "Id": 3,
+        "Name": "Fortov"
+      },
+      "SubCategory": {
+        "Id": 11,
+        "CategoryId": 3,
+        "Name": "Løse filser"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 1,
+        "Name": "Oprettet"
+      }
+    },
+    {
+      "Id": 16,
+      "CitizenId": 1,
+      "Description": "Der er en løs flise",
+      "DateCreated": "2021-09-21T13:44:15",
+      "Location": {
+        "Latitude": 57.014362,
+        "Longitude": 9.990253
+      },
+      "Category": {
+        "Id": 3,
+        "Name": "Fortov"
+      },
+      "SubCategory": {
+        "Id": 11,
+        "CategoryId": 3,
+        "Name": "Løse filser"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 2,
+        "Name": "Godkendt"
+      }
+    },
+    {
+      "Id": 17,
+      "CitizenId": 1,
+      "Description": "Der er en løs flise",
+      "DateCreated": "2021-09-21T13:44:15",
+      "Location": {
+        "Latitude": 57.015273,
+        "Longitude": 9.985404
+      },
+      "Category": {
+        "Id": 3,
+        "Name": "Fortov"
+      },
+      "SubCategory": {
+        "Id": 11,
+        "CategoryId": 3,
+        "Name": "Løse filser"
+      },
+      "Municipality": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "IssueState": {
+        "Id": 3,
+        "Name": "Løst"
       }
     }
   ],

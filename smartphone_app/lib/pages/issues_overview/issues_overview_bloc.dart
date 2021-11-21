@@ -1,21 +1,23 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/pages/create_issue/create_issue_page.dart';
-import 'package:smartphone_app/pages/issue_details/issue_details_page.dart';
+import 'package:smartphone_app/objects/place.dart';
+import 'package:smartphone_app/pages/issue/issue_page.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_events_states.dart';
+import 'package:smartphone_app/pages/issues_overview_filter/issues_overview_filter_page.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:smartphone_app/utilities/wasp_util.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import '../../utilities/location/locator_util.dart';
+import 'package:darq/darq.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
 class IssuesOverviewBloc
     extends Bloc<IssuesOverviewEvent, IssuesOverviewState> {
@@ -34,11 +36,11 @@ class IssuesOverviewBloc
   ///
   //region Constructor
 
-  IssuesOverviewBloc({required BuildContext buildContext})
+  IssuesOverviewBloc({required BuildContext context})
       : super(IssuesOverviewState(
-            issuesOverviewPageView: IssuesOverviewPageView.map,
-            mapType: MapType.hybrid)) {
-    _buildContext = buildContext;
+            mapType: MapType.hybrid,
+            filter: getDefaultIssuesOverviewFilter())) {
+    _buildContext = context;
   }
 
   //endregion
@@ -56,11 +58,15 @@ class IssuesOverviewBloc
     } else if (event is ButtonPressed) {
       switch (event.issuesOverviewButtonEvent) {
         case IssuesOverviewButtonEvent.createIssue:
-          GeneralUtil.showPageAsDialog(
-              _buildContext, CreateIssuePage(mapType: state.mapType!));
+          bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
+              _buildContext, IssuePage(mapType: state.mapType!));
+          flag ??= false;
+          if (flag) {
+            await getListOfIssues(state.filter!);
+          }
           break;
         case IssuesOverviewButtonEvent.logOut:
-          await logOut();
+          await _logOut();
           break;
         case IssuesOverviewButtonEvent.changeMapType:
           yield state.copyWith(
@@ -68,22 +74,39 @@ class IssuesOverviewBloc
                   ? MapType.normal
                   : MapType.hybrid);
           break;
-        case IssuesOverviewButtonEvent.changeOverviewType:
-          yield state.copyWith(
-              issuesOverviewPageView:
-                  state.issuesOverviewPageView == IssuesOverviewPageView.map
-                      ? IssuesOverviewPageView.list
-                      : IssuesOverviewPageView.map);
-          break;
         case IssuesOverviewButtonEvent.getListOfIssues:
-          await getListOfIssues();
+          await getListOfIssues(state.filter!);
+          break;
+        case IssuesOverviewButtonEvent.showFilter:
+          IssuesOverviewFilter? filter =
+              await GeneralUtil.showPageAsDialog<IssuesOverviewFilter?>(
+                  _buildContext,
+                  IssuesOverviewFilterPage(filter: state.filter!));
+          if (filter == null) return;
+          await getListOfIssues(filter);
+          yield state.copyWith(issuesOverviewFilter: filter);
           break;
       }
     } else if (event is IssueDetailsRetrieved) {
-      GeneralUtil.showPopup(_buildContext,
-          IssueDetailsPage(issue: event.issue, mapType: state.mapType!));
+      bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
+          _buildContext,
+          IssuePage(
+            issue: event.issue,
+            mapType: state.mapType!,
+          ));
+      flag ??= false;
+      if (flag) {
+        await getListOfIssues(state.filter!);
+      }
     } else if (event is ListOfIssuesRetrieved) {
-      yield state.copyWith(markers: getMarkersFromIssues(event.issues));
+      List<Place> places = event.issues
+          .select((element, index) => Place(issue: element))
+          .toList();
+      yield state.copyWith(places: places, issues: event.issues);
+    } else if (event is IssuePressed) {
+      await getIssueDetails(event.issue.id!);
+    } else if (event is MarkersUpdated) {
+      yield state.copyWith(markers: event.markers);
     }
   }
 
@@ -94,90 +117,158 @@ class IssuesOverviewBloc
   ///
   //region Methods
 
+  static IssuesOverviewFilter getDefaultIssuesOverviewFilter() {
+    // Get municipalities
+    List<Municipality?> municipalities =
+        AppValuesHelper.getInstance().getMunicipalities();
+    // Get default municipality ID
+    int defaultMunicipalityId = AppValuesHelper.getInstance()
+        .getInteger(AppValuesKey.defaultMunicipalityId)!;
+    // Get municipality
+    Municipality? municipality;
+    try {
+      municipality = municipalities
+          .firstWhere((element) => element!.id == defaultMunicipalityId);
+    } on StateError catch (_) {}
+
+    return IssuesOverviewFilter(
+        municipalityIds: municipality == null ? null : [municipality.id],
+        issueStateIds: [1, 2],
+        citizenIds: null,
+        subCategoryIds: null,
+        isBlocked: false,
+        categoryIds: null);
+  }
+
   Set<Marker> getMarkersFromIssues(List<Issue> issues) {
     Set<Marker> markers = <Marker>{};
     for (var issue in issues) {
       var markerId = MarkerId(issue.id.toString());
+
       markers.add(Marker(
           markerId: markerId,
           position: LatLng(issue.location!.latitude, issue.location!.longitude),
           consumeTapEvents: true,
-          onTap: () => getIssueDetails(issue.id),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)));
+          onTap: () => add(IssuePressed(issue: issue)),
+          icon: WASPUtil.getIssueStateMarkerIcon(issue.issueState!)));
     }
     return markers;
   }
 
-  Future<void> logOut() async {
+  Future<void> _logOut() async {
     await TaskUtil.runTask<bool>(
         buildContext: _buildContext,
         progressMessage: AppLocalizations.of(_buildContext)!.logging_out,
         doInBackground: (runTask) async {
+          // Sign out
           await ThirdPartySignInUtil.signOut();
+          // Reset Citizen ID
+          await AppValuesHelper.getInstance()
+              .saveInteger(AppValuesKey.citizenId, null);
           return null;
         },
         taskCancelled: () {});
+
     GeneralUtil.goToPage(_buildContext, LoginPage());
   }
 
   Future<bool> getValues() async {
-    var flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
-        doInBackground: (runTask) async {
-          // Get user's current position
-          Position position = await LocatorUtil.determinePosition();
-          // Fire event
-          add(PositionRetrieved(devicePosition: position));
+    return await Future.delayed(
+        const Duration(milliseconds: values.pageTransitionTime), () async {
+      bool isBlocked = false;
+      var flag = await TaskUtil.runTask(
+          buildContext: _buildContext,
+          progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
+          doInBackground: (runTask) async {
+            // Get user's current position
+            Position position = await LocatorUtil.determinePosition();
+            // Fire event
+            add(PositionRetrieved(devicePosition: position));
 
-          // Get list of municipalities
-          WASPServiceResponse<GetListOfMunicipalities_WASPResponse>
-              getListOfMunicipalitiesResponse =
-              await WASPService.getInstance().getListOfMunicipalities();
-          if (!getListOfMunicipalitiesResponse.isSuccess) {
-            GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
-            return false;
-          }
-          AppValuesHelper.getInstance().saveMunicipalities(
-              getListOfMunicipalitiesResponse.waspResponse!.result!);
+            // Get if the citizen is blocked
+            WASPServiceResponse<IsBlockedCitizen_WASPResponse>
+                isBlockedCitizenResponse = await WASPService.getInstance()
+                    .isBlockedCitizen(
+                        citizenId: AppValuesHelper.getInstance()
+                            .getInteger(AppValuesKey.citizenId)!);
+            if (!isBlockedCitizenResponse.isSuccess) {
+              GeneralUtil.showToast(isBlockedCitizenResponse.exception!);
+              return false;
+            }
+            if (isBlockedCitizenResponse.waspResponse!.result!) {
+              isBlocked = true;
+              return false;
+            }
 
-          // Get list of municipalities
-          WASPServiceResponse<GetListOfCategories_WASPResponse>
-              getListOfCategoriesResponse =
-              await WASPService.getInstance().getListOfCategories();
-          if (!getListOfCategoriesResponse.isSuccess) {
-            GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
-            return false;
-          }
-          AppValuesHelper.getInstance().saveCategories(
-              getListOfCategoriesResponse.waspResponse!.result!);
+            // Get list of municipalities
+            WASPServiceResponse<GetListOfMunicipalities_WASPResponse>
+                getListOfMunicipalitiesResponse =
+                await WASPService.getInstance().getListOfMunicipalities();
+            if (!getListOfMunicipalitiesResponse.isSuccess) {
+              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              return false;
+            }
+            AppValuesHelper.getInstance().saveMunicipalities(
+                getListOfMunicipalitiesResponse.waspResponse!.result!);
 
-          // Get list of issues
-          var response = await WASPService.getInstance().getListOfIssues();
-          // Check for errors
-          if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
-            return false;
-          }
-          // Get issues
-          var issues = response.waspResponse!.result!;
-          // Fire event
-          add(ListOfIssuesRetrieved(issues: issues));
-          // Return true
-          return true;
-        },
-        taskCancelled: () {});
-    return flag!;
+            // Get list of categories
+            WASPServiceResponse<GetListOfCategories_WASPResponse>
+                getListOfCategoriesResponse =
+                await WASPService.getInstance().getListOfCategories();
+            if (!getListOfCategoriesResponse.isSuccess) {
+              GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
+              return false;
+            }
+            AppValuesHelper.getInstance().saveCategories(
+                getListOfCategoriesResponse.waspResponse!.result!);
+
+            // Get list of report categories
+            WASPServiceResponse<GetListOfReportCategories_WASPResponse>
+                getListOfReportCategoriesResponse =
+                await WASPService.getInstance().getListOfReportCategories();
+            if (!getListOfReportCategoriesResponse.isSuccess) {
+              GeneralUtil.showToast(
+                  getListOfReportCategoriesResponse.exception!);
+              return false;
+            }
+            AppValuesHelper.getInstance().saveReportCategories(
+                getListOfReportCategoriesResponse.waspResponse!.result!);
+
+            // Get list of issues
+            var response = await WASPService.getInstance()
+                .getListOfIssues(filter: state.filter!);
+            // Check for errors
+            if (!response.isSuccess) {
+              GeneralUtil.showToast(response.exception!);
+              return false;
+            }
+            // Get issues
+            var issues = response.waspResponse!.result!;
+            // Fire event
+            add(ListOfIssuesRetrieved(issues: issues));
+            // Return true
+            return true;
+          },
+          taskCancelled: () {});
+      // Is the citizen blocked?
+      if (isBlocked) {
+        GeneralUtil.showToast(
+            AppLocalizations.of(_buildContext)!.this_user_is_blocked);
+        await _logOut();
+      }
+      flag ??= false;
+      return flag;
+    });
   }
 
-  Future<void> getListOfIssues() async {
+  Future<void> getListOfIssues(IssuesOverviewFilter filter) async {
     await TaskUtil.runTask(
         buildContext: _buildContext,
         progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
         doInBackground: (runTask) async {
           // Get list of issues
-          var response = await WASPService.getInstance().getListOfIssues();
+          var response =
+              await WASPService.getInstance().getListOfIssues(filter: filter);
           // Check for errors
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);

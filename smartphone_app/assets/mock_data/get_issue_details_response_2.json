@@ -1,0 +1,52 @@
+{
+  "Result": {
+    "Id": 3,
+    "CitizenId": 3,
+    "Description": "Bænken er i stykker",
+    "DateCreated": "2021-10-21T13:44:15",
+    "Location": {
+      "Latitude": 56.884232,
+      "Longitude": 9.83825
+    },
+    "Address": "Hobrovej 126, 9530 Støvring, Danmark",
+    "Category": {
+      "Id": 8,
+      "Name": "Parkinventar og lign."
+    },
+    "SubCategory": {
+      "Id": 36,
+      "CategoryId": 8,
+      "Name": "Borde / Bænke"
+    },
+    "Municipality": {
+      "Id": 4,
+      "Name": "Rebild"
+    },
+    "IssueState": {
+      "Id": 2,
+      "Name": "Godkendt"
+    },
+    "MunicipalityResponses": [
+      {
+        "Id": 2,
+        "IssueId": 3,
+        "MunicipalityUserId": 4,
+        "Response": "Der er blevet anskaffet en ny bænk. En kommer ud og erstatter den",
+        "DateCreated": "2021-10-22T13:44:15"
+      },
+      {
+        "Id": 3,
+        "IssueId": 3,
+        "MunicipalityUserId": 4,
+        "Response": "Bænket er blevet flyttet",
+        "DateCreated": "2021-10-22T13:46:14"
+      }
+    ],
+    "IssueVerificationCitizenIds": [
+      6,
+      7
+    ]
+  },
+  "IsSuccessful": true,
+  "ErrorNo": 0
+}

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 
-class CustomHeader extends StatelessWidget {
+class CustomLabel extends StatelessWidget {
   ///
   /// VARIABLES
   ///
@@ -17,6 +17,7 @@ class CustomHeader extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final Color textColor;
   final Gradient background;
+  final double? height;
 
   //endregion
 
@@ -26,10 +27,11 @@ class CustomHeader extends StatelessWidget {
   //region Constructor
 
   // ignore: prefer_const_constructors_in_immutables
-  CustomHeader(
+  CustomLabel(
       {Key? key,
       required this.title,
       this.fontSize = 20,
+      this.height,
       this.background = custom_colors.transparentGradient,
       this.margin = const EdgeInsets.all(10),
       this.padding = const EdgeInsets.only(top: 2),
@@ -52,6 +54,7 @@ class CustomHeader extends StatelessWidget {
         decoration: BoxDecoration(gradient: background),
         margin: margin,
         padding: padding,
+        height: height,
         child: Align(
           alignment: alignmentGeometry,
           child: Text(

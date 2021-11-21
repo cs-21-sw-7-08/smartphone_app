@@ -53,13 +53,13 @@ class CustomButton extends StatefulWidget {
     this.margin = const EdgeInsets.all(0),
     this.padding = const EdgeInsets.all(0),
     this.border,
-    this.borderRadius,
+    this.borderRadius = const BorderRadius.all(Radius.circular(5.0)),
     this.showBorder = false,
     this.icon,
     this.image,
     this.imagePadding = const EdgeInsets.all(0),
-    this.defaultBackground = custom_colors.buttonGradientDefault,
-    this.pressedBackground = custom_colors.buttonGradientPressedDefault,
+    this.defaultBackground = custom_colors.buttonDefaultGradient,
+    this.pressedBackground = custom_colors.buttonPressedGradient,
     required this.onPressed,
   })  : assert(
             (text == null && (image != null || icon != null)) || text != null),
@@ -117,21 +117,21 @@ class CustomButtonState extends State<CustomButton> {
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
       child: Container(
-        margin: widget.margin,
-        width: widget.width,
-        height: widget.height,
-        padding: widget.padding,
-        decoration: BoxDecoration(
-          gradient:
-              _isPressed ? widget.pressedBackground : widget.defaultBackground,
-          borderRadius: widget.borderRadius ??
-              const BorderRadius.all(Radius.circular(2.0)),
-          border: !widget.showBorder
-              ? null
-              : widget.border ?? Border.all(color: _border, width: 1),
-        ),
-        child: buildWidgetsOnButton(),
-      ),
+            margin: widget.margin,
+            width: widget.width,
+            height: widget.height,
+            padding: widget.padding,
+            decoration: BoxDecoration(
+              gradient: _isPressed
+                  ? widget.pressedBackground
+                  : widget.defaultBackground,
+              borderRadius: widget.borderRadius,
+              border: !widget.showBorder
+                  ? null
+                  : widget.border ?? Border.all(color: _border, width: 1),
+            ),
+            child: buildWidgetsOnButton(),
+          ),
     );
   }
 

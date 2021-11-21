@@ -33,9 +33,7 @@ class GoogleMapSnippet extends StatefulWidget {
       this.zoom = 14,
       this.mapType = MapType.normal,
       this.cameraPosition})
-      : super(key: key) {
-
-  }
+      : super(key: key);
 
   //endregion
 
@@ -64,27 +62,38 @@ class _GoogleMapSnippetState extends State<GoogleMapSnippet> {
     return Container(
         margin: widget.margin,
         height: widget.height,
-        child: GoogleMap(
-          mapType: widget.mapType ?? MapType.normal,
-          initialCameraPosition: CameraPosition(
-              target: (widget.marker != null
-                  ? widget.marker!.position
-                  : const LatLng(0, 0)),
-              zoom: 14),
-          scrollGesturesEnabled: false,
-          rotateGesturesEnabled: false,
-          tiltGesturesEnabled: false,
-          zoomGesturesEnabled: false,
-          myLocationEnabled: false,
-          zoomControlsEnabled: false,
-          myLocationButtonEnabled: false,
-          buildingsEnabled: false,
-          markers:
-              widget.marker == null ? <Marker>{} : <Marker>{widget.marker!},
-          onMapCreated: (GoogleMapController controller) {
-            this.controller = controller;
-            _googleMapCompleter.complete(controller);
-          },
-        ));
+        padding: const EdgeInsets.all(0),
+        child: Center(
+            child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(5),
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(5),
+                  bottomLeft: Radius.circular(5),
+                ),
+                child: GoogleMap(
+                      mapType: widget.mapType ?? MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                          target: (widget.marker != null
+                              ? widget.marker!.position
+                              : const LatLng(0, 0)),
+                          zoom: 14),
+                      scrollGesturesEnabled: false,
+                      rotateGesturesEnabled: false,
+                      tiltGesturesEnabled: false,
+                      indoorViewEnabled: false,
+                      zoomGesturesEnabled: false,
+                      myLocationEnabled: false,
+                      zoomControlsEnabled: false,
+                      myLocationButtonEnabled: false,
+                      buildingsEnabled: false,
+                      markers: widget.marker == null
+                          ? <Marker>{}
+                          : <Marker>{widget.marker!},
+                      onMapCreated: (GoogleMapController controller) {
+                        this.controller = controller;
+                        _googleMapCompleter.complete(controller);
+                      },
+                    ))));
   }
 }
