@@ -179,6 +179,74 @@
   "@logging_out": {
     "description": "Progress title"
   },
+  "select_municipality": "Select municipality",
+  "@select_municipality": {
+    "description": "Title"
+  },
+  "change_municipality": "Change municipality",
+  "@change_municipality": {
+    "description": "Title"
+  },
+  "please_enter_a_valid_phone_number": "Please enter a valid phone number",
+  "@please_enter_a_valid_phone_number": {
+    "description": "Informative message to the user"
+  },
+  "please_enter_the_sms_code_toast": "Please enter the SMS code",
+  "@please_enter_the_sms_code_toast": {
+    "description": "Informative message to the user"
+  },
+  "please_select_a_municipality": "Please select a municipality",
+  "@please_select_a_municipality": {
+    "description": "Informative message to the user"
+  },
+  "please_enter_your_full_name_toast": "Please enter your full name",
+  "@please_enter_your_full_name_toast": {
+    "description": "Informative message to the user"
+  },
+  "getting_information": "Getting information...",
+  "@getting_information": {
+    "description": "Progress message"
+  },
+  "cancelling_sign_up": "Canceling sign up...",
+  "@cancelling_sign_up": {
+    "description": "Progress title"
+  },
+  "please_enter_your_phone_number": "Enter your phone number\nOnly Danish numbers are supported",
+  "@please_enter_your_phone_number": {
+    "description": "Informative message to the user"
+  },
+  "please_enter_your_full_name": "Enter your full name and select a default municipality",
+  "@please_enter_your_full_name": {
+    "description": "Informative message to the user"
+  },
+  "please_enter_the_sms_code": "Enter the 6-digit verification code you receive on SMS",
+  "@please_enter_the_sms_code": {
+    "description": "Informative message to the user"
+  },
+  "verifying_sms_code": "Verifying SMS code...",
+  "@verifying_sms_code": {
+    "description": "Progress title"
+  },
+  "sending_verification_code": "Sending verification code...",
+  "@sending_verification_code": {
+    "description": "Progress title"
+  },
+  "this_is_not_supported_yet": "This is not supported yet",
+  "@this_is_not_supported_yet": {
+    "description": "Informative message to the user"
+  },
+  "logging_in": "Logging in...",
+  "@logging_in": {
+    "description": "Progress title"
+  },
+  "this_user_is_blocked": "This user is blocked. Contact your municipality for more information",
+  "@this_user_is_blocked": {
+    "description": "Informative message to the user"
+  },
+  "checking_credentials": "Checking credentials...",
+  "@checking_credentials": {
+    "description": "Progress title"
+  },
   "signing_up": "Signing up...",
   "@signing_up": {
     "description": "Progress message"

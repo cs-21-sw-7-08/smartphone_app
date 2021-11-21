@@ -62,12 +62,12 @@ class LoginPage extends StatelessWidget {
                                         ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                                     child: Container(
                                         color: Colors.white.withOpacity(0.5),
-                                        child: getContent(context, bloc)),
+                                        child: _getContent(context, bloc)),
                                   ))))));
             }));
   }
 
-  Widget getContent(BuildContext context, LoginBloc bloc) {
+  Widget _getContent(BuildContext context, LoginBloc bloc) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,

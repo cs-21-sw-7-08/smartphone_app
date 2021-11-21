@@ -9,7 +9,7 @@ import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 
-import 'report_page_events_states.dart';
+import 'report_events_states.dart';
 
 class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ///

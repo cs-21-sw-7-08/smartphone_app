@@ -17,6 +17,7 @@ import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import '../../utilities/location/locator_util.dart';
 import 'package:darq/darq.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
 class IssuesOverviewBloc
     extends Bloc<IssuesOverviewEvent, IssuesOverviewState> {
@@ -65,7 +66,7 @@ class IssuesOverviewBloc
           }
           break;
         case IssuesOverviewButtonEvent.logOut:
-          await logOut();
+          await _logOut();
           break;
         case IssuesOverviewButtonEvent.changeMapType:
           yield state.copyWith(
@@ -122,7 +123,7 @@ class IssuesOverviewBloc
         AppValuesHelper.getInstance().getMunicipalities();
     // Get default municipality ID
     int defaultMunicipalityId = AppValuesHelper.getInstance()
-        .getInteger(AppValuesKey.defaultMunicipality)!;
+        .getInteger(AppValuesKey.defaultMunicipalityId)!;
     // Get municipality
     Municipality? municipality;
     try {
@@ -154,79 +155,110 @@ class IssuesOverviewBloc
     return markers;
   }
 
-  Future<void> logOut() async {
+  Future<void> _logOut() async {
     await TaskUtil.runTask<bool>(
         buildContext: _buildContext,
         progressMessage: AppLocalizations.of(_buildContext)!.logging_out,
         doInBackground: (runTask) async {
+          // Sign out
           await ThirdPartySignInUtil.signOut();
+          // Reset Citizen ID
+          await AppValuesHelper.getInstance()
+              .saveInteger(AppValuesKey.citizenId, null);
           return null;
         },
         taskCancelled: () {});
+
     GeneralUtil.goToPage(_buildContext, LoginPage());
   }
 
   Future<bool> getValues() async {
-    var flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
-        doInBackground: (runTask) async {
-          // Get user's current position
-          Position position = await LocatorUtil.determinePosition();
-          // Fire event
-          add(PositionRetrieved(devicePosition: position));
+    return await Future.delayed(
+        const Duration(milliseconds: values.pageTransitionTime), () async {
+      bool isBlocked = false;
+      var flag = await TaskUtil.runTask(
+          buildContext: _buildContext,
+          progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
+          doInBackground: (runTask) async {
+            // Get user's current position
+            Position position = await LocatorUtil.determinePosition();
+            // Fire event
+            add(PositionRetrieved(devicePosition: position));
 
-          // Get list of municipalities
-          WASPServiceResponse<GetListOfMunicipalities_WASPResponse>
-              getListOfMunicipalitiesResponse =
-              await WASPService.getInstance().getListOfMunicipalities();
-          if (!getListOfMunicipalitiesResponse.isSuccess) {
-            GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
-            return false;
-          }
-          AppValuesHelper.getInstance().saveMunicipalities(
-              getListOfMunicipalitiesResponse.waspResponse!.result!);
+            // Get if the citizen is blocked
+            WASPServiceResponse<IsBlockedCitizen_WASPResponse>
+                isBlockedCitizenResponse = await WASPService.getInstance()
+                    .isBlockedCitizen(
+                        citizenId: AppValuesHelper.getInstance()
+                            .getInteger(AppValuesKey.citizenId)!);
+            if (!isBlockedCitizenResponse.isSuccess) {
+              GeneralUtil.showToast(isBlockedCitizenResponse.exception!);
+              return false;
+            }
+            if (isBlockedCitizenResponse.waspResponse!.result!) {
+              isBlocked = true;
+              return false;
+            }
 
-          // Get list of categories
-          WASPServiceResponse<GetListOfCategories_WASPResponse>
-              getListOfCategoriesResponse =
-              await WASPService.getInstance().getListOfCategories();
-          if (!getListOfCategoriesResponse.isSuccess) {
-            GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
-            return false;
-          }
-          AppValuesHelper.getInstance().saveCategories(
-              getListOfCategoriesResponse.waspResponse!.result!);
+            // Get list of municipalities
+            WASPServiceResponse<GetListOfMunicipalities_WASPResponse>
+                getListOfMunicipalitiesResponse =
+                await WASPService.getInstance().getListOfMunicipalities();
+            if (!getListOfMunicipalitiesResponse.isSuccess) {
+              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              return false;
+            }
+            AppValuesHelper.getInstance().saveMunicipalities(
+                getListOfMunicipalitiesResponse.waspResponse!.result!);
 
-          // Get list of report categories
-          WASPServiceResponse<GetListOfReportCategories_WASPResponse>
-          getListOfReportCategoriesResponse =
-          await WASPService.getInstance().getListOfReportCategories();
-          if (!getListOfReportCategoriesResponse.isSuccess) {
-            GeneralUtil.showToast(getListOfReportCategoriesResponse.exception!);
-            return false;
-          }
-          AppValuesHelper.getInstance().saveReportCategories(
-              getListOfReportCategoriesResponse.waspResponse!.result!);
+            // Get list of categories
+            WASPServiceResponse<GetListOfCategories_WASPResponse>
+                getListOfCategoriesResponse =
+                await WASPService.getInstance().getListOfCategories();
+            if (!getListOfCategoriesResponse.isSuccess) {
+              GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
+              return false;
+            }
+            AppValuesHelper.getInstance().saveCategories(
+                getListOfCategoriesResponse.waspResponse!.result!);
 
-          // Get list of issues
-          var response = await WASPService.getInstance()
-              .getListOfIssues(filter: state.filter!);
-          // Check for errors
-          if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
-            return false;
-          }
-          // Get issues
-          var issues = response.waspResponse!.result!;
-          // Fire event
-          add(ListOfIssuesRetrieved(issues: issues));
-          // Return true
-          return true;
-        },
-        taskCancelled: () {});
-    flag ??= false;
-    return flag;
+            // Get list of report categories
+            WASPServiceResponse<GetListOfReportCategories_WASPResponse>
+                getListOfReportCategoriesResponse =
+                await WASPService.getInstance().getListOfReportCategories();
+            if (!getListOfReportCategoriesResponse.isSuccess) {
+              GeneralUtil.showToast(
+                  getListOfReportCategoriesResponse.exception!);
+              return false;
+            }
+            AppValuesHelper.getInstance().saveReportCategories(
+                getListOfReportCategoriesResponse.waspResponse!.result!);
+
+            // Get list of issues
+            var response = await WASPService.getInstance()
+                .getListOfIssues(filter: state.filter!);
+            // Check for errors
+            if (!response.isSuccess) {
+              GeneralUtil.showToast(response.exception!);
+              return false;
+            }
+            // Get issues
+            var issues = response.waspResponse!.result!;
+            // Fire event
+            add(ListOfIssuesRetrieved(issues: issues));
+            // Return true
+            return true;
+          },
+          taskCancelled: () {});
+      // Is the citizen blocked?
+      if (isBlocked) {
+        GeneralUtil.showToast(
+            AppLocalizations.of(_buildContext)!.this_user_is_blocked);
+        await _logOut();
+      }
+      flag ??= false;
+      return flag;
+    });
   }
 
   Future<void> getListOfIssues(IssuesOverviewFilter filter) async {

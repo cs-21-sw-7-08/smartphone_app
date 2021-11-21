@@ -25,18 +25,20 @@ class ThirdPartySignInUtil {
     var credentials = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken);
-    UserCredential? userCredential =
-        await signInWithCredentials(credentials);
-    if (userCredential == null) return null;
+    UserCredential? userCredential = await signInWithCredentials(credentials);
+    if (userCredential == null) // ignore: unnecessary_null_comparison
+    {
+      return null;
+    }
     return SignInResponse(userCredential.user!, googleSignInAccount);
   }
 
   static Future<void> verifyPhoneNo(
       {required String phoneNumber,
-        required PhoneVerificationCompleted verificationCompleted,
-        required PhoneVerificationFailed verificationFailed,
-        required PhoneCodeSent codeSent,
-        required PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout}) async {
+      required PhoneVerificationCompleted verificationCompleted,
+      required PhoneVerificationFailed verificationFailed,
+      required PhoneCodeSent codeSent,
+      required PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout}) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         verificationCompleted: verificationCompleted,
@@ -60,9 +62,7 @@ class ThirdPartySignInUtil {
   static Future<void> signOut() async {
     try {
       await _getGoogleSignIn().disconnect();
-    } on Exception catch (_) {
-
-    }
+    } on Exception catch (_) {}
     return FirebaseAuth.instance.signOut();
   }
 

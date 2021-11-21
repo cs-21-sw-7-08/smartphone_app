@@ -21,7 +21,7 @@ class WASPResponse {
 
   String? getErrorMessage() {
     if (!isSuccessful && errorNo != 0) {
-      return "Error no. message";
+      return "WASP error: ${errorNo.toString()}";
     } else if (errorMessage != null) {
       return errorMessage;
     }
@@ -60,19 +60,31 @@ class GetListOfMunicipalities_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+class IsBlockedCitizen_WASPResponse extends WASPResponse {
+  @JsonKey(name: "Result")
+  late bool? result;
+
+  IsBlockedCitizen_WASPResponse({this.result});
+
+  factory IsBlockedCitizen_WASPResponse.fromJson(Map<String, dynamic> json) =>
+      _$IsBlockedCitizen_WASPResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$IsBlockedCitizen_WASPResponseToJson(this);
+}
+
+@JsonSerializable()
 class Citizen_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Citizen? result;
 
   Citizen_WASPResponse({this.result});
 
-  factory Citizen_WASPResponse.fromJson(
-      Map<String, dynamic> json) =>
+  factory Citizen_WASPResponse.fromJson(Map<String, dynamic> json) =>
       _$Citizen_WASPResponseFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() =>
-      _$Citizen_WASPResponseToJson(this);
+  Map<String, dynamic> toJson() => _$Citizen_WASPResponseToJson(this);
 }
 
 @JsonSerializable()
@@ -395,8 +407,19 @@ class Citizen {
   late String? name;
   @JsonKey(name: "IsBlocked")
   late bool? isBlocked;
+  @JsonKey(name: "Municipality")
+  late Municipality? municipality;
+  @JsonKey(name: "MunicipalityId")
+  late int? municipalityId;
 
-  Citizen({this.id, this.email, this.phoneNo, this.name, this.isBlocked});
+  Citizen(
+      {this.id,
+      this.email,
+      this.phoneNo,
+      this.name,
+      this.isBlocked,
+      this.municipality,
+      this.municipalityId});
 
   factory Citizen.fromJson(Map<String, dynamic> json) =>
       _$CitizenFromJson(json);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:smartphone_app/helpers/rest_helper.dart';
 import 'package:smartphone_app/utilities/wasp_util.dart';
 import '../interfaces/wasp_service_functions.dart';
@@ -265,11 +266,9 @@ class WASPService implements IWASPServiceFunctions {
     print("Citizen: $jsonCitizen"); // ignore: avoid_print
 
     return actionCall(() {
-      return restHelper.sendPostRequest("${issueControllerPath}LogInCitizen",
+      return restHelper.sendPostRequest("${citizenControllerPath}LogInCitizen",
           body: jsonCitizen);
-    },
-            (response) =>
-            Citizen_WASPResponse.fromJson(response.jsonResponse));
+    }, (response) => Citizen_WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
@@ -287,6 +286,31 @@ class WASPService implements IWASPServiceFunctions {
     // Return response
     return WASPServiceResponse.success(
         Citizen_WASPResponse.fromJson(response.jsonResponse));
+  }
+
+  @override
+  Future<WASPServiceResponse<IsBlockedCitizen_WASPResponse>> isBlockedCitizen(
+      {required int citizenId}) {
+    return actionCall(() {
+      return restHelper.sendGetRequest("${citizenControllerPath}IsBlockedCitizen",
+          parameters: [
+            RestParameter(name: "citizenId", value: citizenId.toString())
+          ]);
+    },
+        (response) =>
+            IsBlockedCitizen_WASPResponse.fromJson(response.jsonResponse));
+  }
+
+  @override
+  Future<WASPServiceResponse<Citizen_WASPResponse>> getCitizen({required int citizenId}) {
+    return actionCall(() {
+      return restHelper.sendGetRequest("${citizenControllerPath}GetCitizen",
+          parameters: [
+            RestParameter(name: "citizenId", value: citizenId.toString())
+          ]);
+    },
+            (response) =>
+            Citizen_WASPResponse.fromJson(response.jsonResponse));
   }
 
 //endregion

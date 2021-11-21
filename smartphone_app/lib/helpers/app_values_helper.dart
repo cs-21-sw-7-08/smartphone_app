@@ -8,7 +8,7 @@ enum AppValuesKey {
   municipalities,
   categories,
   reportCategories,
-  defaultMunicipality
+  defaultMunicipalityId
 }
 
 class AppValuesHelper {
@@ -128,8 +128,13 @@ class AppValuesHelper {
     return _sharedPreferences.setBool(appValuesKey.toString(), value);
   }
 
-  Future<bool> saveInteger(AppValuesKey appValuesKey, int value) async {
-    return _sharedPreferences.setInt(appValuesKey.toString(), value);
+  Future<bool> saveInteger(AppValuesKey appValuesKey, int? value) async {
+    if (value == null) {
+      _sharedPreferences.remove(appValuesKey.toString());
+      return true;
+    } else {
+      return _sharedPreferences.setInt(appValuesKey.toString(), value);
+    }
   }
 
 //endregion

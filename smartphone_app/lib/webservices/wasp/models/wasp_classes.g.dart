@@ -63,6 +63,25 @@ Map<String, dynamic> _$GetListOfMunicipalities_WASPResponseToJson(
       'Result': instance.result,
     };
 
+IsBlockedCitizen_WASPResponse _$IsBlockedCitizen_WASPResponseFromJson(
+    Map<String, dynamic> json) {
+  return IsBlockedCitizen_WASPResponse(
+    result: json['Result'] as bool?,
+  )
+    ..isSuccessful = json['IsSuccessful'] as bool
+    ..errorNo = json['ErrorNo'] as int
+    ..errorMessage = json['ErrorMessage'] as String?;
+}
+
+Map<String, dynamic> _$IsBlockedCitizen_WASPResponseToJson(
+        IsBlockedCitizen_WASPResponse instance) =>
+    <String, dynamic>{
+      'IsSuccessful': instance.isSuccessful,
+      'ErrorNo': instance.errorNo,
+      'ErrorMessage': instance.errorMessage,
+      'Result': instance.result,
+    };
+
 Citizen_WASPResponse _$Citizen_WASPResponseFromJson(Map<String, dynamic> json) {
   return Citizen_WASPResponse(
     result: json['Result'] == null
@@ -350,6 +369,10 @@ Citizen _$CitizenFromJson(Map<String, dynamic> json) {
     phoneNo: json['PhoneNo'] as String?,
     name: json['Name'] as String?,
     isBlocked: json['IsBlocked'] as bool?,
+    municipality: json['Municipality'] == null
+        ? null
+        : Municipality.fromJson(json['Municipality'] as Map<String, dynamic>),
+    municipalityId: json['MunicipalityId'] as int?,
   );
 }
 
@@ -359,6 +382,8 @@ Map<String, dynamic> _$CitizenToJson(Citizen instance) => <String, dynamic>{
       'PhoneNo': instance.phoneNo,
       'Name': instance.name,
       'IsBlocked': instance.isBlocked,
+      'Municipality': instance.municipality,
+      'MunicipalityId': instance.municipalityId,
     };
 
 IssuesOverviewFilter _$IssuesOverviewFilterFromJson(Map<String, dynamic> json) {

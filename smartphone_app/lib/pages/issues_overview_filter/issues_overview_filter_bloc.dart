@@ -56,7 +56,7 @@ class IssuesOverviewFilterBloc
         AppValuesHelper.getInstance().getMunicipalities();
     // Get default municipality ID
     int defaultMunicipalityId = AppValuesHelper.getInstance()
-        .getInteger(AppValuesKey.defaultMunicipality)!;
+        .getInteger(AppValuesKey.defaultMunicipalityId)!;
     // Get municipality
     Municipality? municipality;
     try {

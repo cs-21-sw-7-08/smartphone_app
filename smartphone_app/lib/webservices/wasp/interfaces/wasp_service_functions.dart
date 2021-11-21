@@ -67,6 +67,12 @@ class IWASPServiceFunctions {
 
   //region Citizen controller
 
+  // Get
+  Future<WASPServiceResponse<IsBlockedCitizen_WASPResponse>> isBlockedCitizen(
+      {required int citizenId}) async {
+    throw UnimplementedError();
+  }
+
   // Post
   Future<WASPServiceResponse<Citizen_WASPResponse>> signUpCitizen(
       {required Citizen citizen}) async {
@@ -76,6 +82,12 @@ class IWASPServiceFunctions {
   // Post
   Future<WASPServiceResponse<Citizen_WASPResponse>> logInCitizen(
       {required Citizen citizen}) async {
+    throw UnimplementedError();
+  }
+
+  // Get
+  Future<WASPServiceResponse<Citizen_WASPResponse>> getCitizen(
+      {required int citizenId}) async {
     throw UnimplementedError();
   }
 

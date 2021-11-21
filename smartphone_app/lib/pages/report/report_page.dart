@@ -11,8 +11,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 
-import 'report_page_bloc.dart';
-import 'report_page_events_states.dart';
+import 'report_bloc.dart';
+import 'report_events_states.dart';
 
 // ignore: must_be_immutable
 class ReportPage extends StatelessWidget {

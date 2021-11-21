@@ -9,7 +9,6 @@ class CustomTextField extends StatefulWidget {
   final bool readOnly;
   final TextInputType keyBoardType;
 
-  Key? key;
   final double? height;
   final double fontSize;
   final String? initialValue;
@@ -27,7 +26,7 @@ class CustomTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
 
   CustomTextField(
-      {this.key,
+      {Key? key,
       this.showClearButton = false,
       this.maxLength,
       this.height = 55,
