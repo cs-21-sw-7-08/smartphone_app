@@ -187,6 +187,26 @@
   "@change_municipality": {
     "description": "Title"
   },
+  "save": "Save",
+  "@save": {
+    "description": "Title"
+  },
+  "saving_changes": "Saving changes...",
+  "@saving_changes": {
+    "description": "Progress message"
+  },
+  "are_you_sure_you_want_to_delete_your_account": "Are you sure you want to delete your account, this cannot be undone?",
+  "@are_you_sure_you_want_to_delete_your_account": {
+    "description": "Question to the user"
+  },
+  "delete_account": "Delete account",
+  "@delete_account": {
+    "description": "Title"
+  },
+  "deleting_account": "Deleting account...",
+  "@deleting_account": {
+    "description": "Progress message"
+  },
   "please_enter_a_valid_phone_number": "Please enter a valid phone number",
   "@please_enter_a_valid_phone_number": {
     "description": "Informative message to the user"

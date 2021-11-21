@@ -201,7 +201,14 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                                 color: Colors.black,
                                                 size: 30,
                                               ),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                bloc.add(
+                                                    ButtonPressed(
+                                                        issuesOverviewButtonEvent:
+                                                        IssuesOverviewButtonEvent
+                                                            .showSettings));
+                                              },
                                               text:
                                                   AppLocalizations.of(context)!
                                                       .settings,

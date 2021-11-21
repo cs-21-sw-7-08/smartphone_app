@@ -292,7 +292,8 @@ class WASPService implements IWASPServiceFunctions {
   Future<WASPServiceResponse<IsBlockedCitizen_WASPResponse>> isBlockedCitizen(
       {required int citizenId}) {
     return actionCall(() {
-      return restHelper.sendGetRequest("${citizenControllerPath}IsBlockedCitizen",
+      return restHelper.sendGetRequest(
+          "${citizenControllerPath}IsBlockedCitizen",
           parameters: [
             RestParameter(name: "citizenId", value: citizenId.toString())
           ]);
@@ -302,15 +303,29 @@ class WASPService implements IWASPServiceFunctions {
   }
 
   @override
-  Future<WASPServiceResponse<Citizen_WASPResponse>> getCitizen({required int citizenId}) {
+  Future<WASPServiceResponse<Citizen_WASPResponse>> getCitizen(
+      {required int citizenId}) {
     return actionCall(() {
       return restHelper.sendGetRequest("${citizenControllerPath}GetCitizen",
           parameters: [
             RestParameter(name: "citizenId", value: citizenId.toString())
           ]);
-    },
-            (response) =>
-            Citizen_WASPResponse.fromJson(response.jsonResponse));
+    }, (response) => Citizen_WASPResponse.fromJson(response.jsonResponse));
+  }
+
+  @override
+  Future<WASPServiceResponse<WASPResponse>> updateCitizen(
+      {required int citizenId, required List<WASPUpdate> updates}) async {
+    var jsonString = jsonEncode(
+        updates.map((e) => WASPUtil.removeNullValues(e.toJson())).toList());
+    print("WASP Updates: $jsonString"); // ignore: avoid_print
+    return actionCall(() {
+      return restHelper.sendPutRequest("${citizenControllerPath}UpdateCitizen",
+          parameters: [
+            RestParameter(name: "citizenId", value: citizenId.toString())
+          ],
+          body: jsonString);
+    }, (response) => WASPResponse.fromJson(response.jsonResponse));
   }
 
 //endregion

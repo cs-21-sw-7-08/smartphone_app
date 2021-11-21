@@ -8,6 +8,8 @@ import 'package:smartphone_app/pages/issue/issue_page.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_events_states.dart';
 import 'package:smartphone_app/pages/issues_overview_filter/issues_overview_filter_page.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
+import 'package:smartphone_app/pages/settings/settings_bloc.dart';
+import 'package:smartphone_app/pages/settings/settings_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
@@ -57,6 +59,8 @@ class IssuesOverviewBloc
       yield state.copyWith(devicePosition: event.devicePosition);
     } else if (event is ButtonPressed) {
       switch (event.issuesOverviewButtonEvent) {
+
+        /// Create issue
         case IssuesOverviewButtonEvent.createIssue:
           bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
               _buildContext, IssuePage(mapType: state.mapType!));
@@ -65,6 +69,8 @@ class IssuesOverviewBloc
             await getListOfIssues(state.filter!);
           }
           break;
+
+        /// Log out
         case IssuesOverviewButtonEvent.logOut:
           await _logOut();
           break;
@@ -74,9 +80,13 @@ class IssuesOverviewBloc
                   ? MapType.normal
                   : MapType.hybrid);
           break;
+
+        /// Get list of issues
         case IssuesOverviewButtonEvent.getListOfIssues:
           await getListOfIssues(state.filter!);
           break;
+
+        /// Show filter
         case IssuesOverviewButtonEvent.showFilter:
           IssuesOverviewFilter? filter =
               await GeneralUtil.showPageAsDialog<IssuesOverviewFilter?>(
@@ -85,6 +95,33 @@ class IssuesOverviewBloc
           if (filter == null) return;
           await getListOfIssues(filter);
           yield state.copyWith(issuesOverviewFilter: filter);
+          break;
+
+        /// Show settings
+        case IssuesOverviewButtonEvent.showSettings:
+          SettingsCallBackType? callBackType =
+              await GeneralUtil.showPageAsDialog<SettingsCallBackType>(
+                  _buildContext, SettingsPage());
+          if (callBackType == null) return;
+          switch (callBackType) {
+            case SettingsCallBackType.deleteAccount:
+              await _logOut();
+              break;
+            case SettingsCallBackType.settingsChanged:
+              IssuesOverviewFilter filter = state.filter!;
+              filter.municipalityIds = [
+                AppValuesHelper.getInstance()
+                    .getInteger(AppValuesKey.defaultMunicipalityId)!
+              ];
+              await getListOfIssues(filter);
+              yield state.copyWith(issuesOverviewFilter: filter);
+              break;
+          }
+          break;
+
+        /// Show help
+        case IssuesOverviewButtonEvent.showHelp:
+          // TODO: Handle this case.
           break;
       }
     } else if (event is IssueDetailsRetrieved) {

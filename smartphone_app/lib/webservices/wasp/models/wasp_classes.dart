@@ -225,7 +225,7 @@ class Municipality {
 
   @override
   @JsonKey(ignore: true)
-  int get hashCode => name.hashCode;
+  int get hashCode => id.hashCode;
 
   @override
   bool operator ==(Object other) {

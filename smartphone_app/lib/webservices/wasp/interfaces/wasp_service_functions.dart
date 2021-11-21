@@ -97,5 +97,11 @@ class IWASPServiceFunctions {
     throw UnimplementedError();
   }
 
+  // Put
+  Future<WASPServiceResponse<WASPResponse>> updateCitizen(
+      {required int citizenId, required List<WASPUpdate> updates}) async {
+    throw UnimplementedError();
+  }
+
   //endregion
 }

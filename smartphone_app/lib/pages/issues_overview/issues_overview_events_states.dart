@@ -13,7 +13,9 @@ enum IssuesOverviewButtonEvent {
   logOut,
   changeMapType,
   getListOfIssues,
-  showFilter
+  showFilter,
+  showSettings,
+  showHelp
 }
 
 //endregion
