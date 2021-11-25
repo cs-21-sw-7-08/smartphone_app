@@ -29,7 +29,7 @@ class ReportPage extends StatelessWidget {
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(ButtonPressed(reportButtonEvent: ReportButtonEvent.close));
+          bloc.add(ButtonPressed(buttonEvent: ReportButtonEvent.close));
           return false;
         },
         child: BlocProvider(
@@ -56,7 +56,7 @@ class ReportPage extends StatelessWidget {
                                 background: custom_colors.appBarBackground,
                                 appBarLeftButton: AppBarLeftButton.close,
                                 leftButtonPressed: () => bloc.add(ButtonPressed(
-                                    reportButtonEvent:
+                                    buttonEvent:
                                         ReportButtonEvent.close)),
                               ),
                               body: _getContent(context, bloc, state),
@@ -112,7 +112,7 @@ class ReportPage extends StatelessWidget {
                         // 'Confirm' button
                         CustomButton(
                           onPressed: () => bloc.add(ButtonPressed(
-                              reportButtonEvent: ReportButtonEvent.confirm)),
+                              buttonEvent: ReportButtonEvent.confirm)),
                           text: AppLocalizations.of(context)!.confirm,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -168,7 +168,7 @@ class ReportPage extends StatelessWidget {
               ),
             CustomButton(
               onPressed: () => bloc.add(ButtonPressed(
-                  reportButtonEvent: ReportButtonEvent.selectReportCategory)),
+                  buttonEvent: ReportButtonEvent.selectReportCategory)),
               margin: EdgeInsets.only(
                   top: (state.reportCategory != null) ? values.padding : 0),
               fontWeight: FontWeight.bold,

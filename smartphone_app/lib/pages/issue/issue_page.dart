@@ -180,6 +180,22 @@ class IssuePage extends StatelessWidget {
                                               _getGeneral(context, bloc, state),
                                             ],
                                           )),
+                                    if (state.municipalityResponses != null &&
+                                        state.municipalityResponses!.isNotEmpty)
+                                      Card(
+                                          margin: const EdgeInsets.only(
+                                              top: values.padding,
+                                              left: values.padding,
+                                              right: values.padding),
+                                          child: Column(
+                                            children: [
+                                              _getHeader(
+                                                  AppLocalizations.of(context)!
+                                                      .from_municipality),
+                                              _getFromMunicipality(
+                                                  context, bloc, state)
+                                            ],
+                                          )),
                                     Card(
                                         margin: const EdgeInsets.only(
                                             top: values.padding,
@@ -208,10 +224,18 @@ class IssuePage extends StatelessWidget {
                                           ],
                                         )),
                                     Card(
-                                        margin: const EdgeInsets.only(
+                                        margin: EdgeInsets.only(
                                             top: values.padding,
                                             left: values.padding,
-                                            right: values.padding),
+                                            right: values.padding,
+                                            bottom: state.issuePageView ==
+                                                        IssuePageView.see &&
+                                                    ((!state.isCreator! &&
+                                                            !state
+                                                                .hasVerified!) ||
+                                                        (state.isCreator!))
+                                                ? 0
+                                                : values.padding),
                                         child: Column(
                                           children: [
                                             _getHeader(
@@ -221,34 +245,20 @@ class IssuePage extends StatelessWidget {
                                                 context, bloc, state)
                                           ],
                                         )),
-                                    if (state.municipalityResponses != null &&
-                                        state.municipalityResponses!.isNotEmpty)
-                                      Card(
-                                          margin: const EdgeInsets.only(
-                                              top: values.padding,
-                                              left: values.padding,
-                                              right: values.padding,
-                                              bottom: values.padding),
-                                          child: Column(
-                                            children: [
-                                              _getHeader(
-                                                  AppLocalizations.of(context)!
-                                                      .from_municipality),
-                                              _getFromMunicipality(
-                                                  context, bloc, state)
-                                            ],
-                                          )),
                                   ],
                                 ))),
                         if (state.issuePageView == IssuePageView.see &&
-                            !state.isCreator! &&
-                            !state.hasVerified!)
-                          // 'Verify issue' button
+                            ((!state.isCreator! && !state.hasVerified!) ||
+                                (state.isCreator!)))
+                          // 'Verify/Delete issue' button
                           CustomButton(
                             onPressed: () => bloc.add(ButtonPressed(
-                                issueButtonEvent:
-                                    IssueButtonEvent.verifyIssue)),
-                            text: AppLocalizations.of(context)!.verify_issue,
+                                issueButtonEvent: state.isCreator!
+                                    ? IssueButtonEvent.deleteIssue
+                                    : IssueButtonEvent.verifyIssue)),
+                            text: state.isCreator!
+                                ? AppLocalizations.of(context)!.delete_issue
+                                : AppLocalizations.of(context)!.verify_issue,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                             margin: const EdgeInsets.all(values.padding),
@@ -541,6 +551,7 @@ class IssuePage extends StatelessWidget {
                   : municipalityResponse.dateEdited!;
 
               return Card(
+                margin: const EdgeInsets.all(0),
                 color: custom_colors.grey1,
                 child: Column(
                   children: [

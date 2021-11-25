@@ -17,9 +17,9 @@ enum ReportButtonEvent { close, selectReportCategory, confirm }
 class ReportEvent {}
 
 class ButtonPressed extends ReportEvent {
-  final ReportButtonEvent reportButtonEvent;
+  final ReportButtonEvent buttonEvent;
 
-  ButtonPressed({required this.reportButtonEvent});
+  ButtonPressed({required this.buttonEvent});
 }
 
 //endregion

@@ -17,7 +17,8 @@ enum IssueButtonEvent {
   back,
   editIssue,
   verifyIssue,
-  reportIssue
+  reportIssue,
+  deleteIssue
 }
 enum IssueTextChangedEvent { description }
 enum IssuePageView { create, edit, see }

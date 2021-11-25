@@ -270,7 +270,11 @@ class IssuesOverviewFilterBloc
                         children: [
                           Expanded(
                               child: CustomLabel(
-                            title: item.category.name!,
+                            title: LocalizationHelper.getInstance()
+                                .getLocalizedCategory(
+                                _buildContext, item.category),
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,
@@ -367,6 +371,8 @@ class IssuesOverviewFilterBloc
                         children: [
                           Expanded(
                               child: CustomLabel(
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
                             title: LocalizationHelper.getInstance()
                                 .getLocalizedCategory(
                                     _buildContext, item.category),
@@ -404,6 +410,8 @@ class IssuesOverviewFilterBloc
                         children: [
                           Expanded(
                               child: CustomLabel(
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
                             title: LocalizationHelper.getInstance()
                                 .getLocalizedSubCategory(
                                     _buildContext, item.subCategory),
@@ -507,6 +515,8 @@ class IssuesOverviewFilterBloc
                         children: [
                           Expanded(
                               child: CustomLabel(
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
                             title: item.municipality.name!,
                             margin: const EdgeInsets.only(
                                 left: values.padding,

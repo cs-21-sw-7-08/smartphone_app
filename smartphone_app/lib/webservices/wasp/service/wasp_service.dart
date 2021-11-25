@@ -99,6 +99,17 @@ class WASPService implements IWASPServiceFunctions {
   //region Issue controller
 
   @override
+  Future<WASPServiceResponse<WASPResponse>> deleteIssue(int issueId) {
+    return actionCall(() {
+      return restHelper.sendDeleteRequest("${issueControllerPath}DeleteIssue",
+          parameters: [
+            RestParameter(name: "issueId", value: issueId.toString())
+          ],
+          body: null);
+    }, (response) => WASPResponse.fromJson(response.jsonResponse));
+  }
+
+  @override
   Future<WASPServiceResponse<GetIssueDetails_WASPResponse>> getIssueDetails(
       int issueId) async {
     return actionCall(() {
@@ -128,11 +139,13 @@ class WASPService implements IWASPServiceFunctions {
   @override
   Future<WASPServiceResponse<WASPResponse>> verifyIssue(
       {required int citizenId, required int issueId}) async {
-    RestResponse response = await restHelper
-        .sendGetRequest("${issueControllerPath}VerifyIssue", parameters: [
-      RestParameter(name: "issueId", value: issueId.toString()),
-      RestParameter(name: "citizenId", value: citizenId.toString())
-    ]);
+    RestResponse response =
+        await restHelper.sendPostRequest("${issueControllerPath}VerifyIssue",
+            parameters: [
+              RestParameter(name: "issueId", value: issueId.toString()),
+              RestParameter(name: "citizenId", value: citizenId.toString())
+            ],
+            body: null);
     // Check for HTTP errors
     if (!response.isSuccess) {
       return WASPServiceResponse.error(response.errorMessage);
@@ -176,12 +189,14 @@ class WASPService implements IWASPServiceFunctions {
   @override
   Future<WASPServiceResponse<WASPResponse>> reportIssue(
       {required int reportCategoryId, required int issueId}) async {
-    RestResponse response = await restHelper
-        .sendGetRequest("${issueControllerPath}ReportIssue", parameters: [
-      RestParameter(name: "issueId", value: issueId.toString()),
-      RestParameter(
-          name: "reportCategoryId", value: reportCategoryId.toString())
-    ]);
+    RestResponse response =
+        await restHelper.sendPostRequest("${issueControllerPath}ReportIssue",
+            parameters: [
+              RestParameter(name: "issueId", value: issueId.toString()),
+              RestParameter(
+                  name: "reportCategoryId", value: reportCategoryId.toString())
+            ],
+            body: null);
     // Check for HTTP errors
     if (!response.isSuccess) {
       return WASPServiceResponse.error(response.errorMessage);

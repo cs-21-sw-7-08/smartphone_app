@@ -23,6 +23,10 @@
   "@do_you_want_to_remove_this_picture": {
     "description": "Question to the user"
   },
+  "are_you_sure_you_want_to_delete_this_issue": "Are you sure you want to delete this issue?",
+  "@are_you_sure_you_want_to_delete_this_issue": {
+    "description": "Question to the user"
+  },
   "overview": "Overview",
   "@overview": {
     "description": "Overview title"
@@ -175,9 +179,21 @@
   "@log_out": {
     "description": "Log out drawer title"
   },
+  "you_cannot_edit_the_issue": "You cannot edit the issue, because your municipality has changed the status",
+  "@you_cannot_edit_the_issue": {
+    "description": "Informative message to the user"
+  },
+  "you_cannot_delete_the_issue": "You cannot delete the issue, because your municipality has changed the status",
+  "@you_cannot_delete_the_issue": {
+    "description": "Informative message to the user"
+  },
   "logging_out": "Logging out...",
   "@logging_out": {
     "description": "Progress title"
+  },
+  "deleting_issue": "Deleting issue...",
+  "@deleting_issue": {
+    "description": "Progress message"
   },
   "select_municipality": "Select municipality",
   "@select_municipality": {
@@ -355,15 +371,19 @@
   "@near": {
     "description": "Near an address"
   },
+  "delete_issue": "Delete issue",
+  "@delete_issue": {
+    "description": "Title"
+  },
   "search_hint": "Search...",
   "@search_hint": {
     "description": "Search field hint"
   },
-  "category_id_1": "Sidewalk",
+  "category_id_1": "Road",
   "@category_id_1": {
     "description": "Model enum localization"
   },
-  "sub_category_id_1": "Hole in sidewalk",
+  "sub_category_id_1": "Hole in road",
   "@sub_category_id_1": {
     "description": "Model enum localization"
   },

@@ -125,10 +125,13 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
       /// Back
         case IssueButtonEvent.back:
           switch (state.issuePageView!) {
+          /// See, Create
             case IssuePageView.see:
             case IssuePageView.create:
               Navigator.of(_buildContext).pop(state.hasChanges);
               break;
+
+          /// Edit
             case IssuePageView.edit:
               List<String> names = state.getNamesOfChangedProperties(
                   hashCodeMap!);
@@ -154,10 +157,10 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
 
       /// Edit issue
         case IssueButtonEvent.editIssue:
-        // You can only edit an issue with the status "Created"
+        // You cannot edit the issue, if the municipality has changed the status
           if (issue!.issueState!.id != 1) {
             GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
-                .you_can_only_edit_an_issue_with_the_status_created);
+                .you_cannot_edit_the_issue);
             return;
           }
           // Go into edit mode
@@ -187,9 +190,27 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           if (reportCategory == null) return;
           _reportIssue(reportCategory);
           break;
+
+      /// Delete
+        case IssueButtonEvent.deleteIssue:
+        // You cannot delete the issue, if the municipality has changed the status
+          if (issue!.issueState!.id != 1) {
+            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+                .you_cannot_delete_the_issue);
+            return;
+          }
+          // Ask user if they are sure about deleting the issue
+          DialogQuestionResponse questionResponse = await QuestionDialog
+              .show(context: _buildContext,
+              question: AppLocalizations.of(_buildContext)!
+                  .are_you_sure_you_want_to_delete_this_issue);
+          if (questionResponse != DialogQuestionResponse.yes) return;
+          await _deleteIssue();
+          break;
       }
     } else if (event is TextChanged) {
       switch (event.createIssueTextChangedEvent) {
+      /// Description
         case IssueTextChangedEvent.description:
           yield state.copyWith(description: event.value);
           break;
@@ -499,6 +520,29 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                   picture3: picture3,
                   location: Location.fromLatLng(state.marker!.position)
               ));
+          if (!response.isSuccess) {
+            GeneralUtil.showToast(response.exception!);
+            return false;
+          }
+          return true;
+        },
+        taskCancelled: () {});
+    flag ??= false;
+    // If issue was created return true to parent page and pop this page
+    if (flag) {
+      Navigator.of(_buildContext).pop(true);
+    }
+  }
+
+  Future<void> _deleteIssue() async {
+    // Create issue
+    bool? flag = await TaskUtil.runTask(
+        buildContext: _buildContext,
+        progressMessage:
+        AppLocalizations.of(_buildContext)!.deleting_issue,
+        doInBackground: (runTask) async {
+          var response = await WASPService.getInstance().deleteIssue(
+              issue!.id!);
           if (!response.isSuccess) {
             GeneralUtil.showToast(response.exception!);
             return false;

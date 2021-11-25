@@ -40,16 +40,22 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   @override
   Stream<ReportState> mapEventToState(ReportEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.reportButtonEvent) {
+      switch (event.buttonEvent) {
+
+        /// Close
         case ReportButtonEvent.close:
           // Close dialog
           Navigator.of(_buildContext).pop(null);
           break;
+
+        /// Select report category
         case ReportButtonEvent.selectReportCategory:
           ReportState? newState = await _selectReportCategory();
           if (newState == null) return;
           yield newState;
           break;
+
+        /// Confirm
         case ReportButtonEvent.confirm:
           if (state.reportCategory == null) {
             GeneralUtil.showToast(
