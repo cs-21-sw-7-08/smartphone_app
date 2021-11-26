@@ -297,7 +297,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
               reportCategoryId: reportCategory.id
           )
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           return true;
@@ -400,7 +400,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           )
           // Check response
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
 
@@ -460,7 +460,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
               citizenId: citizenId
           )
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           issue!.issueVerificationCitizenIds!.add(citizenId);
@@ -521,7 +521,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                   location: Location.fromLatLng(state.marker!.position)
               ));
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           return true;
@@ -544,7 +544,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           var response = await WASPService.getInstance().deleteIssue(
               issue!.id!);
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           return true;

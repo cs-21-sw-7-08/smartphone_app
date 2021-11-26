@@ -91,7 +91,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           var response = await WASPService.getInstance().logInCitizen(
               citizen: Citizen(email: signInResponse!.user.email));
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           return response.waspResponse!.result;

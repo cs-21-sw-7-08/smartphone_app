@@ -383,9 +383,309 @@
   "@category_id_1": {
     "description": "Model enum localization"
   },
-  "sub_category_id_1": "Hole in road",
+  "category_id_2": "Road shoulder",
+  "@category_id_2": {
+    "description": "Model enum localization"
+  },
+  "category_id_3": "Sidewalk",
+  "@category_id_3": {
+    "description": "Model enum localization"
+  },
+  "category_id_4": "Sidewalk",
+  "@category_id_4": {
+    "description": "Model enum localization"
+  },
+  "category_id_5": "Bicycle path",
+  "@category_id_5": {
+    "description": "Model enum localization"
+  },
+  "category_id_6": "Urban equipment",
+  "@category_id_6": {
+    "description": "Model enum localization"
+  },
+  "category_id_7": "Technical facilities",
+  "@category_id_7": {
+    "description": "Model enum localization"
+  },
+  "category_id_8": "Park facilities",
+  "@category_id_8": {
+    "description": "Model enum localization"
+  },
+  "category_id_9": "Parks & public spaces",
+  "@category_id_9": {
+    "description": "Model enum localization"
+  },
+  "category_id_10": "Forests and nature areas",
+  "@category_id_10": {
+    "description": "Model enum localization"
+  },
+  "category_id_11": "Invasive plant species",
+  "@category_id_11": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_1": "Potholes",
   "@sub_category_id_1": {
     "description": "Model enum localization"
+  },
+  "sub_category_id_2": "Exposed drain pipe",
+  "@sub_category_id_2": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_3": "Signage",
+  "@sub_category_id_3": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_4": "Road trees",
+  "@sub_category_id_4": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_5": "Wet road",
+  "@sub_category_id_5": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_6": "Roadkill",
+  "@sub_category_id_6": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_7": "Other",
+  "@sub_category_id_7": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_8": "Pothole in road shoulder",
+  "@sub_category_id_8": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_9": "Other",
+  "@sub_category_id_9": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_10": "Damaged sidewalk",
+  "@sub_category_id_10": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_11": "Loose tiles",
+  "@sub_category_id_11": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_12": "Elevation of tiles >3 cm",
+  "@sub_category_id_12": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_13": "Cracked tiles",
+  "@sub_category_id_13": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_14": "Signage",
+  "@sub_category_id_14": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_15": "Weeds",
+  "@sub_category_id_15": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_16": "Other",
+  "@sub_category_id_16": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_17": "Pothole",
+  "@sub_category_id_17": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_18": "Exposed drain pipe",
+  "@sub_category_id_18": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_19": "Signage",
+  "@sub_category_id_19": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_20": "Wet road",
+  "@sub_category_id_20": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_21": "Other",
+  "@sub_category_id_21": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_22": "Pothole",
+  "@sub_category_id_22": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_23": "Exposed drain pipe",
+  "@sub_category_id_23": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_24": "Signage",
+  "@sub_category_id_24": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_25": "Wet bicycle path",
+  "@sub_category_id_25": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_26": "Other",
+  "@sub_category_id_26": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_27": "Tables or benches",
+  "@sub_category_id_27": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_28": "Garbage cans or containers",
+  "@sub_category_id_28": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_29": "Bicycle racks",
+  "@sub_category_id_29": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_30": "Bollards",
+  "@sub_category_id_30": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_31": "Fencing",
+  "@sub_category_id_31": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_32": "Other",
+  "@sub_category_id_32": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_33": "Road lighting",
+  "@sub_category_id_33": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_34": "Traffic lights",
+  "@sub_category_id_34": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_35": "Other",
+  "@sub_category_id_35": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_36": "Tables or benches",
+  "@sub_category_id_36": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_37": "Playgrounds",
+  "@sub_category_id_37": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_38": "Garbage cans or containers",
+  "@sub_category_id_38": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_39": "Water fountains",
+  "@sub_category_id_39": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_40": "Information boards",
+  "@sub_category_id_40": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_41": "Restrooms",
+  "@sub_category_id_41": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_42": "Shelter or campfires",
+  "@sub_category_id_42": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_43": "Other",
+  "@sub_category_id_43": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_44": "Trees",
+  "@sub_category_id_44": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_45": "Lawn",
+  "@sub_category_id_45": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_46": "Plants and greenery",
+  "@sub_category_id_46": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_47": "Ponds",
+  "@sub_category_id_47": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_48": "Paths",
+  "@sub_category_id_48": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_49": "Other",
+  "@sub_category_id_49": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_50": "Trees",
+  "@sub_category_id_50": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_51": "Plants and greenery",
+  "@sub_category_id_51": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_52": "Memorials",
+  "@sub_category_id_52": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_53": "Animal fencing",
+  "@sub_category_id_53": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_54": "Designated roads or paths",
+  "@sub_category_id_54": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_55": "Other",
+  "@sub_category_id_55": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_56": "Giant Hogweed (Bear Claw)",
+  "@sub_category_id_56": {
+    "description": "Model enum localization"
+  },
+  "sub_category_id_57": "Other",
+  "@sub_category_id_57": {
+    "description": "Model enum localization"
+  },
+  "report_category_id_1": "Nudity",
+  "@report_category_id_1": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_2": "Violence",
+  "@report_category_id_2": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_3": "Harrassment",
+  "@report_category_id_3": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_4": "False information",
+  "@report_category_id_4": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_5": "Spam",
+  "@report_category_id_5": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_6": "Unauthorized sale",
+  "@report_category_id_6": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_7": "Hate speech",
+  "@report_category_id_7": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_8": "Terrorism",
+  "@report_category_id_8": {
+    "description": "Report enum localization"
+  },
+  "report_category_id_9": "Other",
+  "@report_category_id_9": {
+    "description": "Report enum localization"
   },
   "issue_state_id_1": "Created",
   "@issue_state_id_1": {
@@ -398,5 +698,113 @@
   "issue_state_id_3": "Resolved",
   "@issue_state_id_3": {
     "description": "Model enum localization"
+  },
+  "issue_state_id_4": "Unresolved",
+  "@issue_state_id_4": {
+    "description": "Model enum localization"
+  },
+  "response_error_id_5": "The changes you made could not be saved\nIf this problem persists, contact the system administrators. Error Code: 5",
+  "@response_error_id_5": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_50": "Something went wrong while applying changes\nIf this problem persists, contact the system administrators. Error Code: 50",
+  "@response_error_id_50": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_100": "The category you attempted to apply does not exist",
+  "@response_error_id_100": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_101": "The subcategory you attempted to apply does not exist",
+  "@response_error_id_101": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_102": "Please provide both the \"From\" and \"To\" timestamps",
+  "@response_error_id_102": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_103": "The status you attempted to apply to the issue does not exist",
+  "@response_error_id_103": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_104": "The issue you attempted to find does not exist",
+  "@response_error_id_104": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_105": "You cannot change an issue status from Approved to Created or from Resolved to Approved/Created",
+  "@response_error_id_105": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_106": "You have already verified this issue",
+  "@response_error_id_106": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_107": "The category you attempted to report this issue in does not exist",
+  "@response_error_id_107": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_108": "You cannot verify your own issue",
+  "@response_error_id_108": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_200": "The citizen you attempted to find does not exist",
+  "@response_error_id_200": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_201": "Please provide only the phone number or E-mail",
+  "@response_error_id_201": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_202": "Incorrect password or phone number/E-mail. Please try again",
+  "@response_error_id_202": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_203": "This citizen is already blocked",
+  "@response_error_id_203": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_204": "This citizen is already unblocked",
+  "@response_error_id_204": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_205": "A user with this phone number already exists",
+  "@response_error_id_205": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_206": "A user with this E-mail already exists",
+  "@response_error_id_206": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_207": "A field contains invalid information\nPlease check your information",
+  "@response_error_id_207": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_208": "You are blocked and is restricted from this action\nPlease contact your municipality for assistance",
+  "@response_error_id_208": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_300": "The municipality you attempted to find does not exist",
+  "@response_error_id_300": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_301": "The municipality user you attempted to find does not exist",
+  "@response_error_id_301": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_302": "Incorrect E-mail or password\nPlease try again",
+  "@response_error_id_302": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_303": "This issue is outside of your municipality",
+  "@response_error_id_303": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_304": "The response you attempted to find does not exist",
+  "@response_error_id_304": {
+    "description": "Error enum localization"
+  },
+  "response_error_id_305": "A municipality user with this E-mail already exists",
+  "@response_error_id_305": {
+    "description": "Error enum localization"
   }
 }

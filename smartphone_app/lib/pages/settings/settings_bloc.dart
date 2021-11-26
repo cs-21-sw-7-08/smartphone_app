@@ -137,7 +137,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               updates: waspUpdates
           )
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           return true;
@@ -170,7 +170,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
                   AppValuesKey.citizenId)!
           )
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           return true;
@@ -249,7 +249,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
                 citizenId: AppValuesHelper.getInstance()
                     .getInteger(AppValuesKey.citizenId)!);
             if (!getListOfMunicipalitiesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfMunicipalitiesResponse.errorMessage)!);
               return false;
             }
 

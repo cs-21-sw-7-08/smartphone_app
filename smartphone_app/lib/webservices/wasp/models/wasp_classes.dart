@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 
 part 'wasp_classes.g.dart';
 
@@ -19,8 +21,18 @@ class WASPResponse {
 
   Map<String, dynamic> toJson() => _$WASPResponseToJson(this);
 
-  String? getErrorMessage() {
+  Future<String?> getErrorMessage() async {
     if (!isSuccessful && errorNo != 0) {
+      // 1 and 2 points to exceptions and not constant errors
+      switch (errorNo) {
+        case 1:
+        case 2:
+          return errorMessage;
+      }
+      // Get localized error message
+      String? waspError = await LocalizationHelper.getInstance()
+          .getLocalizedResponseError(errorNo);
+      if (waspError != null) return waspError;
       return "WASP error: ${errorNo.toString()}";
     } else if (errorMessage != null) {
       return errorMessage;

@@ -231,7 +231,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
           var response = await WASPService.getInstance()
               .logInCitizen(citizen: Citizen(phoneNo: state.phoneNo));
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           return response.waspResponse!.result;
@@ -279,7 +279,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
                   name: state.name,
                   municipalityId: state.municipality!.id));
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           return response.waspResponse!.result;
@@ -310,7 +310,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
                 getListOfMunicipalitiesResponse =
                 await WASPService.getInstance().getListOfMunicipalities();
             if (!getListOfMunicipalitiesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfMunicipalitiesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveMunicipalities(

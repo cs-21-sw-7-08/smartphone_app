@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Jakob Precht on 31/08/2021.
+  
+*/
+
+NSLocalNetworkUsageDescription = "Bruger netværket til at hente og sende data via en webservice";
+CFBundleName = "Bee A Helper";
+CFBundleDisplayName = "Bee A Helper";

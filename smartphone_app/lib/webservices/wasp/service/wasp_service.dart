@@ -23,7 +23,7 @@ class WASPServiceResponse<Response extends WASPResponse> {
     return waspResponse!.isSuccessful;
   }
 
-  String? get errorMessage {
+  Future<String?> get errorMessage async {
     if (exception != null) return exception;
     if (waspResponse != null) return waspResponse!.getErrorMessage();
     return null;

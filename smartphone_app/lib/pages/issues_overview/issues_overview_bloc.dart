@@ -229,7 +229,8 @@ class IssuesOverviewBloc
                         citizenId: AppValuesHelper.getInstance()
                             .getInteger(AppValuesKey.citizenId)!);
             if (!isBlockedCitizenResponse.isSuccess) {
-              GeneralUtil.showToast(isBlockedCitizenResponse.exception!);
+              GeneralUtil.showToast(
+                  (await isBlockedCitizenResponse.errorMessage)!);
               return false;
             }
             if (isBlockedCitizenResponse.waspResponse!.result!) {
@@ -242,7 +243,8 @@ class IssuesOverviewBloc
                 getListOfMunicipalitiesResponse =
                 await WASPService.getInstance().getListOfMunicipalities();
             if (!getListOfMunicipalitiesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfMunicipalitiesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveMunicipalities(
@@ -253,7 +255,8 @@ class IssuesOverviewBloc
                 getListOfCategoriesResponse =
                 await WASPService.getInstance().getListOfCategories();
             if (!getListOfCategoriesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfCategoriesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveCategories(
@@ -265,7 +268,7 @@ class IssuesOverviewBloc
                 await WASPService.getInstance().getListOfReportCategories();
             if (!getListOfReportCategoriesResponse.isSuccess) {
               GeneralUtil.showToast(
-                  getListOfReportCategoriesResponse.exception!);
+                  (await getListOfReportCategoriesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveReportCategories(
@@ -276,7 +279,7 @@ class IssuesOverviewBloc
                 .getListOfIssues(filter: state.filter!);
             // Check for errors
             if (!response.isSuccess) {
-              GeneralUtil.showToast(response.exception!);
+              GeneralUtil.showToast((await response.errorMessage)!);
               return false;
             }
             // Get issues
@@ -308,7 +311,7 @@ class IssuesOverviewBloc
               await WASPService.getInstance().getListOfIssues(filter: filter);
           // Check for errors
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           // Get issues
@@ -332,7 +335,7 @@ class IssuesOverviewBloc
               await WASPService.getInstance().getIssueDetails(issueId);
           // Check for errors
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           // Get issue
