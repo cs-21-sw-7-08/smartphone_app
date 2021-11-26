@@ -118,7 +118,7 @@ class _CustomListDialogState extends State<CustomListDialog>
     return WillPopScope(
         onWillPop: () async {
           bloc.add(ButtonPressed(
-              customListDialogButtonEvent:
+              buttonEvent:
                   CustomListDialogButtonEvent.backPressed));
           return false;
         },
@@ -154,7 +154,7 @@ class _CustomListDialogState extends State<CustomListDialog>
                                         ? AppBarLeftButton.close
                                         : AppBarLeftButton.back,
                                 leftButtonPressed: () => bloc.add(ButtonPressed(
-                                    customListDialogButtonEvent:
+                                    buttonEvent:
                                         CustomListDialogButtonEvent
                                             .backPressed)),
                                 button1Icon: Icon(
@@ -164,7 +164,7 @@ class _CustomListDialogState extends State<CustomListDialog>
                                     color: Colors.white),
                                 onButton1Pressed: () {
                                   bloc.add(ButtonPressed(
-                                      customListDialogButtonEvent:
+                                      buttonEvent:
                                           CustomListDialogButtonEvent
                                               .changeSearchBarVisibility));
                                   !bloc.state.showSearchBar!
@@ -208,7 +208,7 @@ class _CustomListDialogState extends State<CustomListDialog>
                                     hint: AppLocalizations.of(context)!
                                         .search_hint,
                                     onChanged: (value) => bloc.add(TextChanged(
-                                        customListDialogTextChangedEvent:
+                                        textChangedEvent:
                                             CustomListDialogTextChangedEvent
                                                 .searchText,
                                         value: value)),
@@ -221,7 +221,7 @@ class _CustomListDialogState extends State<CustomListDialog>
                           // 'Confirm' button
                           CustomButton(
                             onPressed: () => bloc.add(ButtonPressed(
-                                customListDialogButtonEvent:
+                                buttonEvent:
                                     CustomListDialogButtonEvent.confirm)),
                             text: AppLocalizations.of(context)!.confirm,
                             fontWeight: FontWeight.bold,

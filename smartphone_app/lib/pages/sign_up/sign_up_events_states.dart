@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
@@ -57,7 +58,8 @@ class VerificationIdRetrieved extends SignUpEvent {
 ///
 //region State
 
-class SignUpState {
+// ignore: must_be_immutable
+class SignUpState extends Equatable {
   SignUpPageView? signUpPageView;
   String? name;
   String? phoneNo;
@@ -88,6 +90,10 @@ class SignUpState {
         verificationId: verificationId ?? this.verificationId,
         signUpPageView: signUpPageView ?? this.signUpPageView);
   }
+
+  @override
+  List<Object?> get props =>
+      [signUpPageView, name, phoneNo, smsCode, verificationId, municipality];
 }
 
 //endregion

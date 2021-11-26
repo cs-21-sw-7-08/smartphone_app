@@ -20,15 +20,14 @@ import 'sign_up_events_states.dart';
 // ignore: must_be_immutable
 class SignUpPage extends StatelessWidget {
   late SignUpBloc bloc;
-  SignUpPageView signUpPageView;
+  late SignUpPageView signUpPageView;
   late String? name;
   late String? email;
 
   SignUpPage(
       {Key? key,
       this.name,
-      this.email,
-      this.signUpPageView = SignUpPageView.phoneNo})
+      this.email})
       : super(key: key) {
     signUpPageView =
         name == null ? SignUpPageView.phoneNo : SignUpPageView.name;
@@ -36,7 +35,7 @@ class SignUpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SignUpBloc bloc = SignUpBloc(
+    bloc = SignUpBloc(
         email: email,
         buildContext: context,
         signUpPageView: signUpPageView,

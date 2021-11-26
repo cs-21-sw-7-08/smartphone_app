@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/helpers/permission_helper.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_page.dart';
 import 'package:smartphone_app/pages/login/login_events_states.dart';
 import 'package:smartphone_app/pages/sign_up/sign_up_page.dart';
@@ -20,7 +19,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ///
   //region Variables
 
-  late BuildContext _buildContext;
+  late BuildContext buildContext;
+  late PermissionHelper permissionHelper;
+  static const List<PermissionWithService> permissions = [
+    Permission.locationWhenInUse
+  ];
 
   //endregion
 
@@ -29,9 +32,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ///
   //region Constructor
 
-  LoginBloc({required BuildContext buildContext}) : super(LoginState()) {
-    _buildContext = buildContext;
-  }
+  LoginBloc({required this.buildContext, required this.permissionHelper})
+      : super(LoginState(permissionState: PermissionState.denied));
 
   //endregion
 
@@ -47,7 +49,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         /// Use phone no.
         case LoginButtonEvent.usePhoneNo:
-          GeneralUtil.goToPage(_buildContext, SignUpPage());
+          GeneralUtil.goToPage(buildContext, SignUpPage());
           break;
 
         /// Use Google login
@@ -59,7 +61,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         case LoginButtonEvent.useAppleLogin:
           await _useAppleLogin();
           break;
+
+        /// Go to settings
+        case LoginButtonEvent.goToSettings:
+          await permissionHelper.openAppSettings();
+          break;
       }
+    } else if (event is Resumed) {
+      for (var permission in permissions) {
+        var status = await permissionHelper.getStatus(permission);
+        if (!status.isGranted) {
+          add(PermissionStateChanged(permissionState: PermissionState.denied));
+          return;
+        }
+      }
+      add(PermissionStateChanged(permissionState: PermissionState.granted));
+    } else if (event is PermissionStateChanged) {
+      yield state.copyWith(permissionState: event.permissionState);
     }
   }
 
@@ -73,10 +91,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> _useGoogleLogin() async {
     String? name;
     SignInResponse? signInResponse;
+    bool errorOccurred = false;
     // Try log in
     Citizen? citizen = await TaskUtil.runTask<Citizen>(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.logging_in,
+        buildContext: buildContext,
+        progressMessage: AppLocalizations.of(buildContext)!.logging_in,
         doInBackground: (runTask) async {
           try {
             signInResponse = await ThirdPartySignInUtil.signInWithGoogle();
@@ -91,6 +110,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           var response = await WASPService.getInstance().logInCitizen(
               citizen: Citizen(email: signInResponse!.user.email));
           if (!response.isSuccess) {
+            if (response.waspResponse!.errorNo == 202) {
+              return null;
+            }
+            errorOccurred = true;
             GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
@@ -99,17 +122,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         taskCancelled: () {});
 
     if (signInResponse == null) return;
+    if (errorOccurred) return;
 
     // If citizen is null it means that the user is not signed up yet
     if (citizen == null) {
       name ??= "";
-      GeneralUtil.goToPage(_buildContext,
+      GeneralUtil.goToPage(buildContext,
           SignUpPage(email: signInResponse!.user.email, name: name));
     } else {
       if (citizen.isBlocked!) {
         await ThirdPartySignInUtil.signOut();
         GeneralUtil.showToast(
-            AppLocalizations.of(_buildContext)!.this_user_is_blocked);
+            AppLocalizations.of(buildContext)!.this_user_is_blocked);
         return;
       }
 
@@ -120,23 +144,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await AppValuesHelper.getInstance().saveInteger(
           AppValuesKey.defaultMunicipalityId, citizen.municipality!.id);
       // Go to issues overview
-      GeneralUtil.goToPage(_buildContext, const IssuesOverviewPage());
+      GeneralUtil.goToPage(buildContext, const IssuesOverviewPage());
     }
   }
 
   Future<void> _useAppleLogin() async {
     GeneralUtil.showToast(
-        AppLocalizations.of(_buildContext)!.this_is_not_supported_yet);
+        AppLocalizations.of(buildContext)!.this_is_not_supported_yet);
   }
 
   Future<PermissionState> getPermissions() async {
-    List<PermissionWithService> permissions = [Permission.locationWhenInUse];
-    Map<Permission, PermissionStatus> statuses = await permissions.request();
+    Map<Permission, PermissionStatus> statuses =
+        await permissionHelper.requestPermissions(permissions);
 
     PermissionState permissionState =
         statuses.values.any((element) => !element.isGranted)
             ? PermissionState.denied
             : PermissionState.granted;
+
+    add(PermissionStateChanged(permissionState: permissionState));
     return permissionState;
   }
 

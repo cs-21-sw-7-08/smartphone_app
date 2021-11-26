@@ -20,17 +20,17 @@ enum CustomListDialogTextChangedEvent { searchText }
 class CustomListDialogEvent {}
 
 class ButtonPressed extends CustomListDialogEvent {
-  final CustomListDialogButtonEvent customListDialogButtonEvent;
+  final CustomListDialogButtonEvent buttonEvent;
 
-  ButtonPressed({required this.customListDialogButtonEvent});
+  ButtonPressed({required this.buttonEvent});
 }
 
 class TextChanged extends CustomListDialogEvent {
-  final CustomListDialogTextChangedEvent customListDialogTextChangedEvent;
+  final CustomListDialogTextChangedEvent textChangedEvent;
   String? value;
 
   TextChanged(
-      {required this.customListDialogTextChangedEvent, required this.value});
+      {required this.textChangedEvent, required this.value});
 }
 
 class ItemWasSelected extends CustomListDialogEvent {

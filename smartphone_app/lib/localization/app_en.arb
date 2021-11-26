@@ -343,6 +343,14 @@
   "@category": {
     "description": "Category title"
   },
+  "go_to_settings": "Go to settings",
+  "@go_to_settings": {
+    "description": "Button text"
+  },
+  "please_go_to_settings_and_give_bee_a_helper_all_the_necessary_permissions": "Please go to settings and give Bee A Helper all the necessary permissions",
+  "@please_go_to_settings_and_give_bee_a_helper_all_the_necessary_permissions": {
+    "description": "Informative message to the user"
+  },
   "subcategory": "Subcategory",
   "@subcategory": {
     "description": "Subcategory title"
@@ -391,7 +399,7 @@
   "@category_id_3": {
     "description": "Model enum localization"
   },
-  "category_id_4": "Sidewalk",
+  "category_id_4": "Path",
   "@category_id_4": {
     "description": "Model enum localization"
   },

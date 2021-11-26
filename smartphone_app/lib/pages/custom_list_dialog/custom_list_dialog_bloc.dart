@@ -51,7 +51,7 @@ class CustomListDialogBloc
   Stream<CustomListDialogState> mapEventToState(
       CustomListDialogEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.customListDialogButtonEvent) {
+      switch (event.buttonEvent) {
         case CustomListDialogButtonEvent.changeSearchBarVisibility:
           yield state.copyWith(
               showSearchBar: !state.showSearchBar!,
@@ -93,7 +93,7 @@ class CustomListDialogBloc
           break;
       }
     } else if (event is TextChanged) {
-      switch (event.customListDialogTextChangedEvent) {
+      switch (event.textChangedEvent) {
         case CustomListDialogTextChangedEvent.searchText:
           print(event.value);
           yield state.copyWith(

@@ -215,20 +215,6 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                             ),
                                             CustomDrawerTile(
                                               icon: const Icon(
-                                                  Icons.info_outline,
-                                                  color: Colors.black,
-                                                  size: 30),
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .help,
-                                              onPressed: () async {},
-                                            ),
-                                            Container(
-                                              height: 1,
-                                              color: Colors.black,
-                                            ),
-                                            CustomDrawerTile(
-                                              icon: const Icon(
                                                   Icons.logout_outlined,
                                                   color: Colors.black,
                                                   size: 30),

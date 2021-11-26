@@ -1,9 +1,11 @@
 // ignore: must_be_immutable
 import 'dart:ui';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smartphone_app/helpers/permission_helper.dart';
 import 'package:smartphone_app/pages/login/login_bloc.dart';
 import 'package:smartphone_app/pages/login/login_events_states.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
@@ -13,58 +15,119 @@ import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _LoginState();
+}
+
 // ignore: must_be_immutable, use_key_in_widget_constructors
-class LoginPage extends StatelessWidget {
-  late LoginBloc bloc;
+class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
+  LoginBloc? bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // ignore: missing_enum_constant_in_switch
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (bloc != null) {
+          bloc!.add(Resumed());
+        }
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    LoginBloc bloc = LoginBloc(buildContext: context);
+    bloc =
+        LoginBloc(buildContext: context, permissionHelper: PermissionHelper());
 
     return WillPopScope(
         onWillPop: () async {
           return true;
         },
         child: FutureBuilder<PermissionState>(
-            future: bloc.getPermissions(),
+            future: bloc!.getPermissions(),
             builder: (context, snapshot) {
-              /// Content shown while asking then user for OS permissions like
-              /// accessing camera, location etc.
-              if (snapshot.connectionState != ConnectionState.done) {
-                return Container(
-                  color: Colors.white,
-                );
-              }
-
-              /// The user denied one of the permissions
-              if (snapshot.data! == PermissionState.denied) {
-                // TODO: Add design that lets the user go to settings in order
-                // TODO: to give permissions
-                return Container(color: Colors.red);
-              }
-
               /// Main content shown on the login page
               return BlocProvider(
-                  create: (_) => bloc,
+                  create: (_) => bloc!,
                   child: Container(
                       color: custom_colors.appSafeAreaColor,
-                      child: SafeArea(
-                          child: Scaffold(
-                              body: Container(
-                                  decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: ExactAssetImage(
-                                            values.loginBackground,
-                                          ))),
-                                  child: BackdropFilter(
-                                    filter:
-                                        ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                    child: Container(
-                                        color: Colors.white.withOpacity(0.5),
-                                        child: _getContent(context, bloc)),
-                                  ))))));
+                      child: SafeArea(child:
+                          Scaffold(body: BlocBuilder<LoginBloc, LoginState>(
+                        builder: (context, state) {
+                          return _getBody(context, bloc!, state, snapshot);
+                        },
+                      )))));
             }));
+  }
+
+  Widget _getBody(BuildContext context, LoginBloc bloc, LoginState state,
+      AsyncSnapshot<PermissionState> snapshot) {
+    /// Content shown while asking then user for OS permissions like
+    /// accessing camera, location etc.
+    if (snapshot.connectionState != ConnectionState.done) {
+      return Container(
+        color: Colors.white,
+      );
+    }
+
+    /// The user denied one of the permissions
+    if (state.permissionState == PermissionState.denied &&
+        snapshot.data! == PermissionState.denied) {
+      return Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomLabel(
+              title: AppLocalizations.of(context)!
+                  .please_go_to_settings_and_give_bee_a_helper_all_the_necessary_permissions,
+            ),
+            CustomButton(
+              onPressed: () => bloc.add(ButtonPressed(
+                  loginButtonEvent: LoginButtonEvent.goToSettings)),
+              text: AppLocalizations.of(context)!.go_to_settings,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              margin: const EdgeInsets.only(
+                  left: values.padding,
+                  right: values.padding,
+                  top: values.padding),
+            )
+          ],
+        ),
+      );
+    }
+
+    return Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                fit: BoxFit.cover,
+                image: ExactAssetImage(
+                  values.loginBackground,
+                ))),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+              color: Colors.white.withOpacity(0.5),
+              child: _getContent(context, bloc)),
+        ));
   }
 
   Widget _getContent(BuildContext context, LoginBloc bloc) {

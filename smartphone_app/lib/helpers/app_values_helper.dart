@@ -43,7 +43,9 @@ class AppValuesHelper {
 
   List<T> _getList<T>(
       AppValuesKey appValuesKey, Function(dynamic model) mapping) {
-    Iterable l = jsonDecode(getString(appValuesKey) ?? "");
+    String str = getString(appValuesKey) ?? "";
+    if (str.isEmpty) return List.empty(growable: true);
+    Iterable l = jsonDecode(str);
     List<T> list = List<T>.from(l.map((model) => mapping(model)));
     return list;
   }
