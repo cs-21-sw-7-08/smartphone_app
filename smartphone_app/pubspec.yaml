@@ -54,6 +54,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   devicelocale: ^0.4.2
   image_picker: ^0.8.4+4
+  app_settings: ^4.1.1
   google_maps_cluster_manager: ^3.0.0+1
 
 dev_dependencies:

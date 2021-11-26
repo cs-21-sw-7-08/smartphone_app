@@ -5,6 +5,7 @@
 *.swp
 .env
 android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 .DS_Store
 .atom/
 .buildlog/
