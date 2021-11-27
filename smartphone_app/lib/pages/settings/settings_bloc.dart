@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +24,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ///
   //region Variables
 
-  late BuildContext _buildContext;
+  BuildContext context;
   late HashMap<String, int>? hashCodeMap;
 
   //endregion
@@ -35,10 +34,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ///
   //region Constructor
 
-  SettingsBloc({required BuildContext buildContext})
-      : super(SettingsState()) {
-    _buildContext = buildContext;
-  }
+  SettingsBloc({required this.context})
+      : super(SettingsState());
 
   //endregion
 
@@ -50,30 +47,37 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   @override
   Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.settingsButtonEvent) {
+      switch (event.buttonEvent) {
+      /// Back
         case SettingsButtonEvent.back:
           List<String> names = state.getNamesOfChangedProperties(
               hashCodeMap!);
           if (names.isNotEmpty) {
             DialogQuestionResponse questionResponse = await QuestionDialog
-                .show(context: _buildContext,
-                question: AppLocalizations.of(_buildContext)!
+                .show(context: context,
+                question: AppLocalizations.of(context)!
                     .do_you_want_to_save_the_changes);
             if (questionResponse == DialogQuestionResponse.yes) {
               await _saveChanges();
             } else {
-              Navigator.of(_buildContext).pop(null);
+              Navigator.of(context).pop(null);
             }
           } else {
-            Navigator.of(_buildContext).pop(null);
+            Navigator.of(context).pop(null);
           }
           break;
+
+      /// Save
         case SettingsButtonEvent.save:
           await _saveChanges();
           break;
+
+      /// Delete account
         case SettingsButtonEvent.deleteAccount:
           await _deleteAccount();
           break;
+
+      /// Select municipality
         case SettingsButtonEvent.selectMunicipality:
           SettingsState? newState = await _selectMunicipality();
           if (newState == null) return;
@@ -86,7 +90,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       hashCodeMap = state.getCurrentHashCodes(state: newState);
       yield newState;
     } else if (event is TextChanged) {
-      switch (event.settingsTextChangedEvent) {
+      switch (event.textChangedEvent) {
+      /// Name
         case SettingsTextChangedEvent.name:
           yield state.copyWith(name: event.text);
           break;
@@ -105,21 +110,21 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     List<String> namesOfChangedProperties = state.getNamesOfChangedProperties(
         hashCodeMap!);
     if (namesOfChangedProperties.isEmpty) {
-      Navigator.of(_buildContext).pop(null);
+      Navigator.of(context).pop(null);
     }
 
     // Check for valid name
     if (state.name == null || state.name!.isEmpty) {
-      GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+      GeneralUtil.showToast(AppLocalizations.of(context)!
           .please_enter_your_full_name_toast);
       return;
     }
 
     // Save changes
     bool? flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.saving_changes,
+        AppLocalizations.of(context)!.saving_changes,
         doInBackground: (runTask) async {
           List<WASPUpdate> waspUpdates = List.empty(growable: true);
 
@@ -149,21 +154,21 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     await AppValuesHelper.getInstance().saveInteger(
         AppValuesKey.defaultMunicipalityId, state.municipality!.id);
     // Close dialog
-    Navigator.of(_buildContext).pop(SettingsCallBackType.settingsChanged);
+    Navigator.of(context).pop(SettingsCallBackType.settingsChanged);
   }
 
   Future<void> _deleteAccount() async {
     DialogQuestionResponse questionResponse = await QuestionDialog.show(
-        context: _buildContext,
-        question: AppLocalizations.of(_buildContext)!
+        context: context,
+        question: AppLocalizations.of(context)!
             .are_you_sure_you_want_to_delete_your_account);
     if (questionResponse != DialogQuestionResponse.yes) return;
 
     // Delete account
     bool? flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.deleting_account,
+        AppLocalizations.of(context)!.deleting_account,
         doInBackground: (runTask) async {
           var response = await WASPService.getInstance().deleteCitizen(
               citizenId: AppValuesHelper.getInstance().getInteger(
@@ -179,13 +184,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     flag ??= false;
     if (!flag) return;
     // Close dialog
-    Navigator.of(_buildContext).pop(SettingsCallBackType.deleteAccount);
+    Navigator.of(context).pop(SettingsCallBackType.deleteAccount);
   }
 
   Future<SettingsState?> _selectMunicipality() async {
     List<Municipality> municipalities =
     AppValuesHelper.getInstance().getMunicipalities();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         items: municipalities, itemBuilder:
             (index, item, list, showSearchBar, itemSelected, itemUpdated) {
           if (item is Municipality) {
@@ -222,7 +227,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           return false;
         }, titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.municipality;
+            return AppLocalizations.of(context)!.municipality;
           }
           return "";
         });
@@ -238,9 +243,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     return await Future.delayed(
         const Duration(milliseconds: values.pageTransitionTime), () async {
       var flag = await TaskUtil.runTask(
-          buildContext: _buildContext,
+          buildContext: context,
           progressMessage:
-          AppLocalizations.of(_buildContext)!.getting_information,
+          AppLocalizations.of(context)!.getting_information,
           doInBackground: (runTask) async {
             // Get citizen
             WASPServiceResponse<Citizen_WASPResponse>

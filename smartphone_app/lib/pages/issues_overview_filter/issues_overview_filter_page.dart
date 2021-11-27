@@ -29,8 +29,7 @@ class IssuesOverviewFilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IssuesOverviewFilterBloc bloc =
-        IssuesOverviewFilterBloc(buildContext: context, filter: filter);
+    bloc = IssuesOverviewFilterBloc(context: context, filter: filter);
 
     return WillPopScope(
         onWillPop: () async {
@@ -79,17 +78,17 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                           custom_colors.appBarBackground,
                                       appBarLeftButton: AppBarLeftButton.close,
                                       leftButtonPressed: () => bloc.add(
-                                          ButtonPressed(
-                                              issuesOverviewFilterButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   IssuesOverviewFilterButtonEvent
-                                                      .closePressed)),
+                                                      .close)),
                                       button1Icon: const Icon(
                                         Icons.refresh_outlined,
                                         color: Colors.white,
                                       ),
                                       onButton1Pressed: () => bloc.add(
-                                          ButtonPressed(
-                                              issuesOverviewFilterButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   IssuesOverviewFilterButtonEvent
                                                       .resetAll)),
                                     ),
@@ -122,23 +121,23 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                       _getOnlyOwnIssues(context, bloc, state)
                                     ]),
                                     _getCard(
-                                        () => bloc.add(ButtonPressed(
-                                            issuesOverviewFilterButtonEvent:
+                                        () => bloc.add(const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewFilterButtonEvent
                                                     .resetIssueStates)),
                                         AppLocalizations.of(context)!.status,
                                         [_getIssueState(context, bloc, state)]),
                                     _getCard(
-                                        () => bloc.add(ButtonPressed(
-                                            issuesOverviewFilterButtonEvent:
+                                        () => bloc.add(const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewFilterButtonEvent
                                                     .resetCategories)),
                                         AppLocalizations.of(context)!.category,
                                         [_getCategory(context, bloc, state)]),
                                     if (state.categories!.isNotEmpty)
                                       _getCard(
-                                          () => bloc.add(ButtonPressed(
-                                              issuesOverviewFilterButtonEvent:
+                                          () => bloc.add(const ButtonPressed(
+                                              buttonEvent:
                                                   IssuesOverviewFilterButtonEvent
                                                       .resetSubCategories)),
                                           AppLocalizations.of(context)!.subcategory,
@@ -147,8 +146,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                                 context, bloc, state)
                                           ]),
                                     _getCard(
-                                        () => bloc.add(ButtonPressed(
-                                            issuesOverviewFilterButtonEvent:
+                                        () => bloc.add(const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewFilterButtonEvent
                                                     .resetMunicipalities)),
                                         AppLocalizations.of(context)!
@@ -160,8 +159,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                 ))),
                         // 'Apply' button
                         CustomButton(
-                          onPressed: () => bloc.add(ButtonPressed(
-                              issuesOverviewFilterButtonEvent:
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent:
                                   IssuesOverviewFilterButtonEvent.applyFilter)),
                           text: AppLocalizations.of(context)!.apply,
                           fontWeight: FontWeight.bold,
@@ -260,8 +259,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                       )
                     : const Icon(Icons.check_box_outline_blank_outlined,
                         color: Colors.black, size: 50),
-                onPressed: () => bloc.add(ButtonPressed(
-                    issuesOverviewFilterButtonEvent:
+                onPressed: () => bloc.add(const ButtonPressed(
+                    buttonEvent:
                         IssuesOverviewFilterButtonEvent.onlyShowYourOwnIssues)))
           ],
         ));
@@ -321,7 +320,6 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                             ],
                           ))),
                   onPressed: () => bloc.add(IssueStatePressed(
-                      index: index,
                       issueStateFilterItem: issueStateFilterItem)),
                 ));
           }),
@@ -337,9 +335,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         children: [
           // 'Select categories' button
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issuesOverviewFilterButtonEvent:
-                    IssuesOverviewFilterButtonEvent.selectCategories)),
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent: IssuesOverviewFilterButtonEvent.selectCategories)),
             text: AppLocalizations.of(context)!.select_categories,
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -385,7 +382,6 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                 icon: const Icon(Icons.clear,
                                     color: Colors.black),
                                 onPressed: () => bloc.add(CategoryPressed(
-                                    index: index,
                                     categoryFilterItem: categoryFilterItem)))
                           ],
                         )),
@@ -503,8 +499,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         children: [
           // 'Select subcategories' button
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issuesOverviewFilterButtonEvent:
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent:
                     IssuesOverviewFilterButtonEvent.selectSubCategories)),
             text: AppLocalizations.of(context)!.select_subcategories,
             fontWeight: FontWeight.bold,
@@ -528,8 +524,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         children: [
           // 'Select municipalities' button
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issuesOverviewFilterButtonEvent:
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent:
                     IssuesOverviewFilterButtonEvent.selectMunicipalities)),
             text: AppLocalizations.of(context)!.select_municipalities,
             fontWeight: FontWeight.bold,

@@ -19,7 +19,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ///
   //region Variables
 
-  late BuildContext buildContext;
+  late BuildContext context;
   late PermissionHelper permissionHelper;
   static const List<PermissionWithService> permissions = [
     Permission.locationWhenInUse
@@ -32,7 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ///
   //region Constructor
 
-  LoginBloc({required this.buildContext, required this.permissionHelper})
+  LoginBloc({required this.context, required this.permissionHelper})
       : super(LoginState(permissionState: PermissionState.denied));
 
   //endregion
@@ -45,11 +45,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.loginButtonEvent) {
+      switch (event.buttonEvent) {
 
         /// Use phone no.
         case LoginButtonEvent.usePhoneNo:
-          GeneralUtil.goToPage(buildContext, SignUpPage());
+          GeneralUtil.goToPage(context, SignUpPage());
           break;
 
         /// Use Google login
@@ -71,11 +71,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       for (var permission in permissions) {
         var status = await permissionHelper.getStatus(permission);
         if (!status.isGranted) {
-          add(PermissionStateChanged(permissionState: PermissionState.denied));
+          add(const PermissionStateChanged(
+              permissionState: PermissionState.denied));
           return;
         }
       }
-      add(PermissionStateChanged(permissionState: PermissionState.granted));
+      add(const PermissionStateChanged(
+          permissionState: PermissionState.granted));
     } else if (event is PermissionStateChanged) {
       yield state.copyWith(permissionState: event.permissionState);
     }
@@ -94,8 +96,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     bool errorOccurred = false;
     // Try log in
     Citizen? citizen = await TaskUtil.runTask<Citizen>(
-        buildContext: buildContext,
-        progressMessage: AppLocalizations.of(buildContext)!.logging_in,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.logging_in,
         doInBackground: (runTask) async {
           try {
             signInResponse = await ThirdPartySignInUtil.signInWithGoogle();
@@ -127,13 +129,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     // If citizen is null it means that the user is not signed up yet
     if (citizen == null) {
       name ??= "";
-      GeneralUtil.goToPage(buildContext,
-          SignUpPage(email: signInResponse!.user.email, name: name));
+      GeneralUtil.goToPage(
+          context, SignUpPage(email: signInResponse!.user.email, name: name));
     } else {
       if (citizen.isBlocked!) {
         await ThirdPartySignInUtil.signOut();
         GeneralUtil.showToast(
-            AppLocalizations.of(buildContext)!.this_user_is_blocked);
+            AppLocalizations.of(context)!.this_user_is_blocked);
         return;
       }
 
@@ -144,13 +146,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await AppValuesHelper.getInstance().saveInteger(
           AppValuesKey.defaultMunicipalityId, citizen.municipality!.id);
       // Go to issues overview
-      GeneralUtil.goToPage(buildContext, const IssuesOverviewPage());
+      GeneralUtil.goToPage(context, const IssuesOverviewPage());
     }
   }
 
   Future<void> _useAppleLogin() async {
     GeneralUtil.showToast(
-        AppLocalizations.of(buildContext)!.this_is_not_supported_yet);
+        AppLocalizations.of(context)!.this_is_not_supported_yet);
   }
 
   Future<PermissionState> getPermissions() async {

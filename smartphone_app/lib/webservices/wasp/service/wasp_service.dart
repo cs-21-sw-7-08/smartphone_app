@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:smartphone_app/helpers/rest_helper.dart';
 import 'package:smartphone_app/utilities/wasp_util.dart';
 import '../interfaces/wasp_service_functions.dart';

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:smartphone_app/objects/category_filter_item.dart';
 import 'package:smartphone_app/objects/issue_state_filter_item.dart';
 import 'package:smartphone_app/objects/municipality_filter_item.dart';
@@ -13,7 +14,7 @@ enum IssuesOverviewFilterButtonEvent {
   selectSubCategories,
   selectMunicipalities,
   onlyShowYourOwnIssues,
-  closePressed,
+  close,
   applyFilter,
   resetAll,
   resetIssueStates,
@@ -29,44 +30,65 @@ enum IssuesOverviewFilterButtonEvent {
 ///
 //region Event
 
-class IssuesOverviewFilterEvent {}
+abstract class IssuesOverviewFilterEvent extends Equatable {
+  const IssuesOverviewFilterEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends IssuesOverviewFilterEvent {
-  final IssuesOverviewFilterButtonEvent issuesOverviewFilterButtonEvent;
+  final IssuesOverviewFilterButtonEvent buttonEvent;
 
-  ButtonPressed({required this.issuesOverviewFilterButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class IssueStatePressed extends IssuesOverviewFilterEvent {
-  final int index;
   final IssueStateFilterItem issueStateFilterItem;
 
-  IssueStatePressed({required this.index, required this.issueStateFilterItem});
+  const IssueStatePressed({required this.issueStateFilterItem});
+
+  @override
+  List<Object?> get props => [issueStateFilterItem];
 }
 
 class CategoryPressed extends IssuesOverviewFilterEvent {
-  final int index;
   final CategoryFilterItem categoryFilterItem;
 
-  CategoryPressed({required this.index, required this.categoryFilterItem});
+  const CategoryPressed({required this.categoryFilterItem});
+
+  @override
+  List<Object?> get props => [categoryFilterItem];
 }
 
 class CategoryInSubCategoryPressed extends IssuesOverviewFilterEvent {
   final CategoryFilterItem categoryFilterItem;
 
-  CategoryInSubCategoryPressed({required this.categoryFilterItem});
+  const CategoryInSubCategoryPressed({required this.categoryFilterItem});
+
+  @override
+  List<Object?> get props => [categoryFilterItem];
 }
 
 class SubCategoryPressed extends IssuesOverviewFilterEvent {
   final SubCategoryFilterItem subCategoryFilterItem;
 
-  SubCategoryPressed({required this.subCategoryFilterItem});
+  const SubCategoryPressed({required this.subCategoryFilterItem});
+
+  @override
+  List<Object?> get props => [subCategoryFilterItem];
 }
 
 class MunicipalityPressed extends IssuesOverviewFilterEvent {
   final MunicipalityFilterItem municipalityFilterItem;
 
-  MunicipalityPressed({required this.municipalityFilterItem});
+  const MunicipalityPressed({required this.municipalityFilterItem});
+
+  @override
+  List<Object?> get props => [municipalityFilterItem];
 }
 
 class FilterUpdated extends IssuesOverviewFilterEvent {
@@ -76,12 +98,21 @@ class FilterUpdated extends IssuesOverviewFilterEvent {
   final List<IssueStateFilterItem> issueStates;
   final bool isOnlyShowingOwnIssues;
 
-  FilterUpdated(
+  const FilterUpdated(
       {required this.categories,
       required this.subCategories,
       required this.municipalities,
       required this.issueStates,
       required this.isOnlyShowingOwnIssues});
+
+  @override
+  List<Object?> get props => [
+        categories,
+        subCategories,
+        municipalities,
+        issueStates,
+        isOnlyShowingOwnIssues
+      ];
 }
 
 //endregion
@@ -91,7 +122,8 @@ class FilterUpdated extends IssuesOverviewFilterEvent {
 ///
 //region State
 
-class IssuesOverviewFilterState {
+// ignore: must_be_immutable
+class IssuesOverviewFilterState extends Equatable {
   List<CategoryFilterItem>? categories;
   List<SubCategoryFilterItem>? subCategories;
   List<MunicipalityFilterItem>? municipalities;
@@ -120,6 +152,15 @@ class IssuesOverviewFilterState {
         municipalities: municipalities ?? this.municipalities,
         issueStates: issueStates ?? this.issueStates);
   }
+
+  @override
+  List<Object?> get props => [
+        categories,
+        subCategories,
+        municipalities,
+        issueStates,
+        isOnlyShowingOwnIssues
+      ];
 }
 
 //endregion

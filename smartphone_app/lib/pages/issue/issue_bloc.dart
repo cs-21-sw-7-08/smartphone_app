@@ -27,13 +27,15 @@ import 'package:smartphone_app/widgets/question_dialog.dart';
 
 import 'issue_events_states.dart';
 
+typedef ChangesCallback = Function();
+
 class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   ///
   /// VARIABLES
   ///
   //region Variables
 
-  late BuildContext _buildContext;
+  late BuildContext context;
   late Issue? issue;
   late HashMap<String, int>? hashCodeMap;
 
@@ -44,17 +46,15 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   ///
   //region Constructor
 
-  IssuePageBloc({required BuildContext buildContext,
+  IssuePageBloc({required this.context,
     required MapType mapType,
     this.issue})
       : super(IssuePageState(
       mapType: mapType,
       hasChanges: false,
       pictures: List.empty(growable: true),
-      issuePageView: issue == null ? IssuePageView.create : IssuePageView
-          .see)) {
-    _buildContext = buildContext;
-  }
+      pageView: issue == null ? IssuePageView.create : IssuePageView
+          .see));
 
   //endregion
 
@@ -66,11 +66,11 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   @override
   Stream<IssuePageState> mapEventToState(IssuePageEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.issueButtonEvent) {
+      switch (event.buttonEvent) {
       /// Select location
         case IssueButtonEvent.selectLocation:
           LatLng? position = await GeneralUtil.showPageAsDialog<LatLng?>(
-              _buildContext, SelectLocationPage(mapType: state.mapType!));
+              context, SelectLocationPage(mapType: state.mapType!));
           if (position == null) return;
           var newState = await _getLocationInformation(position);
           if (newState == null) return;
@@ -90,12 +90,12 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           GeneralUtil.hideKeyboard();
           // You can only add up to 3 pictures
           if (state.pictures!.length == 3) {
-            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+            GeneralUtil.showToast(AppLocalizations.of(context)!
                 .you_cannot_add_more_than_three_pictures);
             return;
           }
           // Get image
-          Image? image = await ImagePickerDialog.show(context: _buildContext);
+          Image? image = await ImagePickerDialog.show(context: context);
           // Image is null if the user did not take or pick an image
           // e.g. pressed "Cancel"
           if (image == null) return;
@@ -107,7 +107,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
       /// Save changes
         case IssueButtonEvent.saveChanges:
         // ignore: missing_enum_constant_in_switch
-          switch (state.issuePageView!) {
+          switch (state.pageView!) {
             case IssuePageView.create:
               await _createIssue();
               break;
@@ -124,11 +124,11 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
 
       /// Back
         case IssueButtonEvent.back:
-          switch (state.issuePageView!) {
+          switch (state.pageView!) {
           /// See, Create
             case IssuePageView.see:
             case IssuePageView.create:
-              Navigator.of(_buildContext).pop(state.hasChanges);
+              Navigator.of(context).pop(state.hasChanges);
               break;
 
           /// Edit
@@ -137,8 +137,8 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                   hashCodeMap!);
               if (names.isNotEmpty) {
                 DialogQuestionResponse questionResponse = await QuestionDialog
-                    .show(context: _buildContext,
-                    question: AppLocalizations.of(_buildContext)!
+                    .show(context: context,
+                    question: AppLocalizations.of(context)!
                         .do_you_want_to_save_the_changes);
                 if (questionResponse == DialogQuestionResponse.yes) {
                   IssuePageState? newState = await _updateIssue(names);
@@ -150,7 +150,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                   return;
                 }
               }
-              yield state.copyWith(issuePageView: IssuePageView.see);
+              yield state.copyWith(pageView: IssuePageView.see);
               break;
           }
           break;
@@ -159,20 +159,20 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         case IssueButtonEvent.editIssue:
         // You cannot edit the issue, if the municipality has changed the status
           if (issue!.issueState!.id != 1) {
-            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+            GeneralUtil.showToast(AppLocalizations.of(context)!
                 .you_cannot_edit_the_issue);
             return;
           }
           // Go into edit mode
-          yield state.copyWith(issuePageView: IssuePageView.edit);
+          yield state.copyWith(pageView: IssuePageView.edit);
           break;
 
       /// Verify issue
         case IssueButtonEvent.verifyIssue:
         // Ask user if they want to verify issue
           DialogQuestionResponse questionResponse = await QuestionDialog
-              .show(context: _buildContext,
-              question: AppLocalizations.of(_buildContext)!
+              .show(context: context,
+              question: AppLocalizations.of(context)!
                   .by_verifying);
           // Yes was selected by the user
           if (questionResponse == DialogQuestionResponse.yes) {
@@ -186,7 +186,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
       /// Report issue
         case IssueButtonEvent.reportIssue:
           ReportCategory? reportCategory = await GeneralUtil.showPageAsDialog<
-              ReportCategory>(_buildContext, ReportPage());
+              ReportCategory>(context, ReportPage());
           if (reportCategory == null) return;
           _reportIssue(reportCategory);
           break;
@@ -195,30 +195,30 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         case IssueButtonEvent.deleteIssue:
         // You cannot delete the issue, if the municipality has changed the status
           if (issue!.issueState!.id != 1) {
-            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+            GeneralUtil.showToast(AppLocalizations.of(context)!
                 .you_cannot_delete_the_issue);
             return;
           }
           // Ask user if they are sure about deleting the issue
           DialogQuestionResponse questionResponse = await QuestionDialog
-              .show(context: _buildContext,
-              question: AppLocalizations.of(_buildContext)!
+              .show(context: context,
+              question: AppLocalizations.of(context)!
                   .are_you_sure_you_want_to_delete_this_issue);
           if (questionResponse != DialogQuestionResponse.yes) return;
           await _deleteIssue();
           break;
       }
     } else if (event is TextChanged) {
-      switch (event.createIssueTextChangedEvent) {
+      switch (event.textChangedEvent) {
       /// Description
         case IssueTextChangedEvent.description:
-          yield state.copyWith(description: event.value);
+          yield state.copyWith(description: event.text);
           break;
       }
     } else if (event is DeletePicture) {
       DialogQuestionResponse response = await QuestionDialog.show(
-          context: _buildContext,
-          question: AppLocalizations.of(_buildContext)!
+          context: context,
+          question: AppLocalizations.of(context)!
               .do_you_want_to_remove_this_picture);
       if (response != DialogQuestionResponse.yes) return;
       List<Image> pictures = state.pictures!;
@@ -237,7 +237,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         dateEdited: event.dateEdited,
         dateCreated: event.dateCreated,
         municipalityResponses: event.municipalityResponses,
-        issuePageView: IssuePageView.see,
+        pageView: IssuePageView.see,
         address: event.address,);
       hashCodeMap = state.getCurrentHashCodes(state: newState);
       yield newState;
@@ -288,9 +288,9 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
   Future<void> _reportIssue(ReportCategory reportCategory) async {
     // Report issue
     bool? flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.reporting_issue,
+        AppLocalizations.of(context)!.reporting_issue,
         doInBackground: (runTask) async {
           var response = await WASPService.getInstance().reportIssue(
               issueId: issue!.id!,
@@ -306,20 +306,20 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     flag ??= false;
     if (!flag) return;
     // Close dialog
-    Navigator.pop(_buildContext);
+    Navigator.pop(context);
   }
 
   Future<IssuePageState?> _updateIssue(
       List<String> namesOfChangedProperties) async {
     if (namesOfChangedProperties.isEmpty) {
-      return state.copyWith(issuePageView: IssuePageView.see);
+      return state.copyWith(pageView: IssuePageView.see);
     }
 
     // Verify issue
     IssuePageState? newState = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.updating_issue,
+        AppLocalizations.of(context)!.updating_issue,
         doInBackground: (runTask) async {
           List<WASPUpdate> updates = List.empty(growable: true);
 
@@ -438,7 +438,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           // Return new state
           return state.copyWith(
               hasChanges: true,
-              issuePageView: IssuePageView.see,
+              pageView: IssuePageView.see,
               dateEdited: dateEdited);
         },
         taskCancelled: () {});
@@ -451,9 +451,9 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
 
     // Verify issue
     IssuePageState? newState = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.verifying_issue,
+        AppLocalizations.of(context)!.verifying_issue,
         doInBackground: (runTask) async {
           var response = await WASPService.getInstance().verifyIssue(
               issueId: issue!.id!,
@@ -474,25 +474,25 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     // Check for missing inputs
     if (state.marker == null) {
       GeneralUtil.showToast(
-          AppLocalizations.of(_buildContext)!.please_select_a_location);
+          AppLocalizations.of(context)!.please_select_a_location);
       return;
     }
     if (state.category == null || state.subCategory == null) {
       GeneralUtil.showToast(
-          AppLocalizations.of(_buildContext)!.please_select_a_category);
+          AppLocalizations.of(context)!.please_select_a_category);
       return;
     }
     if (state.description == null || state.description!.isEmpty) {
       GeneralUtil.showToast(
-          AppLocalizations.of(_buildContext)!
+          AppLocalizations.of(context)!
               .please_enter_a_description_of_your_problem);
       return;
     }
     // Create issue
     bool? flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.creating_issue,
+        AppLocalizations.of(context)!.creating_issue,
         doInBackground: (runTask) async {
           // Get municipality ID
           var municipalities = AppValuesHelper.getInstance()
@@ -530,16 +530,16 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     flag ??= false;
     // If issue was created return true to parent page and pop this page
     if (flag) {
-      Navigator.of(_buildContext).pop(true);
+      Navigator.of(context).pop(true);
     }
   }
 
   Future<void> _deleteIssue() async {
     // Create issue
     bool? flag = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.deleting_issue,
+        AppLocalizations.of(context)!.deleting_issue,
         doInBackground: (runTask) async {
           var response = await WASPService.getInstance().deleteIssue(
               issue!.id!);
@@ -553,13 +553,13 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     flag ??= false;
     // If issue was created return true to parent page and pop this page
     if (flag) {
-      Navigator.of(_buildContext).pop(true);
+      Navigator.of(context).pop(true);
     }
   }
 
   Future<IssuePageState?> _selectCategory() async {
     List<Category> categories = AppValuesHelper.getInstance().getCategories();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         items: categories,
         itemBuilder: (index, item, list, showSearchBar, itemSelected,
             itemUpdated) {
@@ -627,9 +627,9 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         },
         titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.category;
+            return AppLocalizations.of(context)!.category;
           } else if (item is Category) {
-            return AppLocalizations.of(_buildContext)!.subcategory;
+            return AppLocalizations.of(context)!.subcategory;
           }
           return "";
         });
@@ -645,9 +645,9 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
 
   Future<IssuePageState?> _getLocationInformation(LatLng position) async {
     IssuePageState? createIssueState = await TaskUtil.runTask(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-        AppLocalizations.of(_buildContext)!.getting_location_information,
+        AppLocalizations.of(context)!.getting_location_information,
         doInBackground: (runTask) async {
           // Create marker
           var marker = Marker(
@@ -680,7 +680,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         taskCancelled: () {});
     // Check for errors
     if (createIssueState == null) {
-      GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
+      GeneralUtil.showToast(AppLocalizations.of(context)!
           .could_not_get_location_information);
       return null;
     }

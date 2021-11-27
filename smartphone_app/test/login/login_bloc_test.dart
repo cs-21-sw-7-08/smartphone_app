@@ -37,7 +37,7 @@ void main() {
     test("Initial state is correct", () {
       expect(
           LoginBloc(
-                  buildContext: MockBuildContext(),
+                  context: MockBuildContext(),
                   permissionHelper: MockGrantedPermissionHelper())
               .state,
           LoginState(permissionState: PermissionState.denied));
@@ -45,24 +45,24 @@ void main() {
 
     blocTest<LoginBloc, LoginState>("Resumed -> Permissions Denied",
         build: () => LoginBloc(
-            buildContext: MockBuildContext(),
+            context: MockBuildContext(),
             permissionHelper: MockDeniedPermissionHelper()),
         act: (bloc) => bloc.add(Resumed()),
         expect: () => [LoginState(permissionState: PermissionState.denied)]);
 
     blocTest<LoginBloc, LoginState>("Resumed -> Permissions granted",
         build: () => LoginBloc(
-            buildContext: MockBuildContext(),
+            context: MockBuildContext(),
             permissionHelper: MockGrantedPermissionHelper()),
         act: (bloc) => bloc.add(Resumed()),
         expect: () => [LoginState(permissionState: PermissionState.granted)]);
 
     blocTest<LoginBloc, LoginState>("Permission state changed",
         build: () => LoginBloc(
-            buildContext: MockBuildContext(),
+            context: MockBuildContext(),
             permissionHelper: MockGrantedPermissionHelper()),
-        act: (bloc) => bloc.add(
-            PermissionStateChanged(permissionState: PermissionState.granted)),
+        act: (bloc) => bloc.add(const PermissionStateChanged(
+            permissionState: PermissionState.granted)),
         expect: () => [LoginState(permissionState: PermissionState.granted)]);
   });
 }

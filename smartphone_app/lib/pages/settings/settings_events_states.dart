@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
@@ -17,26 +18,40 @@ enum SettingsTextChangedEvent { name }
 ///
 //region Event
 
-class SettingsEvent {}
+abstract class SettingsEvent extends Equatable {
+  const SettingsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends SettingsEvent {
-  final SettingsButtonEvent settingsButtonEvent;
+  final SettingsButtonEvent buttonEvent;
 
-  ButtonPressed({required this.settingsButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class TextChanged extends SettingsEvent {
-  final SettingsTextChangedEvent settingsTextChangedEvent;
+  final SettingsTextChangedEvent textChangedEvent;
   final String? text;
 
-  TextChanged({required this.settingsTextChangedEvent, required this.text});
+  const TextChanged({required this.textChangedEvent, required this.text});
+
+  @override
+  List<Object?> get props => [textChangedEvent, text];
 }
 
 class ValuesRetrieved extends SettingsEvent {
   final String? name;
   final Municipality? municipality;
 
-  ValuesRetrieved({required this.name, required this.municipality});
+  const ValuesRetrieved({required this.name, required this.municipality});
+
+  @override
+  List<Object?> get props => [name, municipality];
 }
 
 //endregion
@@ -46,7 +61,8 @@ class ValuesRetrieved extends SettingsEvent {
 ///
 //region State
 
-class SettingsState {
+// ignore: must_be_immutable
+class SettingsState extends Equatable {
   String? name;
   Municipality? municipality;
 
@@ -78,6 +94,9 @@ class SettingsState {
         state.municipality == null ? 0 : state.municipality.hashCode;
     return hashMap;
   }
+
+  @override
+  List<Object?> get props => [name, municipality];
 }
 
 //endregion

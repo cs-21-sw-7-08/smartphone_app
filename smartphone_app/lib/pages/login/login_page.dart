@@ -1,7 +1,6 @@
 // ignore: must_be_immutable
 import 'dart:ui';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,8 +51,7 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    bloc =
-        LoginBloc(buildContext: context, permissionHelper: PermissionHelper());
+    bloc = LoginBloc(context: context, permissionHelper: PermissionHelper());
 
     return WillPopScope(
         onWillPop: () async {
@@ -100,8 +98,8 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
                   .please_go_to_settings_and_give_bee_a_helper_all_the_necessary_permissions,
             ),
             CustomButton(
-              onPressed: () => bloc.add(ButtonPressed(
-                  loginButtonEvent: LoginButtonEvent.goToSettings)),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: LoginButtonEvent.goToSettings)),
               text: AppLocalizations.of(context)!.go_to_settings,
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -154,8 +152,8 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
           fontWeight: FontWeight.bold,
           image: const AssetImage("assets/google_logo.png"),
           imagePadding: const EdgeInsets.all(15),
-          onPressed: () => bloc.add(
-              ButtonPressed(loginButtonEvent: LoginButtonEvent.useGoogleLogin)),
+          onPressed: () => bloc.add(const ButtonPressed(
+              buttonEvent: LoginButtonEvent.useGoogleLogin)),
           pressedBackground: custom_colors.greyGradient,
           defaultBackground: custom_colors.whiteGradient,
           margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
@@ -166,7 +164,7 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
           image: const AssetImage("assets/apple_logo.png"),
           imagePadding: const EdgeInsets.all(15),
           onPressed: () => bloc.add(
-              ButtonPressed(loginButtonEvent: LoginButtonEvent.useAppleLogin)),
+              const ButtonPressed(buttonEvent: LoginButtonEvent.useAppleLogin)),
           pressedBackground: custom_colors.greyGradient,
           defaultBackground: custom_colors.whiteGradient,
           margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
@@ -175,7 +173,7 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
           text: AppLocalizations.of(context)!.sign_in_with_phone_no,
           fontWeight: FontWeight.bold,
           onPressed: () => bloc.add(
-              ButtonPressed(loginButtonEvent: LoginButtonEvent.usePhoneNo)),
+              const ButtonPressed(buttonEvent: LoginButtonEvent.usePhoneNo)),
           pressedBackground: custom_colors.greyGradient,
           defaultBackground: custom_colors.whiteGradient,
           icon: const Icon(Icons.phone, color: custom_colors.black),

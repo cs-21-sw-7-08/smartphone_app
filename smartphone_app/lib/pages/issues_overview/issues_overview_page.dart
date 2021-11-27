@@ -57,7 +57,7 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
       position: cluster.location,
       onTap: () {
         if (cluster.isMultiple) {
-          // TODO: Zoom in on children of the current cluster
+          // Do nothing
         } else {
           ClusterItem item = cluster.items.first;
           if (item is Place) {
@@ -203,15 +203,18 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(context);
-                                                bloc.add(
-                                                    ButtonPressed(
-                                                        issuesOverviewButtonEvent:
+                                                bloc.add(const ButtonPressed(
+                                                    buttonEvent:
                                                         IssuesOverviewButtonEvent
                                                             .showSettings));
                                               },
                                               text:
                                                   AppLocalizations.of(context)!
                                                       .settings,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: custom_colors.black,
                                             ),
                                             CustomDrawerTile(
                                               icon: const Icon(
@@ -224,8 +227,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                               onPressed: () async {
                                                 Navigator.pop(context);
 
-                                                bloc.add(ButtonPressed(
-                                                    issuesOverviewButtonEvent:
+                                                bloc.add(const ButtonPressed(
+                                                    buttonEvent:
                                                         IssuesOverviewButtonEvent
                                                             .logOut));
                                               },
@@ -245,8 +248,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                     button1Icon: const Icon(Icons.tune_outlined,
                                         color: Colors.white),
                                     onButton1Pressed: () => bloc.add(
-                                        ButtonPressed(
-                                            issuesOverviewButtonEvent:
+                                        const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewButtonEvent
                                                     .showFilter)),
                                   ),
@@ -277,8 +280,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                           ? const Icon(Icons.layers_outlined,
                               color: Colors.black)
                           : const Icon(Icons.layers, color: Colors.black),
-                      onPressed: () => bloc.add(ButtonPressed(
-                          issuesOverviewButtonEvent:
+                      onPressed: () => bloc.add(const ButtonPressed(
+                          buttonEvent:
                               IssuesOverviewButtonEvent.changeMapType))),
                   CustomButton(
                       height: 50,
@@ -291,8 +294,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       icon: const Icon(Icons.refresh_outlined,
                           color: Colors.black),
-                      onPressed: () => bloc.add(ButtonPressed(
-                          issuesOverviewButtonEvent:
+                      onPressed: () => bloc.add(const ButtonPressed(
+                          buttonEvent:
                               IssuesOverviewButtonEvent.getListOfIssues))),
                 ],
               ),
@@ -330,9 +333,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
             color: custom_colors.black,
             padding: const EdgeInsets.all(values.padding),
             child: CustomButton(
-              onPressed: () => bloc.add(ButtonPressed(
-                  issuesOverviewButtonEvent:
-                      IssuesOverviewButtonEvent.createIssue)),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: IssuesOverviewButtonEvent.createIssue)),
               text: AppLocalizations.of(context)!.create_issue,
               fontWeight: FontWeight.bold,
               fontSize: 20,

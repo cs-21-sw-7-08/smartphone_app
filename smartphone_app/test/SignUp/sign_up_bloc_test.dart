@@ -21,7 +21,7 @@ void main() {
 
     setUp(() {
       bloc = SignUpBloc(
-          buildContext: MockBuildContext(),
+          context: MockBuildContext(),
           signUpPageView: SignUpPageView.phoneNo,
           email: null,
           name: null);
@@ -30,7 +30,7 @@ void main() {
     test("Initial state is correct", () {
       expect(
           SignUpBloc(
-                  buildContext: MockBuildContext(),
+                  context: MockBuildContext(),
                   email: 'test@gmail.com',
                   name: "Test",
                   signUpPageView: SignUpPageView.phoneNo)
@@ -40,42 +40,42 @@ void main() {
 
     blocTest<SignUpBloc, SignUpState>("TextChanged -> name",
         build: () => bloc,
-        act: (bloc) => bloc.add(TextChanged(
-            signUpTextChangedEvent: SignUpTextChangedEvent.name, text: "Test")),
+        act: (bloc) => bloc.add(const TextChanged(
+            textChangedEvent: SignUpTextChangedEvent.name, text: "Test")),
         expect: () => [bloc.state.copyWith(name: "Test")]);
 
     blocTest<SignUpBloc, SignUpState>("TextChanged -> phone no.",
         build: () => bloc,
-        act: (bloc) => bloc.add(TextChanged(
-            signUpTextChangedEvent: SignUpTextChangedEvent.phoneNo,
+        act: (bloc) => bloc.add(const TextChanged(
+            textChangedEvent: SignUpTextChangedEvent.phoneNo,
             text: "12345678")),
         expect: () => [bloc.state.copyWith(phoneNo: "12345678")]);
 
     blocTest<SignUpBloc, SignUpState>("TextChanged -> sms code",
         build: () => bloc,
-        act: (bloc) => bloc.add(TextChanged(
-            signUpTextChangedEvent: SignUpTextChangedEvent.smsCode,
+        act: (bloc) => bloc.add(const TextChanged(
+            textChangedEvent: SignUpTextChangedEvent.smsCode,
             text: "123456")),
         expect: () => [bloc.state.copyWith(smsCode: "123456")]);
 
     blocTest<SignUpBloc, SignUpState>("MakeViewChange -> name",
         build: () => bloc,
         act: (bloc) =>
-            bloc.add(MakeViewChange(signUpPageView: SignUpPageView.name)),
+            bloc.add(const MakeViewChange(pageView: SignUpPageView.name)),
         expect: () =>
             [bloc.state.copyWith(signUpPageView: SignUpPageView.name)]);
 
     blocTest<SignUpBloc, SignUpState>("MakeViewChange -> name",
         build: () => bloc,
         act: (bloc) =>
-            bloc.add(MakeViewChange(signUpPageView: SignUpPageView.name)),
+            bloc.add(const MakeViewChange(pageView: SignUpPageView.name)),
         expect: () =>
         [bloc.state.copyWith(signUpPageView: SignUpPageView.name)]);
 
     blocTest<SignUpBloc, SignUpState>("VerificationIdRetrieved",
         build: () => bloc,
         act: (bloc) =>
-            bloc.add(VerificationIdRetrieved(verificationId: "this is an id")),
+            bloc.add(const VerificationIdRetrieved(verificationId: "this is an id")),
         expect: () =>
         [bloc.state.copyWith(verificationId: "this is an id")]);
   });

@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
@@ -30,38 +31,58 @@ enum IssuePageView { create, edit, see }
 ///
 //region Event
 
-class IssuePageEvent {}
+abstract class IssuePageEvent extends Equatable {
+  const IssuePageEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends IssuePageEvent {
-  final IssueButtonEvent issueButtonEvent;
+  final IssueButtonEvent buttonEvent;
 
-  ButtonPressed({required this.issueButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class DeletePicture extends IssuePageEvent {
   final Image picture;
 
-  DeletePicture({required this.picture});
+  const DeletePicture({required this.picture});
+
+  @override
+  List<Object?> get props => [picture];
 }
 
 class TextChanged extends IssuePageEvent {
-  final IssueTextChangedEvent createIssueTextChangedEvent;
-  final String? value;
+  final IssueTextChangedEvent textChangedEvent;
+  final String? text;
 
-  TextChanged({required this.createIssueTextChangedEvent, required this.value});
+  const TextChanged({required this.textChangedEvent, required this.text});
+
+  @override
+  List<Object?> get props => [textChangedEvent, text];
 }
 
 class LocationSelected extends IssuePageEvent {
   final LatLng position;
 
-  LocationSelected({required this.position});
+  const LocationSelected({required this.position});
+
+  @override
+  List<Object?> get props => [position];
 }
 
 class CategorySelected extends IssuePageEvent {
   final Category category;
   final SubCategory subCategory;
 
-  CategorySelected({required this.category, required this.subCategory});
+  const CategorySelected({required this.category, required this.subCategory});
+
+  @override
+  List<Object?> get props => [category, subCategory];
 }
 
 class PageContentLoaded extends IssuePageEvent {
@@ -78,7 +99,7 @@ class PageContentLoaded extends IssuePageEvent {
   final String? dateEdited;
   final List<MunicipalityResponse>? municipalityResponses;
 
-  PageContentLoaded(
+  const PageContentLoaded(
       {required this.marker,
       required this.issueState,
       required this.municipalityResponses,
@@ -91,6 +112,22 @@ class PageContentLoaded extends IssuePageEvent {
       required this.pictures,
       required this.category,
       required this.subCategory});
+
+  @override
+  List<Object?> get props => [
+        marker,
+        address,
+        description,
+        pictures,
+        category,
+        subCategory,
+        isCreator,
+        hasVerified,
+        issueState,
+        dateCreated,
+        dateEdited,
+        municipalityResponses
+      ];
 }
 
 //endregion
@@ -100,7 +137,8 @@ class PageContentLoaded extends IssuePageEvent {
 ///
 //region State
 
-class IssuePageState {
+// ignore: must_be_immutable
+class IssuePageState extends Equatable {
   bool? isCreator;
   bool? hasVerified;
   MapType? mapType;
@@ -111,7 +149,7 @@ class IssuePageState {
   List<Image>? pictures;
   Category? category;
   SubCategory? subCategory;
-  IssuePageView? issuePageView;
+  IssuePageView? pageView;
   IssueState? issueState;
   bool? hasChanges;
   String? dateCreated;
@@ -130,7 +168,7 @@ class IssuePageState {
       this.dateEdited,
       this.pictures,
       this.municipalityResponses,
-      this.issuePageView,
+      this.pageView,
       this.category,
       this.hasChanges,
       this.municipalityName,
@@ -148,7 +186,7 @@ class IssuePageState {
       String? dateEdited,
       String? description,
       String? municipalityName,
-      IssuePageView? issuePageView,
+      IssuePageView? pageView,
       List<Image>? pictures,
       Category? category,
       bool? hasChanges,
@@ -166,7 +204,7 @@ class IssuePageState {
         hasChanges: hasChanges ?? this.hasChanges,
         issueState: issueState ?? this.issueState,
         municipalityName: municipalityName ?? this.municipalityName,
-        issuePageView: issuePageView ?? this.issuePageView,
+        pageView: pageView ?? this.pageView,
         description: description ?? this.description,
         pictures: pictures ?? this.pictures,
         category: category ?? this.category,
@@ -204,6 +242,26 @@ class IssuePageState {
         state.subCategory == null ? 0 : state.subCategory.hashCode;
     return hashMap;
   }
+
+  @override
+  List<Object?> get props => [
+        marker,
+        isCreator,
+        mapType,
+        municipalityResponses,
+        address,
+        dateCreated,
+        dateEdited,
+        hasVerified,
+        hasChanges,
+        issueState,
+        municipalityName,
+        pageView,
+        description,
+        pictures,
+        category,
+        subCategory
+      ];
 }
 
 //endregion

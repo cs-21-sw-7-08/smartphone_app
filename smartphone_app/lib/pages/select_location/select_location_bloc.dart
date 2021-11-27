@@ -15,7 +15,7 @@ class SelectLocationBloc
   ///
   //region Variables
 
-  late BuildContext _buildContext;
+  late BuildContext context;
 
   //endregion
 
@@ -24,11 +24,8 @@ class SelectLocationBloc
   ///
   //region Constructor
 
-  SelectLocationBloc(
-      {required BuildContext buildContext, required MapType mapType})
-      : super(SelectLocationState(mapType: mapType)) {
-    _buildContext = buildContext;
-  }
+  SelectLocationBloc({required this.context, required MapType mapType})
+      : super(SelectLocationState(mapType: mapType));
 
   //endregion
 
@@ -46,7 +43,7 @@ class SelectLocationBloc
           markerId: markerId,
           position: event.point,
           consumeTapEvents: true,
-          onTap: () => add(RemoveMarker(markerId: markerId)),
+          onTap: () => add(const RemoveMarker()),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed));
       yield state.copyWith(marker: marker);
     } else if (event is RemoveMarker) {
@@ -54,15 +51,19 @@ class SelectLocationBloc
     } else if (event is PositionRetrieved) {
       yield state.copyWith(devicePosition: event.devicePosition);
     } else if (event is ButtonPressed) {
-      switch (event.selectLocationButtonEvent) {
+      switch (event.buttonEvent) {
+
+        /// Confirm
         case SelectLocationButtonEvent.confirm:
           if (state.marker == null) {
-            GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
-                .please_place_a_marker_first);
+            GeneralUtil.showToast(
+                AppLocalizations.of(context)!.please_place_a_marker_first);
             return;
           }
-          Navigator.pop(_buildContext, state.marker!.position);
+          Navigator.pop(context, state.marker!.position);
           break;
+
+        /// Change map type
         case SelectLocationButtonEvent.changeMapType:
           yield state.copyWith(
               mapType: state.mapType == MapType.hybrid

@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
@@ -26,12 +25,11 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Create bloc
-    bloc = SettingsBloc(buildContext: context);
+    bloc = SettingsBloc(context: context);
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(
-              ButtonPressed(settingsButtonEvent: SettingsButtonEvent.back));
+          bloc.add(const ButtonPressed(buttonEvent: SettingsButtonEvent.back));
           return false;
         },
         child: FutureBuilder<bool>(
@@ -66,8 +64,8 @@ class SettingsPage extends StatelessWidget {
                                           custom_colors.appBarBackground,
                                       appBarLeftButton: AppBarLeftButton.close,
                                       leftButtonPressed: () => bloc.add(
-                                          ButtonPressed(
-                                              settingsButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   SettingsButtonEvent.back)),
                                     ),
                                     body: _getContent(context, bloc, state),
@@ -121,9 +119,9 @@ class SettingsPage extends StatelessWidget {
                                           ],
                                         )),
                                     CustomButton(
-                                      onPressed: () => bloc.add(ButtonPressed(
-                                          settingsButtonEvent:
-                                              SettingsButtonEvent
+                                      onPressed: () => bloc.add(
+                                          const ButtonPressed(
+                                              buttonEvent: SettingsButtonEvent
                                                   .deleteAccount)),
                                       text: AppLocalizations.of(context)!
                                           .delete_account,
@@ -136,8 +134,8 @@ class SettingsPage extends StatelessWidget {
                                 ))),
                         // 'Save' button
                         CustomButton(
-                          onPressed: () => bloc.add(ButtonPressed(
-                              settingsButtonEvent: SettingsButtonEvent.save)),
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent: SettingsButtonEvent.save)),
                           text: AppLocalizations.of(context)!.save,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -184,8 +182,7 @@ class SettingsPage extends StatelessWidget {
         text: state.name,
         onChanged: (text) {
           bloc.add(TextChanged(
-              settingsTextChangedEvent: SettingsTextChangedEvent.name,
-              text: text));
+              textChangedEvent: SettingsTextChangedEvent.name, text: text));
         },
         margin: const EdgeInsets.all(0),
       ),
@@ -212,8 +209,8 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             CustomButton(
-              onPressed: () => bloc.add(ButtonPressed(
-                  settingsButtonEvent: SettingsButtonEvent.selectMunicipality)),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: SettingsButtonEvent.selectMunicipality)),
               margin: EdgeInsets.only(
                   top: (state.municipality != null) ? values.padding : 0),
               fontWeight: FontWeight.bold,

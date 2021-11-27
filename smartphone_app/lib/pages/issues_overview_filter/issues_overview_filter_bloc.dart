@@ -22,8 +22,8 @@ class IssuesOverviewFilterBloc
   ///
   //region Variables
 
-  late BuildContext _buildContext;
-  late IssuesOverviewFilter _filter;
+  late BuildContext context;
+  late IssuesOverviewFilter filter;
 
   //endregion
 
@@ -77,18 +77,13 @@ class IssuesOverviewFilterBloc
   ///
   //region Constructor
 
-  IssuesOverviewFilterBloc(
-      {required BuildContext buildContext,
-      required IssuesOverviewFilter filter})
+  IssuesOverviewFilterBloc({required this.context, required this.filter})
       : super(IssuesOverviewFilterState(
             municipalities: List.empty(),
             categories: List.empty(),
             subCategories: List.empty(),
             issueStates: List.empty(),
-            isOnlyShowingOwnIssues: false)) {
-    _buildContext = buildContext;
-    _filter = filter;
-  }
+            isOnlyShowingOwnIssues: false));
 
   //endregion
 
@@ -101,29 +96,41 @@ class IssuesOverviewFilterBloc
   Stream<IssuesOverviewFilterState> mapEventToState(
       IssuesOverviewFilterEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.issuesOverviewFilterButtonEvent) {
+      switch (event.buttonEvent) {
+
+        /// Select categories
         case IssuesOverviewFilterButtonEvent.selectCategories:
           IssuesOverviewFilterState? newState = await _selectCategories();
           if (newState == null) return;
           yield newState;
           break;
+
+        /// Select subcategories
         case IssuesOverviewFilterButtonEvent.selectSubCategories:
           IssuesOverviewFilterState? newState = await _selectSubCategories();
           if (newState == null) return;
           yield newState;
           break;
+
+        /// Select municipalities
         case IssuesOverviewFilterButtonEvent.selectMunicipalities:
           IssuesOverviewFilterState? newState = await _selectMunicipalities();
           if (newState == null) return;
           yield newState;
           break;
+
+        /// Only show your own issues
         case IssuesOverviewFilterButtonEvent.onlyShowYourOwnIssues:
           yield state.copyWith(
               isOnlyShowingOwnIssues: !state.isOnlyShowingOwnIssues!);
           break;
-        case IssuesOverviewFilterButtonEvent.closePressed:
-          Navigator.of(_buildContext).pop(null);
+
+        /// Close
+        case IssuesOverviewFilterButtonEvent.close:
+          Navigator.of(context).pop(null);
           break;
+
+        /// Apply filter
         case IssuesOverviewFilterButtonEvent.applyFilter:
           // Category IDs
           List<int> categoryIds = state.categories!
@@ -157,21 +164,31 @@ class IssuesOverviewFilterBloc
               municipalityIds:
                   municipalityIds.isEmpty ? null : municipalityIds);
           // Return filter to parent
-          Navigator.of(_buildContext).pop(filter);
+          Navigator.of(context).pop(filter);
           break;
+
+        /// Reset issue states
         case IssuesOverviewFilterButtonEvent.resetIssueStates:
           yield state.copyWith(issueStates: _getDefaultIssueStates());
           break;
+
+        /// Reset categories
         case IssuesOverviewFilterButtonEvent.resetCategories:
           yield state.copyWith(
               categories: List.empty(), subCategories: List.empty());
           break;
+
+        /// Reset subcategories
         case IssuesOverviewFilterButtonEvent.resetSubCategories:
           yield state.copyWith(subCategories: List.empty());
           break;
+
+        /// Reset municipalities
         case IssuesOverviewFilterButtonEvent.resetMunicipalities:
           yield state.copyWith(municipalities: _getDefaultMunicipalities());
           break;
+
+        /// Reset all
         case IssuesOverviewFilterButtonEvent.resetAll:
           yield state.copyWith(
               issueStates: _getDefaultIssueStates(),
@@ -236,7 +253,7 @@ class IssuesOverviewFilterBloc
             isSelected: state.categories!
                 .any((selectedElement) => selectedElement.category == element)))
         .toList();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         // Show confirm button
         showConfirmButton: true,
         // Confirm pressed callback
@@ -271,8 +288,7 @@ class IssuesOverviewFilterBloc
                           Expanded(
                               child: CustomLabel(
                             title: LocalizationHelper.getInstance()
-                                .getLocalizedCategory(
-                                _buildContext, item.category),
+                                .getLocalizedCategory(context, item.category),
                             textAlign: TextAlign.left,
                             alignmentGeometry: Alignment.centerLeft,
                             margin: const EdgeInsets.only(
@@ -306,7 +322,7 @@ class IssuesOverviewFilterBloc
         // Title builder
         titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.category;
+            return AppLocalizations.of(context)!.category;
           }
           return "";
         });
@@ -337,7 +353,7 @@ class IssuesOverviewFilterBloc
                 .toList(),
             isSelected: null))
         .toList();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         // Show confirm button
         showConfirmButton: true,
         // Confirm pressed callback
@@ -374,8 +390,7 @@ class IssuesOverviewFilterBloc
                             textAlign: TextAlign.left,
                             alignmentGeometry: Alignment.centerLeft,
                             title: LocalizationHelper.getInstance()
-                                .getLocalizedCategory(
-                                    _buildContext, item.category),
+                                .getLocalizedCategory(context, item.category),
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,
@@ -414,7 +429,7 @@ class IssuesOverviewFilterBloc
                             alignmentGeometry: Alignment.centerLeft,
                             title: LocalizationHelper.getInstance()
                                 .getLocalizedSubCategory(
-                                    _buildContext, item.subCategory),
+                                    context, item.subCategory),
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,
@@ -448,9 +463,9 @@ class IssuesOverviewFilterBloc
         // Title builder
         titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.category;
+            return AppLocalizations.of(context)!.category;
           } else if (item is CategoryFilterItem) {
-            return AppLocalizations.of(_buildContext)!.subcategory;
+            return AppLocalizations.of(context)!.subcategory;
           }
           return "";
         });
@@ -481,7 +496,7 @@ class IssuesOverviewFilterBloc
             isSelected: state.municipalities!.any(
                 (selectedElement) => selectedElement.municipality == element)))
         .toList();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         // Show confirm button
         showConfirmButton: true,
         // Confirm pressed callback
@@ -549,7 +564,7 @@ class IssuesOverviewFilterBloc
         // Title builder
         titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.municipality;
+            return AppLocalizations.of(context)!.municipality;
           }
           return "";
         });
@@ -573,8 +588,8 @@ class IssuesOverviewFilterBloc
 
     List<CategoryFilterItem> categories = savedCategories
         .where((element) =>
-            _filter.categoryIds != null &&
-            _filter.categoryIds!.any((selectedId) => element.id == selectedId))
+            filter.categoryIds != null &&
+            filter.categoryIds!.any((selectedId) => element.id == selectedId))
         .select((element, index) => CategoryFilterItem(
             category: element, subCategories: null, isSelected: true))
         .toList();
@@ -582,7 +597,7 @@ class IssuesOverviewFilterBloc
     for (var categoryFilterItem in categories) {
       if (categoryFilterItem.category.subCategories == null) continue;
       for (var subCategory in categoryFilterItem.category.subCategories!) {
-        if (_filter.subCategoryIds!
+        if (filter.subCategoryIds!
             .any((element) => element == subCategory.id)) {
           subCategories.add(SubCategoryFilterItem(
               category: categoryFilterItem.category,
@@ -594,8 +609,8 @@ class IssuesOverviewFilterBloc
     List<MunicipalityFilterItem> municipalities = AppValuesHelper.getInstance()
         .getMunicipalities()
         .where((element) =>
-            _filter.municipalityIds != null &&
-            _filter.municipalityIds!
+            filter.municipalityIds != null &&
+            filter.municipalityIds!
                 .any((selectedId) => element.id == selectedId))
         .select((element, index) =>
             MunicipalityFilterItem(municipality: element, isSelected: true))
@@ -603,13 +618,13 @@ class IssuesOverviewFilterBloc
     List<IssueStateFilterItem> issueStates = AppValuesHelper.getInstance()
         .getIssueStates()
         .select((element, index) => IssueStateFilterItem(
-            isSelected: _filter.issueStateIds != null &&
-                _filter.issueStateIds!
+            isSelected: filter.issueStateIds != null &&
+                filter.issueStateIds!
                     .any((selectedId) => element.id == selectedId),
             issueState: element))
         .toList();
-    bool isOnlyShowingOwnIssues = _filter.citizenIds != null &&
-        _filter.citizenIds!.any((element) =>
+    bool isOnlyShowingOwnIssues = filter.citizenIds != null &&
+        filter.citizenIds!.any((element) =>
             element ==
             AppValuesHelper.getInstance().getInteger(AppValuesKey.citizenId));
 

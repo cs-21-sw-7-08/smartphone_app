@@ -1,13 +1,17 @@
+import 'package:equatable/equatable.dart';
 
-
-import 'custom_list_dialog.dart';
+import 'custom_list_dialog_bloc.dart';
 
 ///
 /// ENUMS
 ///
 //region Enums
 
-enum CustomListDialogButtonEvent { changeSearchBarVisibility, backPressed, confirm }
+enum CustomListDialogButtonEvent {
+  changeSearchBarVisibility,
+  backPressed,
+  confirm
+}
 enum CustomListDialogTextChangedEvent { searchText }
 
 //endregion
@@ -17,30 +21,43 @@ enum CustomListDialogTextChangedEvent { searchText }
 ///
 //region Event
 
-class CustomListDialogEvent {}
+abstract class CustomListDialogEvent extends Equatable {
+  const CustomListDialogEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends CustomListDialogEvent {
   final CustomListDialogButtonEvent buttonEvent;
 
-  ButtonPressed({required this.buttonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class TextChanged extends CustomListDialogEvent {
   final CustomListDialogTextChangedEvent textChangedEvent;
-  String? value;
+  final String? text;
 
-  TextChanged(
-      {required this.textChangedEvent, required this.value});
+  const TextChanged({required this.textChangedEvent, required this.text});
+
+  @override
+  List<Object?> get props => [textChangedEvent, text];
 }
 
 class ItemWasSelected extends CustomListDialogEvent {
-  SelectedItem selectedItem;
+  final SelectedItem selectedItem;
 
-  ItemWasSelected({required this.selectedItem});
+  const ItemWasSelected({required this.selectedItem});
+
+  @override
+  List<Object?> get props => [selectedItem];
 }
 
 class ItemWasUpdated extends CustomListDialogEvent {
-  ItemWasUpdated();
+  const ItemWasUpdated();
 }
 
 //endregion
@@ -50,7 +67,8 @@ class ItemWasUpdated extends CustomListDialogEvent {
 ///
 //region State
 
-class CustomListDialogState {
+// ignore: must_be_immutable
+class CustomListDialogState extends Equatable {
   bool? showSearchBar;
   String? searchText;
   List<dynamic>? rootItems;
@@ -81,6 +99,16 @@ class CustomListDialogState {
         searchText: searchText ?? this.searchText,
         items: items ?? this.items);
   }
+
+  @override
+  List<Object?> get props => [
+        showSearchBar,
+        searchText,
+        rootItems,
+        items,
+        filteredItems,
+        selectedItemTree
+      ];
 }
 
 //endregion

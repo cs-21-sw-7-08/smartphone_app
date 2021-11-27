@@ -17,7 +17,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ///
   //region Variables
 
-  late BuildContext _buildContext;
+  late BuildContext context;
 
   //endregion
 
@@ -26,9 +26,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ///
   //region Constructor
 
-  ReportBloc({required BuildContext buildContext}) : super(ReportState()) {
-    _buildContext = buildContext;
-  }
+  ReportBloc({required this.context}) : super(ReportState());
 
   //endregion
 
@@ -45,7 +43,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
         /// Close
         case ReportButtonEvent.close:
           // Close dialog
-          Navigator.of(_buildContext).pop(null);
+          Navigator.of(context).pop(null);
           break;
 
         /// Select report category
@@ -59,10 +57,10 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
         case ReportButtonEvent.confirm:
           if (state.reportCategory == null) {
             GeneralUtil.showToast(
-                AppLocalizations.of(_buildContext)!.please_select_a_category);
+                AppLocalizations.of(context)!.please_select_a_category);
             return;
           }
-          Navigator.of(_buildContext).pop(state.reportCategory);
+          Navigator.of(context).pop(state.reportCategory);
           break;
       }
     }
@@ -78,8 +76,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   Future<ReportState?> _selectReportCategory() async {
     List<ReportCategory> categories =
         AppValuesHelper.getInstance().getReportCategories();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
-        items: categories, itemBuilder:
+    List<dynamic>? selectedItems =
+        await CustomListDialog.show(context, items: categories, itemBuilder:
             (index, item, list, showSearchBar, itemSelected, itemUpdated) {
       if (item is ReportCategory) {
         return Container(
@@ -115,7 +113,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       return false;
     }, titleBuilder: (item) {
       if (item == null) {
-        return AppLocalizations.of(_buildContext)!.category;
+        return AppLocalizations.of(context)!.category;
       }
       return "";
     });

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
@@ -261,6 +260,18 @@ class ReportCategory {
       _$ReportCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReportCategoryToJson(this);
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! ReportCategory) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
 
 enum IssueStates { created, approved, resolved, notResolved }
@@ -280,6 +291,18 @@ class IssueState {
   Map<String, dynamic> toJson() => _$IssueStateToJson(this);
 
   IssueStates getEnum() => IssueStates.values[id - 1];
+
+  @override
+  @JsonKey(ignore: true)
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! IssueState) {
+      return false;
+    }
+    return hashCode == other.hashCode;
+  }
 }
 
 @JsonSerializable()

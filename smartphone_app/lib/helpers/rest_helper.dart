@@ -103,12 +103,12 @@ class RestHelper {
   _receivedResponse(http.Response response) {
     // Print request and response for debug purposes
 
-    print("Response status: ${response.statusCode}");
+    print("Response status: ${response.statusCode}"); // ignore: avoid_print
     print("Response: ${response.body}"); // ignore: avoid_print
   }
 
   _timeout() {
-    print("Response: Timeout");
+    print("Response: Timeout"); // ignore: avoid_print
   }
 
   Map<String, String> _getHeaders() {
@@ -132,7 +132,7 @@ class RestHelper {
     bool trustSelfSigned = true;
     HttpClient httpClient = HttpClient()
       ..badCertificateCallback =
-      ((X509Certificate cert, String host, int port) => trustSelfSigned);
+          ((X509Certificate cert, String host, int port) => trustSelfSigned);
     return IOClient(httpClient);
   }
 
@@ -181,9 +181,9 @@ class RestHelper {
           )
           .timeout(Duration(seconds: timeoutInSeconds))
           .then((onValue) {
-            _receivedResponse(onValue);
-            return onValue;
-          });
+        _receivedResponse(onValue);
+        return onValue;
+      });
     }, [200]);
   }
 

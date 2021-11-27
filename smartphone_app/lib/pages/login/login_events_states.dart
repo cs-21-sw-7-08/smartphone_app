@@ -20,12 +20,20 @@ enum LoginButtonEvent {
 ///
 //region Event
 
-abstract class LoginEvent {}
+abstract class LoginEvent extends Equatable {
+  const LoginEvent();
+
+  @override
+  List<Object> get props => [];
+}
 
 class ButtonPressed extends LoginEvent {
-  final LoginButtonEvent loginButtonEvent;
+  final LoginButtonEvent buttonEvent;
 
-  ButtonPressed({required this.loginButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object> get props => [buttonEvent];
 }
 
 class Resumed extends LoginEvent {}
@@ -33,7 +41,10 @@ class Resumed extends LoginEvent {}
 class PermissionStateChanged extends LoginEvent {
   final PermissionState permissionState;
 
-  PermissionStateChanged({required this.permissionState});
+  const PermissionStateChanged({required this.permissionState});
+
+  @override
+  List<Object> get props => [permissionState];
 }
 
 //endregion

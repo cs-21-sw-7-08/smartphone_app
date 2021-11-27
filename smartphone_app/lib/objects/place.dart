@@ -1,5 +1,5 @@
 import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 class Place extends ClusterItem {

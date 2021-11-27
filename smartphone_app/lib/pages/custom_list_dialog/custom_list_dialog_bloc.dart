@@ -3,8 +3,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:darq/darq.dart';
 
-import 'custom_list_dialog.dart';
 import 'custom_list_dialog_events_states.dart';
+
+typedef ItemSelected = Function(List<dynamic>? newList);
+typedef ItemUpdated = Function();
+typedef ItemBuilder = Widget? Function(
+    int index,
+    dynamic item,
+    List<dynamic> list,
+    bool showSearchBar,
+    ItemSelected itemSelected,
+    ItemUpdated itemUpdated);
+typedef SearchPredicate = bool Function(dynamic item, String searchString);
+typedef TitleBuilder = String Function(dynamic item);
+typedef ConfirmPressedCallBack = List<dynamic> Function(
+    List<dynamic> currentRootList);
+
+class SelectedItem {
+  dynamic selectedItem;
+  List<dynamic>? selectedItems;
+
+  SelectedItem({required this.selectedItem, required this.selectedItems});
+}
 
 class CustomListDialogBloc
     extends Bloc<CustomListDialogEvent, CustomListDialogState> {
@@ -13,9 +33,9 @@ class CustomListDialogBloc
   ///
   //region Variables
 
-  late BuildContext _buildContext;
-  late SearchPredicate _searchPredicate;
-  ConfirmPressedCallBack? _confirmPressedCallBack;
+  late BuildContext context;
+  late SearchPredicate searchPredicate;
+  ConfirmPressedCallBack? confirmPressedCallBack;
 
   //endregion
 
@@ -25,20 +45,16 @@ class CustomListDialogBloc
   //region Constructor
 
   CustomListDialogBloc(
-      {required BuildContext buildContext,
+      {required this.context,
       required List<dynamic> items,
-      required ConfirmPressedCallBack? confirmPressedCallBack,
-      required SearchPredicate searchPredicate})
+      required this.confirmPressedCallBack,
+      required this.searchPredicate})
       : super(CustomListDialogState(
             showSearchBar: false,
             rootItems: items,
             items: items,
             filteredItems: items,
-            selectedItemTree: List.empty(growable: true))) {
-    _buildContext = buildContext;
-    _searchPredicate = searchPredicate;
-    _confirmPressedCallBack = confirmPressedCallBack;
-  }
+            selectedItemTree: List.empty(growable: true)));
 
   //endregion
 
@@ -63,7 +79,7 @@ class CustomListDialogBloc
           GeneralUtil.hideKeyboard();
           // If the selected item tree is empty close the dialog
           if (state.selectedItemTree!.isEmpty) {
-            Navigator.of(_buildContext).pop(null);
+            Navigator.of(context).pop(null);
           } else {
             // New end index removes the last item in the selected item tree
             var endIndex = state.selectedItemTree!.length - 2;
@@ -84,22 +100,23 @@ class CustomListDialogBloc
           }
           break;
         case CustomListDialogButtonEvent.confirm:
-          if (_confirmPressedCallBack == null) {
-            Navigator.of(_buildContext).pop(null);
+          if (confirmPressedCallBack == null) {
+            Navigator.of(context).pop(null);
             return;
           }
-          List<dynamic> list = _confirmPressedCallBack!(state.rootItems!);
-          Navigator.of(_buildContext).pop(list);
+          List<dynamic> list = confirmPressedCallBack!(state.rootItems!);
+          Navigator.of(context).pop(list);
           break;
       }
     } else if (event is TextChanged) {
       switch (event.textChangedEvent) {
+
+        /// Search text
         case CustomListDialogTextChangedEvent.searchText:
-          print(event.value);
           yield state.copyWith(
-              searchText: event.value,
+              searchText: event.text,
               filteredItems: _getFilteredItems(
-                  items: state.items!, searchText: event.value));
+                  items: state.items!, searchText: event.text));
           break;
       }
     } else if (event is ItemWasSelected) {
@@ -110,7 +127,7 @@ class CustomListDialogBloc
       // If no new list has been given close the dialog and return the selected
       // items tree
       if (event.selectedItem.selectedItems == null) {
-        Navigator.of(_buildContext).pop(newSelectedItemTree
+        Navigator.of(context).pop(newSelectedItemTree
             .select((element, index) => element.selectedItem)
             .toList());
         return;
@@ -142,7 +159,7 @@ class CustomListDialogBloc
       return items;
     }
     return items
-        .where((element) => _searchPredicate(element, searchText.toLowerCase()))
+        .where((element) => searchPredicate(element, searchText.toLowerCase()))
         .toList(growable: true);
   }
 
