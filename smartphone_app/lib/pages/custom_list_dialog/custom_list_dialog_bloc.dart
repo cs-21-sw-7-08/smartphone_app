@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
@@ -19,6 +20,7 @@ typedef TitleBuilder = String Function(dynamic item);
 typedef ConfirmPressedCallBack = List<dynamic> Function(
     List<dynamic> currentRootList);
 
+// ignore: must_be_immutable
 class SelectedItem {
   dynamic selectedItem;
   List<dynamic>? selectedItems;
@@ -142,7 +144,7 @@ class CustomListDialogBloc
           selectedItemTree: newSelectedItemTree);
     } else if (event is ItemWasUpdated) {
       // Yield new state
-      yield state.copyWith(filteredItems: state.filteredItems);
+      yield state.update(updatedItemHashCode: event.updatedItem.hashCode);
     }
   }
 

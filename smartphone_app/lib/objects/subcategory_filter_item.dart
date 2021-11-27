@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 // ignore: must_be_immutable
@@ -13,5 +14,5 @@ class SubCategoryFilterItem extends Equatable {
       required this.isSelected});
 
   @override
-  List<Object?> get props => [category, subCategory, isSelected];
+  List<Object?> get props => [isSelected, subCategory];
 }

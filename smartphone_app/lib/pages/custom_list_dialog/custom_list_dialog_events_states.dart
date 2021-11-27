@@ -1,4 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:quiver/collection.dart';
 
 import 'custom_list_dialog_bloc.dart';
 
@@ -57,7 +60,9 @@ class ItemWasSelected extends CustomListDialogEvent {
 }
 
 class ItemWasUpdated extends CustomListDialogEvent {
-  const ItemWasUpdated();
+  final dynamic updatedItem;
+
+  const ItemWasUpdated({required this.updatedItem});
 }
 
 //endregion
@@ -75,6 +80,7 @@ class CustomListDialogState extends Equatable {
   List<dynamic>? items;
   List<dynamic>? filteredItems;
   List<SelectedItem>? selectedItemTree;
+  int? updatedItemHashCode;
 
   CustomListDialogState(
       {this.showSearchBar,
@@ -82,11 +88,13 @@ class CustomListDialogState extends Equatable {
       this.rootItems,
       this.selectedItemTree,
       this.items,
+      this.updatedItemHashCode,
       this.filteredItems});
 
   CustomListDialogState copyWith(
       {bool? showSearchBar,
       String? searchText,
+      int? updatedItemHashCode,
       List<dynamic>? rootItems,
       List<dynamic>? items,
       List<dynamic>? filteredItems,
@@ -97,7 +105,12 @@ class CustomListDialogState extends Equatable {
         filteredItems: filteredItems ?? this.filteredItems,
         selectedItemTree: selectedItemTree ?? this.selectedItemTree,
         searchText: searchText ?? this.searchText,
+        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
         items: items ?? this.items);
+  }
+
+  CustomListDialogState update({required int updatedItemHashCode}) {
+    return copyWith(updatedItemHashCode: updatedItemHashCode);
   }
 
   @override
@@ -105,9 +118,10 @@ class CustomListDialogState extends Equatable {
         showSearchBar,
         searchText,
         rootItems,
+        selectedItemTree,
         items,
         filteredItems,
-        selectedItemTree
+        updatedItemHashCode
       ];
 }
 

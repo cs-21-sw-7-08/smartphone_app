@@ -37,7 +37,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       required SignUpPageView signUpPageView,
       required this.email,
       String? name})
-      : super(SignUpState(signUpPageView: signUpPageView, name: name));
+      : super(SignUpState(pageView: signUpPageView, name: name));
 
   //endregion
 
@@ -67,7 +67,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
           break;
       }
     } else if (event is MakeViewChange) {
-      yield state.copyWith(signUpPageView: event.pageView);
+      yield state.copyWith(pageView: event.pageView);
     } else if (event is VerificationIdRetrieved) {
       yield state.copyWith(verificationId: event.verificationId);
     } else if (event is ButtonPressed) {
@@ -160,7 +160,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     if (selectedMunicipality == null) return null;
     return state.copyWith(
         municipality: selectedMunicipality,
-        signUpPageView: SignUpPageView.name);
+        pageView: SignUpPageView.name);
   }
 
   Future<void> _cancelSignUp() async {

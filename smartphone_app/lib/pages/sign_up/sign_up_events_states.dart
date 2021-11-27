@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
@@ -77,7 +79,7 @@ class VerificationIdRetrieved extends SignUpEvent {
 
 // ignore: must_be_immutable
 class SignUpState extends Equatable {
-  SignUpPageView? signUpPageView;
+  SignUpPageView? pageView;
   String? name;
   String? phoneNo;
   String? smsCode;
@@ -90,7 +92,7 @@ class SignUpState extends Equatable {
       this.municipality,
       this.verificationId,
       this.phoneNo,
-      this.signUpPageView});
+      this.pageView});
 
   SignUpState copyWith(
       {String? name,
@@ -98,19 +100,19 @@ class SignUpState extends Equatable {
       String? smsCode,
       Municipality? municipality,
       String? verificationId,
-      SignUpPageView? signUpPageView}) {
+      SignUpPageView? pageView}) {
     return SignUpState(
         name: name ?? this.name,
         phoneNo: phoneNo ?? this.phoneNo,
         smsCode: smsCode ?? this.smsCode,
         municipality: municipality ?? this.municipality,
         verificationId: verificationId ?? this.verificationId,
-        signUpPageView: signUpPageView ?? this.signUpPageView);
+        pageView: pageView ?? this.pageView);
   }
 
   @override
   List<Object?> get props =>
-      [signUpPageView, name, phoneNo, smsCode, verificationId, municipality];
+      [pageView, name, phoneNo, smsCode, verificationId, municipality];
 }
 
 //endregion

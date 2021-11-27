@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:smartphone_app/objects/subcategory_filter_item.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
@@ -28,5 +29,5 @@ class CategoryFilterItem extends Equatable {
   }
 
   @override
-  List<Object?> get props => [category, isSelected, subCategories];
+  List<Object?> get props => [isSelected, category, subCategories];
 }

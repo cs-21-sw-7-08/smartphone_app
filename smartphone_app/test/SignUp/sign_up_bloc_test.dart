@@ -35,7 +35,7 @@ void main() {
                   name: "Test",
                   signUpPageView: SignUpPageView.phoneNo)
               .state,
-          SignUpState(signUpPageView: SignUpPageView.phoneNo, name: "Test"));
+          SignUpState(pageView: SignUpPageView.phoneNo, name: "Test"));
     });
 
     blocTest<SignUpBloc, SignUpState>("TextChanged -> name",
@@ -63,14 +63,14 @@ void main() {
         act: (bloc) =>
             bloc.add(const MakeViewChange(pageView: SignUpPageView.name)),
         expect: () =>
-            [bloc.state.copyWith(signUpPageView: SignUpPageView.name)]);
+            [bloc.state.copyWith(pageView: SignUpPageView.name)]);
 
     blocTest<SignUpBloc, SignUpState>("MakeViewChange -> name",
         build: () => bloc,
         act: (bloc) =>
             bloc.add(const MakeViewChange(pageView: SignUpPageView.name)),
         expect: () =>
-        [bloc.state.copyWith(signUpPageView: SignUpPageView.name)]);
+        [bloc.state.copyWith(pageView: SignUpPageView.name)]);
 
     blocTest<SignUpBloc, SignUpState>("VerificationIdRetrieved",
         build: () => bloc,

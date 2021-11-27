@@ -156,6 +156,8 @@ class IssuePageState extends Equatable {
   String? dateEdited;
   List<MunicipalityResponse>? municipalityResponses;
 
+  int? updatedItemHashCode;
+
   IssuePageState(
       {this.marker,
       this.isCreator,
@@ -167,6 +169,7 @@ class IssuePageState extends Equatable {
       this.dateCreated,
       this.dateEdited,
       this.pictures,
+      this.updatedItemHashCode,
       this.municipalityResponses,
       this.pageView,
       this.category,
@@ -187,6 +190,7 @@ class IssuePageState extends Equatable {
       String? description,
       String? municipalityName,
       IssuePageView? pageView,
+      int? updatedItemHashCode,
       List<Image>? pictures,
       Category? category,
       bool? hasChanges,
@@ -207,8 +211,13 @@ class IssuePageState extends Equatable {
         pageView: pageView ?? this.pageView,
         description: description ?? this.description,
         pictures: pictures ?? this.pictures,
+        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
         category: category ?? this.category,
         subCategory: subCategory ?? this.subCategory);
+  }
+
+  IssuePageState update({required int updatedItemHashCode}) {
+    return copyWith(updatedItemHashCode: updatedItemHashCode);
   }
 
   List<String> getNamesOfChangedProperties(
@@ -226,9 +235,8 @@ class IssuePageState extends Equatable {
   HashMap<String, int> getCurrentHashCodes({IssuePageState? state}) {
     state ??= this;
     HashMap<String, int> hashMap = HashMap();
-    hashMap["Marker"] = state.marker == null ? 0 : state.marker.hashCode;
-    hashMap["Description"] =
-        state.description == null ? 0 : state.description.hashCode;
+    hashMap["Marker"] = state.marker.hashCode;
+    hashMap["Description"] = state.description.hashCode;
     hashMap["Picture1"] = (pictures == null || state.pictures!.isEmpty)
         ? 0
         : state.pictures![0].hashCode;
@@ -238,8 +246,7 @@ class IssuePageState extends Equatable {
     hashMap["Picture3"] = (pictures == null || state.pictures!.length < 3)
         ? 0
         : state.pictures![2].hashCode;
-    hashMap["SubCategory"] =
-        state.subCategory == null ? 0 : state.subCategory.hashCode;
+    hashMap["SubCategory"] = state.subCategory.hashCode;
     return hashMap;
   }
 
@@ -260,7 +267,8 @@ class IssuePageState extends Equatable {
         description,
         pictures,
         category,
-        subCategory
+        subCategory,
+        updatedItemHashCode
       ];
 }
 

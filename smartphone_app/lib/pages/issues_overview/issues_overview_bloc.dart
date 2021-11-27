@@ -167,10 +167,13 @@ class IssuesOverviewBloc
       }
     } on StateError catch (_) {}
 
+    int? citizenId =
+        AppValuesHelper.getInstance().getInteger(AppValuesKey.citizenId);
+
     return IssuesOverviewFilter(
         municipalityIds: municipality == null ? null : [municipality.id],
         issueStateIds: [1, 2],
-        citizenIds: null,
+        citizenIds: citizenId == null ? null : [citizenId],
         subCategoryIds: null,
         isBlocked: false,
         categoryIds: null);

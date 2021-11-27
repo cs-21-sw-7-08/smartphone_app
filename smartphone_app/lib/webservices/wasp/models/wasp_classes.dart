@@ -181,19 +181,7 @@ class Category extends Equatable {
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
 
   @override
-  @JsonKey(ignore: true)
-  int get hashCode => id;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! Category) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
-
-  @override
-  List<Object?> get props => [id, subCategories];
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
@@ -212,18 +200,6 @@ class SubCategory extends Equatable {
       _$SubCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubCategoryToJson(this);
-
-  @override
-  @JsonKey(ignore: true)
-  int get hashCode => id;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! SubCategory) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
 
   @override
   List<Object?> get props => [id];
@@ -245,23 +221,12 @@ class Municipality extends Equatable {
   Map<String, dynamic> toJson() => _$MunicipalityToJson(this);
 
   @override
-  @JsonKey(ignore: true)
-  int get hashCode => id.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! Municipality) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
-
-  @override
   List<Object?> get props => [id];
 }
 
 @JsonSerializable()
-class ReportCategory {
+// ignore: must_be_immutable
+class ReportCategory extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -275,16 +240,7 @@ class ReportCategory {
   Map<String, dynamic> toJson() => _$ReportCategoryToJson(this);
 
   @override
-  @JsonKey(ignore: true)
-  int get hashCode => id.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! ReportCategory) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
+  List<Object?> get props => [id];
 }
 
 enum IssueStates { created, approved, resolved, notResolved }
@@ -305,18 +261,6 @@ class IssueState extends Equatable {
   Map<String, dynamic> toJson() => _$IssueStateToJson(this);
 
   IssueStates getEnum() => IssueStates.values[id - 1];
-
-  @override
-  @JsonKey(ignore: true)
-  int get hashCode => id.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! IssueState) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
 
   @override
   List<Object?> get props => [id];

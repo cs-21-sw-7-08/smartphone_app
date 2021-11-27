@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 

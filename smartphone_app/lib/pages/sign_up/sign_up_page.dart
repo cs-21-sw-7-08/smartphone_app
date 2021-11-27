@@ -81,7 +81,7 @@ class SignUpPage extends StatelessWidget {
 
   Widget getContent(BuildContext context, SignUpBloc bloc, SignUpState state) {
     List<Widget>? children;
-    switch (state.signUpPageView!) {
+    switch (state.pageView!) {
       case SignUpPageView.phoneNo:
         children = [
           _getMessage(
@@ -163,7 +163,7 @@ class SignUpPage extends StatelessWidget {
                         // 'Confirm' button
                         CustomButton(
                           onPressed: () {
-                            switch (state.signUpPageView!) {
+                            switch (state.pageView!) {
                               case SignUpPageView.phoneNo:
                                 bloc.add(const ButtonPressed(
                                     buttonEvent:

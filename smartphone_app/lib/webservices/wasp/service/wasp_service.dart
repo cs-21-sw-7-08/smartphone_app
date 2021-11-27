@@ -211,7 +211,7 @@ class WASPService implements IWASPServiceFunctions {
     var jsonString = jsonEncode(
         updates.map((e) => WASPUtil.removeNullValues(e.toJson())).toList());
     print("WASP Updates: $jsonString"); // ignore: avoid_print
-    RestResponse response = await restHelper.sendPostRequest(
+    RestResponse response = await restHelper.sendPutRequest(
         "${issueControllerPath}UpdateIssue",
         parameters: [RestParameter(name: "issueId", value: issueId.toString())],
         body: jsonString);

@@ -8,7 +8,7 @@ void main() {
       var state = SignUpState();
       state = state.copyWith(
           verificationId: "afasdffdasf",
-          signUpPageView: SignUpPageView.phoneNo,
+          pageView: SignUpPageView.phoneNo,
           name: "Test",
           municipality: Municipality(id: 1),
           phoneNo: "12345678",
@@ -17,7 +17,7 @@ void main() {
           state,
           SignUpState(
               verificationId: "afasdffdasf",
-              signUpPageView: SignUpPageView.phoneNo,
+              pageView: SignUpPageView.phoneNo,
               name: "Test",
               municipality: Municipality(id: 1),
               phoneNo: "12345678",

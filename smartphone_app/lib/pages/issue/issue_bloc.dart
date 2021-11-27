@@ -101,7 +101,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           if (image == null) return;
           List<Image> pictures = state.pictures!;
           pictures.add(image);
-          yield state.copyWith(pictures: pictures);
+          yield state.update(updatedItemHashCode: hashList(pictures));
           break;
 
       /// Save changes
@@ -223,7 +223,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
       if (response != DialogQuestionResponse.yes) return;
       List<Image> pictures = state.pictures!;
       pictures.remove(event.picture);
-      yield state.copyWith(pictures: pictures);
+      yield state.update(updatedItemHashCode: hashList(pictures));
     } else if (event is PageContentLoaded) {
       IssuePageState newState = state.copyWith(
         marker: event.marker,

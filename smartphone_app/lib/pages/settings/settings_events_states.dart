@@ -89,9 +89,8 @@ class SettingsState extends Equatable {
   HashMap<String, int> getCurrentHashCodes({SettingsState? state}) {
     state ??= this;
     HashMap<String, int> hashMap = HashMap();
-    hashMap["Name"] = state.name == null ? 0 : state.name.hashCode;
-    hashMap["Municipality"] =
-        state.municipality == null ? 0 : state.municipality.hashCode;
+    hashMap["Name"] = state.name.hashCode;
+    hashMap["Municipality"] = state.municipality.hashCode;
     return hashMap;
   }
 

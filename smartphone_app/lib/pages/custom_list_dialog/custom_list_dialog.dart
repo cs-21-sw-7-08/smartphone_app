@@ -231,7 +231,7 @@ class _CustomListDialogState extends State<CustomListDialog>
           // Hide keyboard
           GeneralUtil.hideKeyboard();
           // Fire event
-          bloc.add(const ItemWasUpdated());
+          bloc.add(ItemWasUpdated(updatedItem: state.filteredItems![index]));
         });
         if (itemBuilderWidget == null) {
           return Container(height: 50);
