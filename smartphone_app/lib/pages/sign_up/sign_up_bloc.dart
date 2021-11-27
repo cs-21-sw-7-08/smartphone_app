@@ -212,7 +212,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
   Future<void> _verifySmsCode({PhoneAuthCredential? credentials}) async {
     // Check for valid SMS code
-    if (state.smsCode == null || state.phoneNo!.length != 6) {
+    if (state.smsCode == null || state.smsCode!.length != 6) {
       GeneralUtil.showToast(
           AppLocalizations.of(context)!.please_enter_the_sms_code_toast);
       return;

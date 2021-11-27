@@ -123,7 +123,7 @@ class FilterUpdated extends IssuesOverviewFilterEvent {
 //region State
 
 // ignore: must_be_immutable
-class IssuesOverviewFilterState extends Equatable {
+class IssuesOverviewFilterState {
   List<CategoryFilterItem>? categories;
   List<SubCategoryFilterItem>? subCategories;
   List<MunicipalityFilterItem>? municipalities;

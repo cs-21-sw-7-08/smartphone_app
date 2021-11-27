@@ -201,7 +201,8 @@ class IssuesOverviewFilterBloc
     } else if (event is IssueStatePressed) {
       event.issueStateFilterItem.isSelected =
           !event.issueStateFilterItem.isSelected;
-      yield state.copyWith(issueStates: state.issueStates);
+      yield state.copyWith(
+          issueStates: state.issueStates);
     } else if (event is CategoryPressed) {
       yield state.copyWith(
           categories: state.categories!

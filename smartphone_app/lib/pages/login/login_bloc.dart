@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -156,6 +158,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<PermissionState> getPermissions() async {
+    if (Platform.isIOS) {
+      return PermissionState.granted;
+    }
+
     Map<Permission, PermissionStatus> statuses =
         await permissionHelper.requestPermissions(permissions);
 

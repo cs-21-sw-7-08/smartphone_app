@@ -7,5 +7,6 @@
 */
 
 NSLocalNetworkUsageDescription = "Bruger netværket til at hente og sende data via en webservice";
+NSLocationWhenInUseUsageDescription = "Bruger denne funktion til at vise telefonens placering på Google Maps";
 CFBundleName = "Bee A Helper";
 CFBundleDisplayName = "Bee A Helper";

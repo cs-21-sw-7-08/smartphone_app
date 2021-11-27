@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
@@ -163,7 +164,8 @@ class Location {
 }
 
 @JsonSerializable()
-class Category {
+// ignore: must_be_immutable
+class Category extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -189,10 +191,14 @@ class Category {
     }
     return hashCode == other.hashCode;
   }
+
+  @override
+  List<Object?> get props => [id, subCategories];
 }
 
 @JsonSerializable()
-class SubCategory {
+// ignore: must_be_immutable
+class SubCategory extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "CategoryId")
@@ -218,10 +224,14 @@ class SubCategory {
     }
     return hashCode == other.hashCode;
   }
+
+  @override
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
-class Municipality {
+// ignore: must_be_immutable
+class Municipality extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -245,6 +255,9 @@ class Municipality {
     }
     return hashCode == other.hashCode;
   }
+
+  @override
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
@@ -277,7 +290,8 @@ class ReportCategory {
 enum IssueStates { created, approved, resolved, notResolved }
 
 @JsonSerializable()
-class IssueState {
+// ignore: must_be_immutable
+class IssueState extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -303,6 +317,9 @@ class IssueState {
     }
     return hashCode == other.hashCode;
   }
+
+  @override
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()

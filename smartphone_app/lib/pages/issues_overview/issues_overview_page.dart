@@ -313,8 +313,10 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
             child: GoogleMap(
           mapType: state.mapType!,
           initialCameraPosition: CameraPosition(
-              target: LatLng(state.devicePosition!.latitude,
-                  state.devicePosition!.longitude),
+              target: state.devicePosition == null
+                  ? const LatLng(0, 0)
+                  : LatLng(state.devicePosition!.latitude,
+                      state.devicePosition!.longitude),
               zoom: 14),
           myLocationEnabled: true,
           zoomControlsEnabled: false,

@@ -94,7 +94,7 @@ class MarkersUpdated extends IssuesOverviewEvent {
 //region State
 
 // ignore: must_be_immutable
-class IssuesOverviewState extends Equatable {
+class IssuesOverviewState {
   Set<Marker>? markers;
   Position? devicePosition;
   MapType? mapType;
