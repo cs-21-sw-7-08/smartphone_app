@@ -37,6 +37,10 @@
 	<string>Using the network to access a webservice to verify the device</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Using this feature to show the location of the phone on Google Maps</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Using this feature to make it possible to select pictures from the photo library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Using this feature to make it possible to take pictures with the camera</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
