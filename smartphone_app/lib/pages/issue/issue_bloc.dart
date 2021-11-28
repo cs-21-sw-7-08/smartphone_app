@@ -499,6 +499,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                   municipalityId: municipalityId,
                   subCategoryId: state.subCategory!.id,
                   description: state.description ?? "",
+                  address: state.address,
                   picture1: picture1,
                   picture2: picture2,
                   picture3: picture3,
