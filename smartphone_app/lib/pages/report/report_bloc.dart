@@ -48,9 +48,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
 
         /// Select report category
         case ReportButtonEvent.selectReportCategory:
-          ReportState? newState = await _selectReportCategory();
-          if (newState == null) return;
-          yield newState;
+          await _selectReportCategory();
           break;
 
         /// Confirm
@@ -63,6 +61,12 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
           Navigator.of(context).pop(state.reportCategory);
           break;
       }
+    } else if (event is ValueSelected) {
+      switch (event.valueSelectedEvent) {
+        case ReportValueSelectedEvent.reportCategory:
+          yield state.copyWith(reportCategory: event.value);
+          break;
+      }
     }
   }
 
@@ -73,7 +77,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ///
   //region Methods
 
-  Future<ReportState?> _selectReportCategory() async {
+  Future<void> _selectReportCategory() async {
     List<ReportCategory> categories =
         AppValuesHelper.getInstance().getReportCategories();
     List<dynamic>? selectedItems =
@@ -117,11 +121,15 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       }
       return "";
     });
-    if (selectedItems == null) return null;
+    if (selectedItems == null) return;
     ReportCategory? selectedReportCategory = selectedItems
         .firstWhere((element) => element is ReportCategory, orElse: () => null);
-    if (selectedReportCategory == null) return null;
-    return state.copyWith(reportCategory: selectedReportCategory);
+    if (selectedReportCategory == null) return;
+
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent: ReportValueSelectedEvent.reportCategory,
+        value: selectedReportCategory));
   }
 
 //endregion

@@ -23,6 +23,7 @@ enum IssueButtonEvent {
 }
 enum IssueTextChangedEvent { description }
 enum IssuePageView { create, edit, see }
+enum IssuePageValueSelectedEvent { picture }
 
 //endregion
 
@@ -66,15 +67,6 @@ class TextChanged extends IssuePageEvent {
   List<Object?> get props => [textChangedEvent, text];
 }
 
-class LocationSelected extends IssuePageEvent {
-  final LatLng position;
-
-  const LocationSelected({required this.position});
-
-  @override
-  List<Object?> get props => [position];
-}
-
 class CategorySelected extends IssuePageEvent {
   final Category category;
   final SubCategory subCategory;
@@ -99,22 +91,22 @@ class PageContentLoaded extends IssuePageEvent {
   final String? dateEdited;
   final List<MunicipalityResponse>? municipalityResponses;
 
-  const PageContentLoaded(
-      {required this.marker,
-      required this.issueState,
-      required this.municipalityResponses,
-      required this.address,
-      required this.dateCreated,
-      required this.dateEdited,
-      required this.hasVerified,
-      required this.isCreator,
-      required this.description,
-      required this.pictures,
-      required this.category,
-      required this.subCategory});
+  const PageContentLoaded({required this.marker,
+    required this.issueState,
+    required this.municipalityResponses,
+    required this.address,
+    required this.dateCreated,
+    required this.dateEdited,
+    required this.hasVerified,
+    required this.isCreator,
+    required this.description,
+    required this.pictures,
+    required this.category,
+    required this.subCategory});
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props =>
+      [
         marker,
         address,
         description,
@@ -128,6 +120,42 @@ class PageContentLoaded extends IssuePageEvent {
         dateEdited,
         municipalityResponses
       ];
+}
+
+class LocationInformationRetrieved extends IssuePageEvent {
+  final Marker marker;
+  final String address;
+  final String municipalityName;
+
+  const LocationInformationRetrieved(
+      {required this.marker, required this.address, required this.municipalityName});
+
+  @override
+  List<Object?> get props => [marker, address, municipalityName];
+}
+
+class PictureSelected extends IssuePageEvent {
+  final Image image;
+
+  const PictureSelected({required this.image});
+
+  @override
+  List<Object?> get props => [image];
+}
+
+class IssueUpdated extends IssuePageEvent {
+  final bool? hasChanges;
+  final String? dateEdited;
+
+  const IssueUpdated(
+      {required this.hasChanges, required this.dateEdited});
+
+  @override
+  List<Object?> get props => [hasChanges, dateEdited];
+}
+
+class IssueVerified extends IssuePageEvent {
+  const IssueVerified();
 }
 
 //endregion
@@ -158,49 +186,47 @@ class IssuePageState extends Equatable {
 
   int? updatedItemHashCode;
 
-  IssuePageState(
-      {this.marker,
-      this.isCreator,
-      this.mapType,
-      this.address,
-      this.issueState,
-      this.hasVerified,
-      this.description,
-      this.dateCreated,
-      this.dateEdited,
-      this.pictures,
-      this.updatedItemHashCode,
-      this.municipalityResponses,
-      this.pageView,
-      this.category,
-      this.hasChanges,
-      this.municipalityName,
-      this.subCategory});
+  IssuePageState({this.marker,
+    this.isCreator,
+    this.mapType,
+    this.address,
+    this.issueState,
+    this.hasVerified,
+    this.description,
+    this.dateCreated,
+    this.dateEdited,
+    this.pictures,
+    this.updatedItemHashCode,
+    this.municipalityResponses,
+    this.pageView,
+    this.category,
+    this.hasChanges,
+    this.municipalityName,
+    this.subCategory});
 
-  IssuePageState copyWith(
-      {Marker? marker,
-      MapType? mapType,
-      bool? isCreator,
-      String? address,
-      bool? hasVerified,
-      IssueState? issueState,
-      List<MunicipalityResponse>? municipalityResponses,
-      String? dateCreated,
-      String? dateEdited,
-      String? description,
-      String? municipalityName,
-      IssuePageView? pageView,
-      int? updatedItemHashCode,
-      List<Image>? pictures,
-      Category? category,
-      bool? hasChanges,
-      SubCategory? subCategory}) {
+  IssuePageState copyWith({Marker? marker,
+    MapType? mapType,
+    bool? isCreator,
+    String? address,
+    bool? hasVerified,
+    IssueState? issueState,
+    List<MunicipalityResponse>? municipalityResponses,
+    String? dateCreated,
+    String? dateEdited,
+    String? description,
+    String? municipalityName,
+    IssuePageView? pageView,
+    int? updatedItemHashCode,
+    List<Image>? pictures,
+    Category? category,
+    bool? hasChanges,
+    SubCategory? subCategory}) {
     return IssuePageState(
         marker: marker ?? this.marker,
         isCreator: isCreator ?? this.isCreator,
         mapType: mapType ?? this.mapType,
         municipalityResponses:
-            municipalityResponses ?? this.municipalityResponses,
+        municipalityResponses ?? this.municipalityResponses,
         address: address ?? this.address,
         dateCreated: dateCreated ?? this.dateCreated,
         dateEdited: dateEdited ?? this.dateEdited,
@@ -251,7 +277,8 @@ class IssuePageState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props =>
+      [
         marker,
         isCreator,
         mapType,

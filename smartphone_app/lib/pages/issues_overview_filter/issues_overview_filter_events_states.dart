@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:smartphone_app/objects/category_filter_item.dart';
 import 'package:smartphone_app/objects/issue_state_filter_item.dart';
 import 'package:smartphone_app/objects/municipality_filter_item.dart';
@@ -22,6 +21,12 @@ enum IssuesOverviewFilterButtonEvent {
   resetCategories,
   resetSubCategories,
   resetMunicipalities
+}
+
+enum IssuesOverviewFilterValueSelectedEvent {
+  categories,
+  subCategories,
+  municipalities
 }
 
 //endregion
@@ -114,6 +119,16 @@ class FilterUpdated extends IssuesOverviewFilterEvent {
         issueStates,
         isOnlyShowingOwnIssues
       ];
+}
+
+class ValueSelected<T> extends IssuesOverviewFilterEvent {
+  final IssuesOverviewFilterValueSelectedEvent valueSelectedEvent;
+  final T value;
+
+  const ValueSelected({required this.valueSelectedEvent, required this.value});
+
+  @override
+  List<Object?> get props => [valueSelectedEvent, value];
 }
 
 //endregion

@@ -7,6 +7,7 @@ import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 //region Enums
 
 enum ReportButtonEvent { close, selectReportCategory, confirm }
+enum ReportValueSelectedEvent { reportCategory }
 
 //endregion
 
@@ -29,6 +30,16 @@ class ButtonPressed extends ReportEvent {
 
   @override
   List<Object?> get props => [buttonEvent];
+}
+
+class ValueSelected<T> extends ReportEvent {
+  final ReportValueSelectedEvent valueSelectedEvent;
+  final T value;
+
+  const ValueSelected({required this.valueSelectedEvent, required this.value});
+
+  @override
+  List<Object?> get props => [valueSelectedEvent, value];
 }
 
 //endregion

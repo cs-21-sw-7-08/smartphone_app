@@ -100,23 +100,17 @@ class IssuesOverviewFilterBloc
 
         /// Select categories
         case IssuesOverviewFilterButtonEvent.selectCategories:
-          IssuesOverviewFilterState? newState = await _selectCategories();
-          if (newState == null) return;
-          yield newState;
+          await _selectCategories();
           break;
 
         /// Select subcategories
         case IssuesOverviewFilterButtonEvent.selectSubCategories:
-          IssuesOverviewFilterState? newState = await _selectSubCategories();
-          if (newState == null) return;
-          yield newState;
+          await _selectSubCategories();
           break;
 
         /// Select municipalities
         case IssuesOverviewFilterButtonEvent.selectMunicipalities:
-          IssuesOverviewFilterState? newState = await _selectMunicipalities();
-          if (newState == null) return;
-          yield newState;
+          await _selectMunicipalities();
           break;
 
         /// Only show your own issues
@@ -207,6 +201,10 @@ class IssuesOverviewFilterBloc
       yield state.copyWith(
           categories: state.categories!
               .where((element) => element != event.categoryFilterItem)
+              .toList(),
+          subCategories: state.subCategories!
+              .where((element) =>
+                  element.category != event.categoryFilterItem.category)
               .toList());
     } else if (event is CategoryInSubCategoryPressed) {
       yield state.copyWith(
@@ -235,6 +233,24 @@ class IssuesOverviewFilterBloc
           subCategories: event.subCategories,
           categories: event.categories,
           municipalities: event.municipalities);
+    } else if (event is ValueSelected) {
+      switch (event.valueSelectedEvent) {
+
+        /// Categories
+        case IssuesOverviewFilterValueSelectedEvent.categories:
+          yield state.copyWith(categories: event.value);
+          break;
+
+        /// Subcategories
+        case IssuesOverviewFilterValueSelectedEvent.subCategories:
+          yield state.copyWith(subCategories: event.value);
+          break;
+
+        /// Municipalities
+        case IssuesOverviewFilterValueSelectedEvent.municipalities:
+          yield state.copyWith(municipalities: event.value);
+          break;
+      }
     }
   }
 
@@ -245,7 +261,7 @@ class IssuesOverviewFilterBloc
   ///
   //region Methods
 
-  Future<IssuesOverviewFilterState?> _selectCategories() async {
+  Future<void> _selectCategories() async {
     List<CategoryFilterItem> categories = AppValuesHelper.getInstance()
         .getCategories()
         .select((element, index) => CategoryFilterItem(
@@ -327,18 +343,27 @@ class IssuesOverviewFilterBloc
           }
           return "";
         });
-    if (selectedItems == null) return null;
-    if (selectedItems.isEmpty) return state.copyWith(categories: List.empty());
+    if (selectedItems == null) return;
+    if (selectedItems.isEmpty) {
+      // Fire event
+      add(ValueSelected(
+          valueSelectedEvent: IssuesOverviewFilterValueSelectedEvent.categories,
+          value: List.empty()));
+    }
     List<CategoryFilterItem> categoryFilterItems = List.empty(growable: true);
     for (var item in selectedItems) {
       if (item is CategoryFilterItem) {
         categoryFilterItems.add(item);
       }
     }
-    return state.copyWith(categories: categoryFilterItems);
+
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent: IssuesOverviewFilterValueSelectedEvent.categories,
+        value: categoryFilterItems));
   }
 
-  Future<IssuesOverviewFilterState?> _selectSubCategories() async {
+  Future<void> _selectSubCategories() async {
     List<CategoryFilterItem> categories = AppValuesHelper.getInstance()
         .getCategories()
         .where((element) => state.categories!
@@ -470,9 +495,14 @@ class IssuesOverviewFilterBloc
           }
           return "";
         });
-    if (selectedItems == null) return null;
+    if (selectedItems == null) return;
     if (selectedItems.isEmpty) {
-      return state.copyWith(subCategories: List.empty());
+      // Fire event
+      add(ValueSelected(
+          valueSelectedEvent:
+              IssuesOverviewFilterValueSelectedEvent.subCategories,
+          value: List.empty()));
+      return;
     }
     List<SubCategoryFilterItem> subCategoryFilterItems =
         List.empty(growable: true);
@@ -486,10 +516,15 @@ class IssuesOverviewFilterBloc
         }
       }
     }
-    return state.copyWith(subCategories: subCategoryFilterItems);
+
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent:
+            IssuesOverviewFilterValueSelectedEvent.subCategories,
+        value: subCategoryFilterItems));
   }
 
-  Future<IssuesOverviewFilterState?> _selectMunicipalities() async {
+  Future<void> _selectMunicipalities() async {
     List<MunicipalityFilterItem> municipalities = AppValuesHelper.getInstance()
         .getMunicipalities()
         .select((element, index) => MunicipalityFilterItem(
@@ -569,9 +604,14 @@ class IssuesOverviewFilterBloc
           }
           return "";
         });
-    if (selectedItems == null) return null;
+    if (selectedItems == null) return;
     if (selectedItems.isEmpty) {
-      return state.copyWith(municipalities: List.empty());
+      // Fire event
+      add(ValueSelected(
+          valueSelectedEvent:
+              IssuesOverviewFilterValueSelectedEvent.municipalities,
+          value: List.empty()));
+      return;
     }
     List<MunicipalityFilterItem> municipalityFilterItems =
         List.empty(growable: true);
@@ -580,7 +620,11 @@ class IssuesOverviewFilterBloc
         municipalityFilterItems.add(item);
       }
     }
-    return state.copyWith(municipalities: municipalityFilterItems);
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent:
+            IssuesOverviewFilterValueSelectedEvent.municipalities,
+        value: municipalityFilterItems));
   }
 
   Future<bool> getValues() async {

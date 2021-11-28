@@ -69,39 +69,17 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
       switch (event.buttonEvent) {
       /// Select location
         case IssueButtonEvent.selectLocation:
-          LatLng? position = await GeneralUtil.showPageAsDialog<LatLng?>(
-              context, SelectLocationPage(mapType: state.mapType!));
-          if (position == null) return;
-          var newState = await _getLocationInformation(position);
-          if (newState == null) return;
-          yield newState;
+          await _selectLocation();
           break;
 
       /// Select category
         case IssueButtonEvent.selectCategory:
-          IssuePageState? newState = await _selectCategory();
-          if (newState == null) return;
-          yield newState;
+          await _selectCategory();
           break;
 
       /// Select picture
         case IssueButtonEvent.selectPicture:
-        // Hide keyboard
-          GeneralUtil.hideKeyboard();
-          // You can only add up to 3 pictures
-          if (state.pictures!.length == 3) {
-            GeneralUtil.showToast(AppLocalizations.of(context)!
-                .you_cannot_add_more_than_three_pictures);
-            return;
-          }
-          // Get image
-          Image? image = await ImagePickerDialog.show(context: context);
-          // Image is null if the user did not take or pick an image
-          // e.g. pressed "Cancel"
-          if (image == null) return;
-          List<Image> pictures = state.pictures!;
-          pictures.add(image);
-          yield state.update(updatedItemHashCode: hashList(pictures));
+          await _selectPicture();
           break;
 
       /// Save changes
@@ -112,12 +90,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
               await _createIssue();
               break;
             case IssuePageView.edit:
-              List<String> names = state.getNamesOfChangedProperties(
-                  hashCodeMap!);
-              IssuePageState? newState = await _updateIssue(names);
-              if (newState != null) {
-                yield newState;
-              }
+              await _updateIssue();
               break;
           }
           break;
@@ -141,16 +114,14 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                     question: AppLocalizations.of(context)!
                         .do_you_want_to_save_the_changes);
                 if (questionResponse == DialogQuestionResponse.yes) {
-                  IssuePageState? newState = await _updateIssue(names);
-                  if (newState != null) {
-                    yield newState;
-                  }
+                  await _updateIssue(names: names);
                 } else {
                   await getValues();
                   return;
                 }
+              } else {
+                yield state.copyWith(pageView: IssuePageView.see);
               }
-              yield state.copyWith(pageView: IssuePageView.see);
               break;
           }
           break;
@@ -177,9 +148,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           // Yes was selected by the user
           if (questionResponse == DialogQuestionResponse.yes) {
             // Verify issue
-            IssuePageState? newState = await _verifyIssue();
-            if (newState == null) return;
-            yield newState;
+            await _verifyIssue();
           }
           break;
 
@@ -241,6 +210,23 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         address: event.address,);
       hashCodeMap = state.getCurrentHashCodes(state: newState);
       yield newState;
+    } else if (event is LocationInformationRetrieved) {
+      yield state.copyWith(marker: event.marker,
+          address: event.address,
+          municipalityName: event.municipalityName);
+    } else if (event is CategorySelected) {
+      yield state.copyWith(
+          category: event.category, subCategory: event.subCategory);
+    } else if (event is PictureSelected) {
+      List<Image> pictures = state.pictures!;
+      pictures.add(event.image);
+      yield state.update(updatedItemHashCode: hashList(pictures));
+    } else if (event is IssueUpdated) {
+      yield state.copyWith(pageView: IssuePageView.see,
+          hasChanges: event.hasChanges,
+          dateEdited: event.dateEdited);
+    } else if (event is IssueVerified) {
+      yield state.copyWith(hasVerified: true);
     }
   }
 
@@ -309,14 +295,16 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     Navigator.pop(context);
   }
 
-  Future<IssuePageState?> _updateIssue(
-      List<String> namesOfChangedProperties) async {
-    if (namesOfChangedProperties.isEmpty) {
-      return state.copyWith(pageView: IssuePageView.see);
+  Future<void> _updateIssue({List<String>? names}) async {
+    names ??= state.getNamesOfChangedProperties(
+        hashCodeMap!);
+    if (names.isEmpty) {
+      add(const IssueUpdated(dateEdited: null, hasChanges: null));
+      return;
     }
 
     // Verify issue
-    IssuePageState? newState = await TaskUtil.runTask(
+    await TaskUtil.runTask(
         buildContext: context,
         progressMessage:
         AppLocalizations.of(context)!.updating_issue,
@@ -331,87 +319,87 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           String? picture2;
           String? picture3;
 
-          if (namesOfChangedProperties.contains("Marker")) {
+          if (names!.contains("Marker")) {
             // Get municipality ID
             var municipalities = AppValuesHelper.getInstance()
                 .getMunicipalities()
                 .where((element) =>
             element.name!.toLowerCase() ==
                 state.municipalityName!.toLowerCase());
-            if (municipalities.isEmpty) return null;
+            if (municipalities.isEmpty) return;
             var municipality = municipalities.first;
             municipalityId = municipality.id;
 
             location = Location.fromLatLng(state.marker!.position);
             address = state.address!;
             updates.add(WASPUpdate(
-                name: "MunicipalityId", value: municipalityId.toString()))
+                name: "MunicipalityId", value: municipalityId.toString()));
             updates.add(WASPUpdate(
                 name: "Location",
                 value: jsonEncode(location.toJson())
-            ))
+            ));
             updates.add(WASPUpdate(
                 name: "Address",
                 value: address
-            ))
+            ));
           }
-          if (namesOfChangedProperties.contains("Description")) {
+          if (names.contains("Description")) {
             description = state.description ?? "";
             updates.add(WASPUpdate(
                 name: "Description",
                 value: description
-            ))
+            ));
           }
-          if (namesOfChangedProperties.contains("Picture1")) {
+          if (names.contains("Picture1")) {
             picture1 = await _getPictureAsBase64FromNumber(1);
 
             updates.add(WASPUpdate(
                 name: "Picture1",
                 value: picture1
-            ))
+            ));
           }
-          if (namesOfChangedProperties.contains("Picture2")) {
+          if (names.contains("Picture2")) {
             picture2 = await _getPictureAsBase64FromNumber(2);
 
             updates.add(WASPUpdate(
                 name: "Picture2",
                 value: picture2
-            ))
+            ));
           }
-          if (namesOfChangedProperties.contains("Picture3")) {
+          if (names.contains("Picture3")) {
             picture3 = await _getPictureAsBase64FromNumber(3);
 
             updates.add(WASPUpdate(
                 name: "Picture3",
                 value: picture3
-            ))
+            ));
           }
-          if (namesOfChangedProperties.contains("SubCategory")) {
+          if (names.contains("SubCategory")) {
             updates.add(WASPUpdate(
                 name: "SubCategoryId",
                 value: state.subCategory!.id.toString()
-            ))
+            ));
           }
 
           // Send request
           var response = await WASPService.getInstance().updateIssue(
               issueId: issue!.id!,
               updates: updates
-          )
+          );
           // Check response
           if (!response.isSuccess) {
             GeneralUtil.showToast((await response.errorMessage)!);
-            return null;
+            return;
           }
 
           // Update values in the issue
-          for (var name in namesOfChangedProperties) {
+          for (var name in names) {
             switch (name) {
               case "Marker":
                 issue!.location = location;
                 issue!.address = address;
                 issue!.municipality = Municipality(
-                    id: municipalityId!, name: state.municipalityName)
+                    id: municipalityId!, name: state.municipalityName);
                 break;
               case "Description":
                 issue!.description = description;
@@ -435,22 +423,18 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           issue!.dateEdited = DateTime.now();
           var dateFormat = getDateFormat();
           String? dateEdited = dateFormat.format(issue!.dateEdited!);
-          // Return new state
-          return state.copyWith(
-              hasChanges: true,
-              pageView: IssuePageView.see,
-              dateEdited: dateEdited);
+          // Fire event
+          add(IssueUpdated(hasChanges: true, dateEdited: dateEdited));
         },
         taskCancelled: () {});
-    return newState;
   }
 
-  Future<IssuePageState?> _verifyIssue() async {
+  Future<void> _verifyIssue() async {
     int citizenId = AppValuesHelper.getInstance().getInteger(
         AppValuesKey.citizenId)!;
 
     // Verify issue
-    IssuePageState? newState = await TaskUtil.runTask(
+    await TaskUtil.runTask(
         buildContext: context,
         progressMessage:
         AppLocalizations.of(context)!.verifying_issue,
@@ -458,16 +442,16 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           var response = await WASPService.getInstance().verifyIssue(
               issueId: issue!.id!,
               citizenId: citizenId
-          )
+          );
           if (!response.isSuccess) {
             GeneralUtil.showToast((await response.errorMessage)!);
-            return null;
+            return;
           }
           issue!.issueVerificationCitizenIds!.add(citizenId);
-          return state.copyWith(hasVerified: true);
+          // Fire event
+          add(const IssueVerified());
         },
         taskCancelled: () {});
-    return newState;
   }
 
   Future<void> _createIssue() async {
@@ -557,7 +541,7 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     }
   }
 
-  Future<IssuePageState?> _selectCategory() async {
+  Future<void> _selectCategory() async {
     List<Category> categories = AppValuesHelper.getInstance().getCategories();
     List<dynamic>? selectedItems = await CustomListDialog.show(context,
         items: categories,
@@ -633,18 +617,29 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           }
           return "";
         });
-    if (selectedItems == null) return null;
+    if (selectedItems == null) return;
+    // Get selected category
     Category? selectedCategory = selectedItems
         .firstWhere((element) => element is Category, orElse: () => null);
+    // Get selected subcategory
     SubCategory? selectedSubCategory = selectedItems
         .firstWhere((element) => element is SubCategory, orElse: () => null);
 
-    return state.copyWith(
-        category: selectedCategory, subCategory: selectedSubCategory);
+    // Fire event
+    add(CategorySelected(
+        category: selectedCategory!, subCategory: selectedSubCategory!));
   }
 
-  Future<IssuePageState?> _getLocationInformation(LatLng position) async {
-    IssuePageState? createIssueState = await TaskUtil.runTask(
+  Future<void> _selectLocation() async {
+    LatLng? position = await GeneralUtil.showPageAsDialog<LatLng?>(
+        context, SelectLocationPage(mapType: state.mapType!));
+    if (position == null) return;
+    await _getLocationInformation(position);
+  }
+
+  Future<void> _getLocationInformation(LatLng position) async {
+    LocationInformationRetrieved? locationInformationRetrieved = await TaskUtil
+        .runTask(
         buildContext: context,
         progressMessage:
         AppLocalizations.of(context)!.getting_location_information,
@@ -671,21 +666,39 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           String? municipalityName =
           response.googleResponse!.getMunicipalityName();
           if (address == null || municipalityName == null) return null;
-          // Return new state
-          return state.copyWith(
+          // Return event
+          return LocationInformationRetrieved(
               marker: marker,
               municipalityName: municipalityName,
               address: address);
         },
         taskCancelled: () {});
     // Check for errors
-    if (createIssueState == null) {
+    if (locationInformationRetrieved == null) {
       GeneralUtil.showToast(AppLocalizations.of(context)!
           .could_not_get_location_information);
-      return null;
+      return;
     }
-    // Return new state
-    return createIssueState;
+    // Fire event
+    add(locationInformationRetrieved);
+  }
+
+  Future<void> _selectPicture() async {
+    // Hide keyboard
+    GeneralUtil.hideKeyboard();
+    // You can only add up to 3 pictures
+    if (state.pictures!.length == 3) {
+      GeneralUtil.showToast(AppLocalizations.of(context)!
+          .you_cannot_add_more_than_three_pictures);
+      return;
+    }
+    // Get image
+    Image? image = await ImagePickerDialog.show(context: context);
+    // Image is null if the user did not take or pick an image
+    // e.g. pressed "Cancel"
+    if (image == null) return;
+    // Fire event
+    add(PictureSelected(image: image));
   }
 
   Future<bool> getValues() async {
