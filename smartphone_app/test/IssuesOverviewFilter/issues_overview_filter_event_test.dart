@@ -101,12 +101,55 @@ void main() {
     group("FilterUpdated", () {
       test("Supports value comparisons", () {
         expect(
-          MunicipalityPressed(
-              municipalityFilterItem: MunicipalityFilterItem(
-                  municipality: Municipality(id: 1), isSelected: true)),
-          MunicipalityPressed(
-              municipalityFilterItem: MunicipalityFilterItem(
-                  municipality: Municipality(id: 1), isSelected: true)),
+          FilterUpdated(categories: [
+            CategoryFilterItem(
+                category: Category(id: 1),
+                isSelected: true,
+                subCategories: null)
+          ], subCategories: [
+            SubCategoryFilterItem(
+                category: Category(id: 1),
+                isSelected: true,
+                subCategory: SubCategory(id: 1))
+          ], municipalities: [
+            MunicipalityFilterItem(
+                municipality: Municipality(id: 1), isSelected: true)
+          ], issueStates: [
+            IssueStateFilterItem(
+                issueState: IssueState(id: 1), isSelected: true)
+          ], isOnlyShowingOwnIssues: false),
+          FilterUpdated(categories: [
+            CategoryFilterItem(
+                category: Category(id: 1),
+                isSelected: true,
+                subCategories: null)
+          ], subCategories: [
+            SubCategoryFilterItem(
+                category: Category(id: 1),
+                isSelected: true,
+                subCategory: SubCategory(id: 1))
+          ], municipalities: [
+            MunicipalityFilterItem(
+                municipality: Municipality(id: 1), isSelected: true)
+          ], issueStates: [
+            IssueStateFilterItem(
+                issueState: IssueState(id: 1), isSelected: true)
+          ], isOnlyShowingOwnIssues: false),
+        );
+      });
+    });
+
+    group("ValueSelected", () {
+      test("Supports value comparisons", () {
+        expect(
+          ValueSelected(valueSelectedEvent: IssuesOverviewFilterValueSelectedEvent.subCategories, value: [SubCategoryFilterItem(
+              category: Category(id: 1),
+              isSelected: true,
+              subCategory: SubCategory(id: 1))]),
+          ValueSelected(valueSelectedEvent: IssuesOverviewFilterValueSelectedEvent.subCategories, value: [SubCategoryFilterItem(
+              category: Category(id: 1),
+              isSelected: true,
+              subCategory: SubCategory(id: 1))]),
         );
       });
     });
