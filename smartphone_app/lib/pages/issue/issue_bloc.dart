@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/pages/custom_list_dialog/custom_list_dialog.dart';
 import 'package:smartphone_app/pages/report/report_page.dart';
 import 'package:smartphone_app/pages/select_location/select_location_page.dart';
@@ -82,17 +83,14 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
           await _selectPicture();
           break;
 
+      /// Create issue
+        case IssueButtonEvent.createIssue:
+          await _createIssue();
+          break;
+
       /// Save changes
         case IssueButtonEvent.saveChanges:
-        // ignore: missing_enum_constant_in_switch
-          switch (state.pageView!) {
-            case IssuePageView.create:
-              await _createIssue();
-              break;
-            case IssuePageView.edit:
-              await _updateIssue();
-              break;
-          }
+          await _updateIssue();
           break;
 
       /// Back
@@ -140,7 +138,14 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
 
       /// Verify issue
         case IssueButtonEvent.verifyIssue:
-        // Ask user if they want to verify issue
+        // You cannot verify the issue, if the municipality has changed the
+        // status to "Resolved" or "Not resolved"
+          if (issue!.issueState!.id != 1 && issue!.issueState!.id != 2) {
+            GeneralUtil.showToast(AppLocalizations.of(context)!
+                .you_cannot_verify_the_issue);
+            return;
+          }
+          // Ask user if they want to verify issue
           DialogQuestionResponse questionResponse = await QuestionDialog
               .show(context: context,
               question: AppLocalizations.of(context)!
@@ -154,13 +159,10 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
 
       /// Report issue
         case IssueButtonEvent.reportIssue:
-          ReportCategory? reportCategory = await GeneralUtil.showPageAsDialog<
-              ReportCategory>(context, ReportPage());
-          if (reportCategory == null) return;
-          _reportIssue(reportCategory);
+          await _reportIssue();
           break;
 
-      /// Delete
+      /// Delete issue
         case IssueButtonEvent.deleteIssue:
         // You cannot delete the issue, if the municipality has changed the status
           if (issue!.issueState!.id != 1) {
@@ -271,7 +273,11 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
     return null;
   }
 
-  Future<void> _reportIssue(ReportCategory reportCategory) async {
+  Future<void> _reportIssue() async {
+    ReportCategory? reportCategory = await GeneralUtil.showPageAsDialog<
+        ReportCategory>(context, ReportPage());
+    if (reportCategory == null) return;
+
     // Report issue
     bool? flag = await TaskUtil.runTask(
         buildContext: context,
@@ -561,7 +567,8 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                       child: Column(
                         children: [
                           CustomLabel(
-                            title: item.name!,
+                            title: LocalizationHelper.getInstance()
+                                .getLocalizedCategory(context, item),
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,
@@ -587,7 +594,8 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
                       child: Column(
                         children: [
                           CustomLabel(
-                            title: item.name!,
+                            title: LocalizationHelper.getInstance()
+                                .getLocalizedSubCategory(context, item),
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,

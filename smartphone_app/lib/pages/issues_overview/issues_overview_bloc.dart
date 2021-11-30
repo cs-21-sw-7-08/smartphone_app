@@ -172,7 +172,7 @@ class IssuesOverviewBloc
 
     return IssuesOverviewFilter(
         municipalityIds: municipality == null ? null : [municipality.id],
-        issueStateIds: [1, 2],
+        issueStateIds: const [1, 2],
         citizenIds: citizenId == null ? null : [citizenId],
         subCategoryIds: null,
         isBlocked: false,

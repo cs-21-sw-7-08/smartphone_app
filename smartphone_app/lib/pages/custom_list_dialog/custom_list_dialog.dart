@@ -75,9 +75,9 @@ class _CustomListDialogState extends State<CustomListDialog>
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
     opacityAnimation =
-        Tween<double>(begin: 0, end: 1).animate(animationController);
+        Tween<double>(begin: 1, end: 0).animate(animationController);
     sizeAnimation =
-        Tween<double>(begin: 0, end: 80).animate(animationController);
+        Tween<double>(begin: 80, end: 0).animate(animationController);
   }
 
   @override
@@ -145,8 +145,8 @@ class _CustomListDialogState extends State<CustomListDialog>
                                       buttonEvent: CustomListDialogButtonEvent
                                           .changeSearchBarVisibility));
                                   !bloc.state.showSearchBar!
-                                      ? animationController.forward()
-                                      : animationController.reverse();
+                                      ? animationController.reverse()
+                                      : animationController.forward();
                                 },
                               ),
                               body: _getContent(context, bloc, state),

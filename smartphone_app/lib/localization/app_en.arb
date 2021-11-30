@@ -179,8 +179,16 @@
   "@log_out": {
     "description": "Log out drawer title"
   },
+  "save_changes": "Save changes",
+  "@save_changes": {
+    "description": "Button text"
+  },
   "you_cannot_edit_the_issue": "You cannot edit the issue, because your municipality has changed the status",
   "@you_cannot_edit_the_issue": {
+    "description": "Informative message to the user"
+  },
+  "you_cannot_verify_the_issue": "You cannot verify the issue, because the municipality has finished the processing",
+  "@you_cannot_verify_the_issue": {
     "description": "Informative message to the user"
   },
   "you_cannot_delete_the_issue": "You cannot delete the issue, because your municipality has changed the status",

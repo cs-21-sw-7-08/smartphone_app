@@ -23,11 +23,11 @@ void main() {
   group("IssuesOverviewFilter", () {
     late IssuesOverviewFilterBloc bloc;
     var filter = IssuesOverviewFilter(
-        categoryIds: [],
-        subCategoryIds: [],
-        citizenIds: [1],
-        issueStateIds: [1, 2],
-        municipalityIds: [1],
+        categoryIds: const [],
+        subCategoryIds: const [],
+        citizenIds: const [1],
+        issueStateIds: const [1, 2],
+        municipalityIds: const [1],
         isBlocked: false);
     var hashCode = 0;
 

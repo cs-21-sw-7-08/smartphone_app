@@ -245,13 +245,14 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                     leftButtonPressed: () async => {
                                       _scaffoldKey.currentState!.openDrawer()
                                     },
-                                    button1Icon: const Icon(Icons.tune_outlined,
+                                    button1Icon: const Icon(
+                                        Icons.refresh_outlined,
                                         color: Colors.white),
                                     onButton1Pressed: () => bloc.add(
                                         const ButtonPressed(
                                             buttonEvent:
                                                 IssuesOverviewButtonEvent
-                                                    .showFilter)),
+                                                    .getListOfIssues)),
                                   ),
                                   body: _getContent(bloc))))));
             }));
@@ -292,11 +293,10 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                           top: values.padding),
                       imagePadding: const EdgeInsets.all(10),
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
-                      icon: const Icon(Icons.refresh_outlined,
-                          color: Colors.black),
+                      icon:
+                          const Icon(Icons.tune_outlined, color: Colors.black),
                       onPressed: () => bloc.add(const ButtonPressed(
-                          buttonEvent:
-                              IssuesOverviewButtonEvent.getListOfIssues))),
+                          buttonEvent: IssuesOverviewButtonEvent.showFilter))),
                 ],
               ),
             )

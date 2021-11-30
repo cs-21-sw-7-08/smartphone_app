@@ -89,50 +89,28 @@ class IssuePage extends StatelessWidget {
                                           const ButtonPressed(
                                               buttonEvent:
                                                   IssueButtonEvent.back)),
-                                      onButton1Pressed: () {
-                                        IssueButtonEvent? buttonEvent;
-                                        switch (state.pageView!) {
-                                          case IssuePageView.edit:
-                                          case IssuePageView.create:
-                                            buttonEvent =
-                                                IssueButtonEvent.saveChanges;
-                                            break;
-                                          case IssuePageView.see:
-                                            if (state.isCreator!) {
-                                              buttonEvent =
-                                                  IssueButtonEvent.editIssue;
-                                            } else {
-                                              buttonEvent =
-                                                  IssueButtonEvent.reportIssue;
-                                            }
-                                            break;
-                                        }
-                                        bloc.add(ButtonPressed(
-                                            buttonEvent: buttonEvent));
-                                      },
-                                      button1Icon: Icon(_getButton1Icon(state),
-                                          color: Colors.white),
+                                      onButton1Pressed: state.pageView! ==
+                                              IssuePageView.see
+                                          ? () => bloc.add(ButtonPressed(
+                                              buttonEvent: state.isCreator!
+                                                  ? IssueButtonEvent.editIssue
+                                                  : IssueButtonEvent
+                                                      .reportIssue))
+                                          : null,
+                                      button1Icon:
+                                          state.pageView! == IssuePageView.see
+                                              ? Icon(
+                                                  state.isCreator!
+                                                      ? Icons.edit_outlined
+                                                      : Icons.flag_outlined,
+                                                  color: Colors.white)
+                                              : null,
                                     ),
                                     body: _getContent(context, bloc, state),
                                   );
                                 },
                               )))));
             }));
-  }
-
-  IconData _getButton1Icon(IssuePageState state) {
-    switch (state.pageView!) {
-      case IssuePageView.create:
-        return Icons.send_outlined;
-      case IssuePageView.edit:
-        return Icons.check;
-      case IssuePageView.see:
-        if (state.isCreator!) {
-          return Icons.edit_outlined;
-        } else {
-          return Icons.flag_outlined;
-        }
-    }
   }
 
   String _getTitle(BuildContext context, IssuePageState state) {
@@ -148,6 +126,8 @@ class IssuePage extends StatelessWidget {
 
   Widget _getContent(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
+    var bottomButton = _getBottomButton(context, bloc, state);
+
     return ClipRect(
         child: Container(
             constraints: const BoxConstraints.expand(),
@@ -224,12 +204,7 @@ class IssuePage extends StatelessWidget {
                                             top: values.padding,
                                             left: values.padding,
                                             right: values.padding,
-                                            bottom: state.pageView ==
-                                                        IssuePageView.see &&
-                                                    ((!state.isCreator! &&
-                                                            !state
-                                                                .hasVerified!) ||
-                                                        (state.isCreator!))
+                                            bottom: bottomButton != null
                                                 ? 0
                                                 : values.padding),
                                         child: Column(
@@ -243,24 +218,61 @@ class IssuePage extends StatelessWidget {
                                         )),
                                   ],
                                 ))),
-                        if (state.pageView == IssuePageView.see &&
-                            ((!state.isCreator! && !state.hasVerified!) ||
-                                (state.isCreator!)))
-                          // 'Verify/Delete issue' button
-                          CustomButton(
-                            onPressed: () => bloc.add(ButtonPressed(
-                                buttonEvent: state.isCreator!
-                                    ? IssueButtonEvent.deleteIssue
-                                    : IssueButtonEvent.verifyIssue)),
-                            text: state.isCreator!
-                                ? AppLocalizations.of(context)!.delete_issue
-                                : AppLocalizations.of(context)!.verify_issue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            margin: const EdgeInsets.all(values.padding),
-                          )
+                        if (bottomButton != null) bottomButton
                       ],
                     )))));
+  }
+
+  Widget? _getBottomButton(
+      BuildContext context, IssuePageBloc bloc, IssuePageState state) {
+    switch (state.pageView!) {
+      case IssuePageView.create:
+        // 'Create issue' button
+        return CustomButton(
+          onPressed: () => bloc.add(
+              const ButtonPressed(buttonEvent: IssueButtonEvent.createIssue)),
+          text: AppLocalizations.of(context)!.create_issue,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          margin: const EdgeInsets.all(values.padding),
+        );
+      case IssuePageView.edit:
+        // 'Save changes' button
+        return CustomButton(
+          onPressed: () => bloc.add(
+              const ButtonPressed(buttonEvent: IssueButtonEvent.saveChanges)),
+          text: AppLocalizations.of(context)!.save_changes,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          margin: const EdgeInsets.all(values.padding),
+        );
+      case IssuePageView.see:
+        if (state.isCreator!) {
+          // 'Delete issue' button
+          return CustomButton(
+            onPressed: () => bloc.add(
+                const ButtonPressed(buttonEvent: IssueButtonEvent.deleteIssue)),
+            text: AppLocalizations.of(context)!.delete_issue,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            margin: const EdgeInsets.all(values.padding),
+          );
+        } else {
+          if (!state.hasVerified!) {
+            // 'Verify issue' button
+            return CustomButton(
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: IssueButtonEvent.verifyIssue)),
+              text: AppLocalizations.of(context)!.verify_issue,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              margin: const EdgeInsets.all(values.padding),
+            );
+          }
+        }
+        break;
+    }
+    return null;
   }
 
   Widget _getHeader(String title) {

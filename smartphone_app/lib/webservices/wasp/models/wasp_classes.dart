@@ -42,6 +42,7 @@ class WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfIssues_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<Issue>? result;
@@ -56,6 +57,7 @@ class GetListOfIssues_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfMunicipalities_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<Municipality>? result;
@@ -72,6 +74,7 @@ class GetListOfMunicipalities_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class IsBlockedCitizen_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late bool? result;
@@ -86,6 +89,7 @@ class IsBlockedCitizen_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class Citizen_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Citizen? result;
@@ -100,6 +104,7 @@ class Citizen_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetIssueDetails_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Issue? result;
@@ -114,6 +119,7 @@ class GetIssueDetails_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfCategories_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<Category>? result;
@@ -130,6 +136,7 @@ class GetListOfCategories_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfReportCategories_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<ReportCategory>? result;
@@ -146,7 +153,8 @@ class GetListOfReportCategories_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
-class Location {
+// ignore: must_be_immutable
+class Location extends Equatable {
   @JsonKey(name: "Latitude")
   late double latitude;
   @JsonKey(name: "Longitude")
@@ -161,6 +169,9 @@ class Location {
 
   factory Location.fromLatLng(LatLng latLng) =>
       Location(latitude: latLng.latitude, longitude: latLng.longitude);
+
+  @override
+  List<Object?> get props => [latitude, longitude];
 }
 
 @JsonSerializable()
@@ -267,7 +278,7 @@ class IssueState extends Equatable {
 }
 
 @JsonSerializable()
-class MunicipalityResponse {
+class MunicipalityResponse extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "IssueId")
@@ -293,10 +304,15 @@ class MunicipalityResponse {
       _$MunicipalityResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$MunicipalityResponseToJson(this);
+
+  @override
+  List<Object?> get props =>
+      [id, issueId, municipalityUserId, response, dateCreated, dateEdited];
 }
 
 @JsonSerializable()
-class Issue {
+// ignore: must_be_immutable
+class Issue extends Equatable {
   @JsonKey(name: "Id")
   late int? id;
   @JsonKey(name: "CitizenId")
@@ -351,6 +367,23 @@ class Issue {
   factory Issue.fromJson(Map<String, dynamic> json) => _$IssueFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssueToJson(this);
+
+  @override
+  List<Object?> get props => [
+        id,
+        citizenId,
+        description,
+        dateCreated,
+        dateEdited,
+        location,
+        address,
+        category,
+        subCategory,
+        municipality,
+        issueState,
+        municipalityResponses,
+        issueVerificationCitizenIds
+      ];
 }
 
 @JsonSerializable()
@@ -424,7 +457,8 @@ class Citizen {
 }
 
 @JsonSerializable()
-class IssuesOverviewFilter {
+// ignore: must_be_immutable
+class IssuesOverviewFilter extends Equatable {
   @JsonKey(name: "FromTime")
   late DateTime? fromTime;
   @JsonKey(name: "ToTime")
@@ -456,6 +490,18 @@ class IssuesOverviewFilter {
       _$IssuesOverviewFilterFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssuesOverviewFilterToJson(this);
+
+  @override
+  List<Object?> get props => [
+        fromTime,
+        toTime,
+        municipalityIds,
+        issueStateIds,
+        categoryIds,
+        subCategoryIds,
+        isBlocked,
+        citizenIds
+      ];
 }
 
 @JsonSerializable()

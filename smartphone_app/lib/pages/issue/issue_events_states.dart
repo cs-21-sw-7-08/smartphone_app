@@ -15,6 +15,7 @@ enum IssueButtonEvent {
   selectCategory,
   selectPicture,
   saveChanges,
+  createIssue,
   back,
   editIssue,
   verifyIssue,

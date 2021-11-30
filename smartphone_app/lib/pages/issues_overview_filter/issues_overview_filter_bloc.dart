@@ -642,8 +642,9 @@ class IssuesOverviewFilterBloc
     for (var categoryFilterItem in categories) {
       if (categoryFilterItem.category.subCategories == null) continue;
       for (var subCategory in categoryFilterItem.category.subCategories!) {
-        if (filter.subCategoryIds!
-            .any((element) => element == subCategory.id)) {
+        if (filter.subCategoryIds != null &&
+            filter.subCategoryIds!
+                .any((element) => element == subCategory.id)) {
           subCategories.add(SubCategoryFilterItem(
               category: categoryFilterItem.category,
               subCategory: subCategory,

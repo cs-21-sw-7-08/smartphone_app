@@ -21,11 +21,14 @@ typedef ConfirmPressedCallBack = List<dynamic> Function(
     List<dynamic> currentRootList);
 
 // ignore: must_be_immutable
-class SelectedItem {
+class SelectedItem extends Equatable {
   dynamic selectedItem;
   List<dynamic>? selectedItems;
 
   SelectedItem({required this.selectedItem, required this.selectedItems});
+
+  @override
+  List<Object?> get props => [selectedItem, selectedItems];
 }
 
 class CustomListDialogBloc
@@ -52,7 +55,7 @@ class CustomListDialogBloc
       required this.confirmPressedCallBack,
       required this.searchPredicate})
       : super(CustomListDialogState(
-            showSearchBar: false,
+            showSearchBar: true,
             rootItems: items,
             items: items,
             filteredItems: items,
@@ -74,7 +77,7 @@ class CustomListDialogBloc
           yield state.copyWith(
               showSearchBar: !state.showSearchBar!,
               searchText: "",
-              filteredItems: _getFilteredItems(items: state.items!));
+              filteredItems: state.items);
           break;
         case CustomListDialogButtonEvent.backPressed:
           // Hide keyboard
@@ -97,7 +100,7 @@ class CustomListDialogBloc
             yield state.copyWith(
                 searchText: "",
                 items: newItems,
-                filteredItems: _getFilteredItems(items: newItems!),
+                filteredItems: newItems,
                 selectedItemTree: newSelectedItemTree);
           }
           break;
@@ -140,7 +143,7 @@ class CustomListDialogBloc
       yield state.copyWith(
           searchText: "",
           items: newItems,
-          filteredItems: _getFilteredItems(items: newItems!),
+          filteredItems: newItems,
           selectedItemTree: newSelectedItemTree);
     } else if (event is ItemWasUpdated) {
       // Yield new state
