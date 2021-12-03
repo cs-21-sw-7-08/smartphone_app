@@ -277,10 +277,11 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                           right: values.padding, top: values.padding),
                       imagePadding: const EdgeInsets.all(10),
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
-                      icon: state.mapType == MapType.hybrid
-                          ? const Icon(Icons.layers_outlined,
-                              color: Colors.black)
-                          : const Icon(Icons.layers, color: Colors.black),
+                      icon: Icon(
+                          state.mapType == MapType.hybrid
+                              ? Icons.layers_outlined
+                              : Icons.layers,
+                          color: Colors.black),
                       onPressed: () => bloc.add(const ButtonPressed(
                           buttonEvent:
                               IssuesOverviewButtonEvent.changeMapType))),

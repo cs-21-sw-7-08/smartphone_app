@@ -332,7 +332,10 @@ class IssuesOverviewFilterBloc
         // Search predicate
         searchPredicate: (item, searchString) {
           if (item is CategoryFilterItem) {
-            return item.category.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance()
+                .getLocalizedCategory(context, item.category)
+                .toLowerCase()
+                .contains(searchString);
           }
           return false;
         },
@@ -480,9 +483,15 @@ class IssuesOverviewFilterBloc
         // Search predicate
         searchPredicate: (item, searchString) {
           if (item is CategoryFilterItem) {
-            return item.category.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance()
+                .getLocalizedCategory(context, item.category)
+                .toLowerCase()
+                .contains(searchString);
           } else if (item is SubCategoryFilterItem) {
-            return item.subCategory.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance()
+                .getLocalizedSubCategory(context, item.subCategory)
+                .toLowerCase()
+                .contains(searchString);
           }
           return false;
         },

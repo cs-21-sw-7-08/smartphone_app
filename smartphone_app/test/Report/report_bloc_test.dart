@@ -18,7 +18,7 @@ void main() {
     });
 
     test("Initial state is correct", () {
-      expect(ReportBloc(context: MockBuildContext()).state, ReportState());
+      expect(bloc.state, ReportState());
     });
 
     blocTest<ReportBloc, ReportState>("ValueSelected",

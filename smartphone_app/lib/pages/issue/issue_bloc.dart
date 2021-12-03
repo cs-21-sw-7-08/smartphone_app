@@ -612,9 +612,11 @@ class IssuePageBloc extends Bloc<IssuePageEvent, IssuePageState> {
         },
         searchPredicate: (item, searchString) {
           if (item is Category) {
-            return item.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance().getLocalizedCategory(
+                context, item).toLowerCase().contains(searchString);
           } else if (item is SubCategory) {
-            return item.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance().getLocalizedSubCategory(
+                context, item).toLowerCase().contains(searchString);
           }
           return false;
         },
