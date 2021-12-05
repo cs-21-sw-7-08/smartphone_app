@@ -45,7 +45,7 @@ class WASPService implements IWASPServiceFunctions {
     return _waspServiceFunctions!;
   }
 
-  static const String issueControllerPath = "/WASP/Issues/";
+  static const String issueControllerPath = "/WASP/Issue/";
   static const String municipalityControllerPath = "/WASP/Municipality/";
   static const String citizenControllerPath = "/WASP/Citizen/";
 
