@@ -1,11 +1,7 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartphone_app/pages/login/login_page.dart';
-import 'package:smartphone_app/utilities/general_util.dart';
-import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,31 +16,26 @@ import 'sign_up_events_states.dart';
 // ignore: must_be_immutable
 class SignUpPage extends StatelessWidget {
   late SignUpBloc bloc;
-  SignUpPageView signUpPageView;
+  late SignUpPageView signUpPageView;
   late String? name;
   late String? email;
 
-  SignUpPage(
-      {Key? key,
-      this.name,
-      this.email,
-      this.signUpPageView = SignUpPageView.phoneNo})
-      : super(key: key) {
+  SignUpPage({Key? key, this.name, this.email}) : super(key: key) {
     signUpPageView =
         name == null ? SignUpPageView.phoneNo : SignUpPageView.name;
   }
 
   @override
   Widget build(BuildContext context) {
-    SignUpBloc bloc = SignUpBloc(
+    bloc = SignUpBloc(
         email: email,
-        buildContext: context,
+        context: context,
         signUpPageView: signUpPageView,
         name: name);
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(ButtonPressed(signUpButtonEvent: SignUpButtonEvent.back));
+          bloc.add(const ButtonPressed(buttonEvent: SignUpButtonEvent.back));
           return false;
         },
         child: FutureBuilder<bool>(
@@ -79,8 +70,8 @@ class SignUpPage extends StatelessWidget {
                                           custom_colors.appBarBackground,
                                       appBarLeftButton: AppBarLeftButton.back,
                                       leftButtonPressed: () => bloc.add(
-                                          ButtonPressed(
-                                              signUpButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   SignUpButtonEvent.back)),
                                     ),
                                     body: getContent(context, bloc, state));
@@ -90,7 +81,7 @@ class SignUpPage extends StatelessWidget {
 
   Widget getContent(BuildContext context, SignUpBloc bloc, SignUpState state) {
     List<Widget>? children;
-    switch (state.signUpPageView!) {
+    switch (state.pageView!) {
       case SignUpPageView.phoneNo:
         children = [
           _getMessage(
@@ -172,20 +163,20 @@ class SignUpPage extends StatelessWidget {
                         // 'Confirm' button
                         CustomButton(
                           onPressed: () {
-                            switch (state.signUpPageView!) {
+                            switch (state.pageView!) {
                               case SignUpPageView.phoneNo:
-                                bloc.add(ButtonPressed(
-                                    signUpButtonEvent:
+                                bloc.add(const ButtonPressed(
+                                    buttonEvent:
                                         SignUpButtonEvent.verifyPhoneNo));
                                 break;
                               case SignUpPageView.name:
-                                bloc.add(ButtonPressed(
-                                    signUpButtonEvent:
+                                bloc.add(const ButtonPressed(
+                                    buttonEvent:
                                         SignUpButtonEvent.confirmName));
                                 break;
                               case SignUpPageView.smsCode:
-                                bloc.add(ButtonPressed(
-                                    signUpButtonEvent:
+                                bloc.add(const ButtonPressed(
+                                    buttonEvent:
                                         SignUpButtonEvent.verifySmsCode));
                                 break;
                             }
@@ -257,8 +248,7 @@ class SignUpPage extends StatelessWidget {
         text: state.phoneNo,
         onChanged: (text) {
           bloc.add(TextChanged(
-              signUpTextChangedEvent: SignUpTextChangedEvent.phoneNo,
-              text: text));
+              textChangedEvent: SignUpTextChangedEvent.phoneNo, text: text));
         },
         margin: const EdgeInsets.all(0),
       ),
@@ -278,8 +268,7 @@ class SignUpPage extends StatelessWidget {
         text: state.smsCode,
         onChanged: (text) {
           bloc.add(TextChanged(
-              signUpTextChangedEvent: SignUpTextChangedEvent.smsCode,
-              text: text));
+              textChangedEvent: SignUpTextChangedEvent.smsCode, text: text));
         },
         margin: const EdgeInsets.all(0),
       ),
@@ -306,8 +295,8 @@ class SignUpPage extends StatelessWidget {
                 ],
               ),
             CustomButton(
-              onPressed: () => bloc.add(ButtonPressed(
-                  signUpButtonEvent: SignUpButtonEvent.selectMunicipality)),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: SignUpButtonEvent.selectMunicipality)),
               margin: EdgeInsets.only(
                   top: (state.municipality != null) ? values.padding : 0),
               fontWeight: FontWeight.bold,
@@ -332,7 +321,7 @@ class SignUpPage extends StatelessWidget {
         text: state.name,
         onChanged: (text) {
           bloc.add(TextChanged(
-              signUpTextChangedEvent: SignUpTextChangedEvent.name, text: text));
+              textChangedEvent: SignUpTextChangedEvent.name, text: text));
         },
         margin: const EdgeInsets.all(0),
       ),

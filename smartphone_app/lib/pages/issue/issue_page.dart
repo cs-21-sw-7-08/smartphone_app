@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -20,8 +19,6 @@ import 'package:smartphone_app/values/values.dart' as values;
 import 'issue_bloc.dart';
 import 'issue_events_states.dart';
 
-typedef ChangesCallback = Function();
-
 // ignore: must_be_immutable
 class IssuePage extends StatelessWidget {
   late IssuePageBloc bloc;
@@ -38,14 +35,14 @@ class IssuePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Create bloc
     IssuePageBloc bloc = IssuePageBloc(
-      buildContext: context,
+      context: context,
       mapType: mapType,
       issue: issue,
     );
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(ButtonPressed(issueButtonEvent: IssueButtonEvent.back));
+          bloc.add(const ButtonPressed(buttonEvent: IssueButtonEvent.back));
           return false;
         },
         child: FutureBuilder<bool>(
@@ -84,37 +81,30 @@ class IssuePage extends StatelessWidget {
                                       titleColor: Colors.white,
                                       background:
                                           custom_colors.appBarBackground,
-                                      appBarLeftButton: state.issuePageView ==
-                                              IssuePageView.edit
-                                          ? AppBarLeftButton.back
-                                          : AppBarLeftButton.close,
+                                      appBarLeftButton:
+                                          state.pageView == IssuePageView.edit
+                                              ? AppBarLeftButton.back
+                                              : AppBarLeftButton.close,
                                       leftButtonPressed: () => bloc.add(
-                                          ButtonPressed(
-                                              issueButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   IssueButtonEvent.back)),
-                                      onButton1Pressed: () {
-                                        IssueButtonEvent? buttonEvent;
-                                        switch (state.issuePageView!) {
-                                          case IssuePageView.edit:
-                                          case IssuePageView.create:
-                                            buttonEvent =
-                                                IssueButtonEvent.saveChanges;
-                                            break;
-                                          case IssuePageView.see:
-                                            if (state.isCreator!) {
-                                              buttonEvent =
-                                                  IssueButtonEvent.editIssue;
-                                            } else {
-                                              buttonEvent =
-                                                  IssueButtonEvent.reportIssue;
-                                            }
-                                            break;
-                                        }
-                                        bloc.add(ButtonPressed(
-                                            issueButtonEvent: buttonEvent));
-                                      },
-                                      button1Icon: Icon(_getButton1Icon(state),
-                                          color: Colors.white),
+                                      onButton1Pressed: state.pageView! ==
+                                              IssuePageView.see
+                                          ? () => bloc.add(ButtonPressed(
+                                              buttonEvent: state.isCreator!
+                                                  ? IssueButtonEvent.editIssue
+                                                  : IssueButtonEvent
+                                                      .reportIssue))
+                                          : null,
+                                      button1Icon:
+                                          state.pageView! == IssuePageView.see
+                                              ? Icon(
+                                                  state.isCreator!
+                                                      ? Icons.edit_outlined
+                                                      : Icons.flag_outlined,
+                                                  color: Colors.white)
+                                              : null,
                                     ),
                                     body: _getContent(context, bloc, state),
                                   );
@@ -123,23 +113,8 @@ class IssuePage extends StatelessWidget {
             }));
   }
 
-  IconData _getButton1Icon(IssuePageState state) {
-    switch (state.issuePageView!) {
-      case IssuePageView.create:
-        return Icons.send_outlined;
-      case IssuePageView.edit:
-        return Icons.check;
-      case IssuePageView.see:
-        if (state.isCreator!) {
-          return Icons.edit_outlined;
-        } else {
-          return Icons.flag_outlined;
-        }
-    }
-  }
-
   String _getTitle(BuildContext context, IssuePageState state) {
-    switch (state.issuePageView!) {
+    switch (state.pageView!) {
       case IssuePageView.create:
         return AppLocalizations.of(context)!.create_issue;
       case IssuePageView.edit:
@@ -151,6 +126,8 @@ class IssuePage extends StatelessWidget {
 
   Widget _getContent(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
+    var bottomButton = _getBottomButton(context, bloc, state);
+
     return ClipRect(
         child: Container(
             constraints: const BoxConstraints.expand(),
@@ -165,8 +142,7 @@ class IssuePage extends StatelessWidget {
                                 physics: const ClampingScrollPhysics(),
                                 child: Column(
                                   children: [
-                                    if (state.issuePageView ==
-                                        IssuePageView.see)
+                                    if (state.pageView == IssuePageView.see)
                                       Card(
                                           margin: const EdgeInsets.only(
                                               top: values.padding,
@@ -178,6 +154,22 @@ class IssuePage extends StatelessWidget {
                                                   AppLocalizations.of(context)!
                                                       .general),
                                               _getGeneral(context, bloc, state),
+                                            ],
+                                          )),
+                                    if (state.municipalityResponses != null &&
+                                        state.municipalityResponses!.isNotEmpty)
+                                      Card(
+                                          margin: const EdgeInsets.only(
+                                              top: values.padding,
+                                              left: values.padding,
+                                              right: values.padding),
+                                          child: Column(
+                                            children: [
+                                              _getHeader(
+                                                  AppLocalizations.of(context)!
+                                                      .from_municipality),
+                                              _getFromMunicipality(
+                                                  context, bloc, state)
                                             ],
                                           )),
                                     Card(
@@ -208,10 +200,13 @@ class IssuePage extends StatelessWidget {
                                           ],
                                         )),
                                     Card(
-                                        margin: const EdgeInsets.only(
+                                        margin: EdgeInsets.only(
                                             top: values.padding,
                                             left: values.padding,
-                                            right: values.padding),
+                                            right: values.padding,
+                                            bottom: bottomButton != null
+                                                ? 0
+                                                : values.padding),
                                         child: Column(
                                           children: [
                                             _getHeader(
@@ -221,40 +216,63 @@ class IssuePage extends StatelessWidget {
                                                 context, bloc, state)
                                           ],
                                         )),
-                                    if (state.municipalityResponses != null &&
-                                        state.municipalityResponses!.isNotEmpty)
-                                      Card(
-                                          margin: const EdgeInsets.only(
-                                              top: values.padding,
-                                              left: values.padding,
-                                              right: values.padding,
-                                              bottom: values.padding),
-                                          child: Column(
-                                            children: [
-                                              _getHeader(
-                                                  AppLocalizations.of(context)!
-                                                      .from_municipality),
-                                              _getFromMunicipality(
-                                                  context, bloc, state)
-                                            ],
-                                          )),
                                   ],
                                 ))),
-                        if (state.issuePageView == IssuePageView.see &&
-                            !state.isCreator! &&
-                            !state.hasVerified!)
-                          // 'Verify issue' button
-                          CustomButton(
-                            onPressed: () => bloc.add(ButtonPressed(
-                                issueButtonEvent:
-                                    IssueButtonEvent.verifyIssue)),
-                            text: AppLocalizations.of(context)!.verify_issue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            margin: const EdgeInsets.all(values.padding),
-                          )
+                        if (bottomButton != null) bottomButton
                       ],
                     )))));
+  }
+
+  Widget? _getBottomButton(
+      BuildContext context, IssuePageBloc bloc, IssuePageState state) {
+    switch (state.pageView!) {
+      case IssuePageView.create:
+        // 'Create issue' button
+        return CustomButton(
+          onPressed: () => bloc.add(
+              const ButtonPressed(buttonEvent: IssueButtonEvent.createIssue)),
+          text: AppLocalizations.of(context)!.create_issue,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          margin: const EdgeInsets.all(values.padding),
+        );
+      case IssuePageView.edit:
+        // 'Save changes' button
+        return CustomButton(
+          onPressed: () => bloc.add(
+              const ButtonPressed(buttonEvent: IssueButtonEvent.saveChanges)),
+          text: AppLocalizations.of(context)!.save_changes,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          margin: const EdgeInsets.all(values.padding),
+        );
+      case IssuePageView.see:
+        if (state.isCreator!) {
+          // 'Delete issue' button
+          return CustomButton(
+            onPressed: () => bloc.add(
+                const ButtonPressed(buttonEvent: IssueButtonEvent.deleteIssue)),
+            text: AppLocalizations.of(context)!.delete_issue,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            margin: const EdgeInsets.all(values.padding),
+          );
+        } else {
+          if (!state.hasVerified!) {
+            // 'Verify issue' button
+            return CustomButton(
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: IssueButtonEvent.verifyIssue)),
+              text: AppLocalizations.of(context)!.verify_issue,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              margin: const EdgeInsets.all(values.padding),
+            );
+          }
+        }
+        break;
+    }
+    return null;
   }
 
   Widget _getHeader(String title) {
@@ -347,11 +365,11 @@ class IssuePage extends StatelessWidget {
                     "${AppLocalizations.of(context)!.near} ${(state.address ?? "")}",
                 margin: const EdgeInsets.only(bottom: values.padding),
               ),
-            if (state.issuePageView == IssuePageView.create ||
-                state.issuePageView == IssuePageView.edit)
+            if (state.pageView == IssuePageView.create ||
+                state.pageView == IssuePageView.edit)
               CustomButton(
-                onPressed: () => bloc.add(ButtonPressed(
-                    issueButtonEvent: IssueButtonEvent.selectLocation)),
+                onPressed: () => bloc.add(const ButtonPressed(
+                    buttonEvent: IssueButtonEvent.selectLocation)),
                 margin: const EdgeInsets.all(0),
                 fontWeight: FontWeight.bold,
                 text: state.category == null
@@ -387,11 +405,11 @@ class IssuePage extends StatelessWidget {
                   )
                 ],
               ),
-            if (state.issuePageView == IssuePageView.create ||
-                state.issuePageView == IssuePageView.edit)
+            if (state.pageView == IssuePageView.create ||
+                state.pageView == IssuePageView.edit)
               CustomButton(
-                onPressed: () => bloc.add(ButtonPressed(
-                    issueButtonEvent: IssueButtonEvent.selectCategory)),
+                onPressed: () => bloc.add(const ButtonPressed(
+                    buttonEvent: IssueButtonEvent.selectCategory)),
                 margin: EdgeInsets.only(
                     top: (state.category != null && state.subCategory != null)
                         ? values.padding
@@ -407,7 +425,7 @@ class IssuePage extends StatelessWidget {
 
   Widget _getDescription(
       BuildContext context, IssuePageBloc bloc, IssuePageState state) {
-    switch (state.issuePageView!) {
+    switch (state.pageView!) {
       case IssuePageView.create:
       case IssuePageView.edit:
         return _getCreateEditDescription(context, bloc, state);
@@ -432,15 +450,15 @@ class IssuePage extends StatelessWidget {
             text: state.description,
             initialValue: state.description,
             onChanged: (value) => bloc.add(TextChanged(
-                createIssueTextChangedEvent: IssueTextChangedEvent.description,
-                value: value)),
+                textChangedEvent: IssueTextChangedEvent.description,
+                text: value)),
             maxLength: 255,
             height: 110,
             maxLines: null,
           ),
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issueButtonEvent: IssueButtonEvent.selectPicture)),
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent: IssueButtonEvent.selectPicture)),
             margin: const EdgeInsets.only(top: values.padding),
             fontWeight: FontWeight.bold,
             text: AppLocalizations.of(context)!.add_picture,
@@ -541,6 +559,7 @@ class IssuePage extends StatelessWidget {
                   : municipalityResponse.dateEdited!;
 
               return Card(
+                margin: const EdgeInsets.all(0),
                 color: custom_colors.grey1,
                 child: Column(
                   children: [

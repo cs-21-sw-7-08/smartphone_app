@@ -8,6 +8,8 @@ import 'package:smartphone_app/pages/issue/issue_page.dart';
 import 'package:smartphone_app/pages/issues_overview/issues_overview_events_states.dart';
 import 'package:smartphone_app/pages/issues_overview_filter/issues_overview_filter_page.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
+import 'package:smartphone_app/pages/settings/settings_bloc.dart';
+import 'package:smartphone_app/pages/settings/settings_page.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/utilities/task_util.dart';
@@ -27,7 +29,7 @@ class IssuesOverviewBloc
   //region Variables
 
   // ignore: unused_field
-  late BuildContext _buildContext;
+  late BuildContext context;
 
   //endregion
 
@@ -36,12 +38,9 @@ class IssuesOverviewBloc
   ///
   //region Constructor
 
-  IssuesOverviewBloc({required BuildContext context})
+  IssuesOverviewBloc({required this.context})
       : super(IssuesOverviewState(
-            mapType: MapType.hybrid,
-            filter: getDefaultIssuesOverviewFilter())) {
-    _buildContext = context;
-  }
+            mapType: MapType.hybrid, filter: getDefaultIssuesOverviewFilter()));
 
   //endregion
 
@@ -56,40 +55,75 @@ class IssuesOverviewBloc
     if (event is PositionRetrieved) {
       yield state.copyWith(devicePosition: event.devicePosition);
     } else if (event is ButtonPressed) {
-      switch (event.issuesOverviewButtonEvent) {
+      switch (event.buttonEvent) {
+
+        /// Create issue
         case IssuesOverviewButtonEvent.createIssue:
           bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
-              _buildContext, IssuePage(mapType: state.mapType!));
+              context, IssuePage(mapType: state.mapType!));
           flag ??= false;
           if (flag) {
             await getListOfIssues(state.filter!);
           }
           break;
+
+        /// Log out
         case IssuesOverviewButtonEvent.logOut:
           await _logOut();
           break;
+
+        /// Change map type
         case IssuesOverviewButtonEvent.changeMapType:
           yield state.copyWith(
               mapType: state.mapType == MapType.hybrid
                   ? MapType.normal
                   : MapType.hybrid);
           break;
+
+        /// Get list of issues
         case IssuesOverviewButtonEvent.getListOfIssues:
           await getListOfIssues(state.filter!);
           break;
+
+        /// Show filter
         case IssuesOverviewButtonEvent.showFilter:
           IssuesOverviewFilter? filter =
               await GeneralUtil.showPageAsDialog<IssuesOverviewFilter?>(
-                  _buildContext,
-                  IssuesOverviewFilterPage(filter: state.filter!));
+                  context, IssuesOverviewFilterPage(filter: state.filter!));
           if (filter == null) return;
           await getListOfIssues(filter);
-          yield state.copyWith(issuesOverviewFilter: filter);
+          yield state.copyWith(filter: filter);
+          break;
+
+        /// Show settings
+        case IssuesOverviewButtonEvent.showSettings:
+          SettingsCallBackType? callBackType =
+              await GeneralUtil.showPageAsDialog<SettingsCallBackType>(
+                  context, SettingsPage());
+          if (callBackType == null) return;
+          switch (callBackType) {
+
+            /// Delete account
+            case SettingsCallBackType.deleteAccount:
+              await _logOut();
+              break;
+
+            /// Settings changed
+            case SettingsCallBackType.settingsChanged:
+              IssuesOverviewFilter filter = state.filter!;
+              filter.municipalityIds = [
+                AppValuesHelper.getInstance()
+                    .getInteger(AppValuesKey.defaultMunicipalityId)!
+              ];
+              await getListOfIssues(filter);
+              yield state.copyWith(filter: filter);
+              break;
+          }
           break;
       }
     } else if (event is IssueDetailsRetrieved) {
       bool? flag = await GeneralUtil.showPageAsDialog<bool?>(
-          _buildContext,
+          context,
           IssuePage(
             issue: event.issue,
             mapType: state.mapType!,
@@ -122,19 +156,24 @@ class IssuesOverviewBloc
     List<Municipality?> municipalities =
         AppValuesHelper.getInstance().getMunicipalities();
     // Get default municipality ID
-    int defaultMunicipalityId = AppValuesHelper.getInstance()
-        .getInteger(AppValuesKey.defaultMunicipalityId)!;
+    int? defaultMunicipalityId = AppValuesHelper.getInstance()
+        .getInteger(AppValuesKey.defaultMunicipalityId);
     // Get municipality
     Municipality? municipality;
     try {
-      municipality = municipalities
-          .firstWhere((element) => element!.id == defaultMunicipalityId);
+      if (defaultMunicipalityId != null) {
+        municipality = municipalities
+            .firstWhere((element) => element!.id == defaultMunicipalityId);
+      }
     } on StateError catch (_) {}
+
+    int? citizenId =
+        AppValuesHelper.getInstance().getInteger(AppValuesKey.citizenId);
 
     return IssuesOverviewFilter(
         municipalityIds: municipality == null ? null : [municipality.id],
-        issueStateIds: [1, 2],
-        citizenIds: null,
+        issueStateIds: const [1, 2],
+        citizenIds: citizenId == null ? null : [citizenId],
         subCategoryIds: null,
         isBlocked: false,
         categoryIds: null);
@@ -157,8 +196,8 @@ class IssuesOverviewBloc
 
   Future<void> _logOut() async {
     await TaskUtil.runTask<bool>(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.logging_out,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.logging_out,
         doInBackground: (runTask) async {
           // Sign out
           await ThirdPartySignInUtil.signOut();
@@ -169,7 +208,7 @@ class IssuesOverviewBloc
         },
         taskCancelled: () {});
 
-    GeneralUtil.goToPage(_buildContext, LoginPage());
+    GeneralUtil.goToPage(context, const LoginPage());
   }
 
   Future<bool> getValues() async {
@@ -177,8 +216,8 @@ class IssuesOverviewBloc
         const Duration(milliseconds: values.pageTransitionTime), () async {
       bool isBlocked = false;
       var flag = await TaskUtil.runTask(
-          buildContext: _buildContext,
-          progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
+          buildContext: context,
+          progressMessage: AppLocalizations.of(context)!.getting_issues,
           doInBackground: (runTask) async {
             // Get user's current position
             Position position = await LocatorUtil.determinePosition();
@@ -192,7 +231,8 @@ class IssuesOverviewBloc
                         citizenId: AppValuesHelper.getInstance()
                             .getInteger(AppValuesKey.citizenId)!);
             if (!isBlockedCitizenResponse.isSuccess) {
-              GeneralUtil.showToast(isBlockedCitizenResponse.exception!);
+              GeneralUtil.showToast(
+                  (await isBlockedCitizenResponse.errorMessage)!);
               return false;
             }
             if (isBlockedCitizenResponse.waspResponse!.result!) {
@@ -205,7 +245,8 @@ class IssuesOverviewBloc
                 getListOfMunicipalitiesResponse =
                 await WASPService.getInstance().getListOfMunicipalities();
             if (!getListOfMunicipalitiesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfMunicipalitiesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveMunicipalities(
@@ -216,7 +257,8 @@ class IssuesOverviewBloc
                 getListOfCategoriesResponse =
                 await WASPService.getInstance().getListOfCategories();
             if (!getListOfCategoriesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfCategoriesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfCategoriesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveCategories(
@@ -228,7 +270,7 @@ class IssuesOverviewBloc
                 await WASPService.getInstance().getListOfReportCategories();
             if (!getListOfReportCategoriesResponse.isSuccess) {
               GeneralUtil.showToast(
-                  getListOfReportCategoriesResponse.exception!);
+                  (await getListOfReportCategoriesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveReportCategories(
@@ -239,7 +281,7 @@ class IssuesOverviewBloc
                 .getListOfIssues(filter: state.filter!);
             // Check for errors
             if (!response.isSuccess) {
-              GeneralUtil.showToast(response.exception!);
+              GeneralUtil.showToast((await response.errorMessage)!);
               return false;
             }
             // Get issues
@@ -253,7 +295,7 @@ class IssuesOverviewBloc
       // Is the citizen blocked?
       if (isBlocked) {
         GeneralUtil.showToast(
-            AppLocalizations.of(_buildContext)!.this_user_is_blocked);
+            AppLocalizations.of(context)!.this_user_is_blocked);
         await _logOut();
       }
       flag ??= false;
@@ -263,15 +305,15 @@ class IssuesOverviewBloc
 
   Future<void> getListOfIssues(IssuesOverviewFilter filter) async {
     await TaskUtil.runTask(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.getting_issues,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.getting_issues,
         doInBackground: (runTask) async {
           // Get list of issues
           var response =
               await WASPService.getInstance().getListOfIssues(filter: filter);
           // Check for errors
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return false;
           }
           // Get issues
@@ -286,16 +328,15 @@ class IssuesOverviewBloc
 
   Future<void> getIssueDetails(int issueId) async {
     Issue? issue = await TaskUtil.runTask(
-        buildContext: _buildContext,
-        progressMessage:
-            AppLocalizations.of(_buildContext)!.getting_issue_details,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.getting_issue_details,
         doInBackground: (runTask) async {
           // Get issue details
           var response =
               await WASPService.getInstance().getIssueDetails(issueId);
           // Check for errors
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           // Get issue

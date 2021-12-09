@@ -1,13 +1,20 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:quiver/collection.dart';
 
-
-import 'custom_list_dialog.dart';
+import 'custom_list_dialog_bloc.dart';
 
 ///
 /// ENUMS
 ///
 //region Enums
 
-enum CustomListDialogButtonEvent { changeSearchBarVisibility, backPressed, confirm }
+enum CustomListDialogButtonEvent {
+  changeSearchBarVisibility,
+  backPressed,
+  confirm
+}
 enum CustomListDialogTextChangedEvent { searchText }
 
 //endregion
@@ -17,30 +24,45 @@ enum CustomListDialogTextChangedEvent { searchText }
 ///
 //region Event
 
-class CustomListDialogEvent {}
+abstract class CustomListDialogEvent extends Equatable {
+  const CustomListDialogEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends CustomListDialogEvent {
-  final CustomListDialogButtonEvent customListDialogButtonEvent;
+  final CustomListDialogButtonEvent buttonEvent;
 
-  ButtonPressed({required this.customListDialogButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class TextChanged extends CustomListDialogEvent {
-  final CustomListDialogTextChangedEvent customListDialogTextChangedEvent;
-  String? value;
+  final CustomListDialogTextChangedEvent textChangedEvent;
+  final String? text;
 
-  TextChanged(
-      {required this.customListDialogTextChangedEvent, required this.value});
+  const TextChanged({required this.textChangedEvent, required this.text});
+
+  @override
+  List<Object?> get props => [textChangedEvent, text];
 }
 
 class ItemWasSelected extends CustomListDialogEvent {
-  SelectedItem selectedItem;
+  final SelectedItem selectedItem;
 
-  ItemWasSelected({required this.selectedItem});
+  const ItemWasSelected({required this.selectedItem});
+
+  @override
+  List<Object?> get props => [selectedItem];
 }
 
 class ItemWasUpdated extends CustomListDialogEvent {
-  ItemWasUpdated();
+  final dynamic updatedItem;
+
+  const ItemWasUpdated({required this.updatedItem});
 }
 
 //endregion
@@ -50,13 +72,15 @@ class ItemWasUpdated extends CustomListDialogEvent {
 ///
 //region State
 
-class CustomListDialogState {
+// ignore: must_be_immutable
+class CustomListDialogState extends Equatable {
   bool? showSearchBar;
   String? searchText;
   List<dynamic>? rootItems;
   List<dynamic>? items;
   List<dynamic>? filteredItems;
   List<SelectedItem>? selectedItemTree;
+  int? updatedItemHashCode;
 
   CustomListDialogState(
       {this.showSearchBar,
@@ -64,11 +88,13 @@ class CustomListDialogState {
       this.rootItems,
       this.selectedItemTree,
       this.items,
+      this.updatedItemHashCode,
       this.filteredItems});
 
   CustomListDialogState copyWith(
       {bool? showSearchBar,
       String? searchText,
+      int? updatedItemHashCode,
       List<dynamic>? rootItems,
       List<dynamic>? items,
       List<dynamic>? filteredItems,
@@ -79,8 +105,24 @@ class CustomListDialogState {
         filteredItems: filteredItems ?? this.filteredItems,
         selectedItemTree: selectedItemTree ?? this.selectedItemTree,
         searchText: searchText ?? this.searchText,
+        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
         items: items ?? this.items);
   }
+
+  CustomListDialogState update({required int updatedItemHashCode}) {
+    return copyWith(updatedItemHashCode: updatedItemHashCode);
+  }
+
+  @override
+  List<Object?> get props => [
+        showSearchBar,
+        searchText,
+        rootItems,
+        selectedItemTree,
+        items,
+        filteredItems,
+        updatedItemHashCode
+      ];
 }
 
 //endregion

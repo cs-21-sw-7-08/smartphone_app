@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
@@ -14,13 +15,16 @@ enum IssueButtonEvent {
   selectCategory,
   selectPicture,
   saveChanges,
+  createIssue,
   back,
   editIssue,
   verifyIssue,
-  reportIssue
+  reportIssue,
+  deleteIssue
 }
 enum IssueTextChangedEvent { description }
 enum IssuePageView { create, edit, see }
+enum IssuePageValueSelectedEvent { picture }
 
 //endregion
 
@@ -29,38 +33,49 @@ enum IssuePageView { create, edit, see }
 ///
 //region Event
 
-class IssuePageEvent {}
+abstract class IssuePageEvent extends Equatable {
+  const IssuePageEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends IssuePageEvent {
-  final IssueButtonEvent issueButtonEvent;
+  final IssueButtonEvent buttonEvent;
 
-  ButtonPressed({required this.issueButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class DeletePicture extends IssuePageEvent {
   final Image picture;
 
-  DeletePicture({required this.picture});
+  const DeletePicture({required this.picture});
+
+  @override
+  List<Object?> get props => [picture];
 }
 
 class TextChanged extends IssuePageEvent {
-  final IssueTextChangedEvent createIssueTextChangedEvent;
-  final String? value;
+  final IssueTextChangedEvent textChangedEvent;
+  final String? text;
 
-  TextChanged({required this.createIssueTextChangedEvent, required this.value});
-}
+  const TextChanged({required this.textChangedEvent, required this.text});
 
-class LocationSelected extends IssuePageEvent {
-  final LatLng position;
-
-  LocationSelected({required this.position});
+  @override
+  List<Object?> get props => [textChangedEvent, text];
 }
 
 class CategorySelected extends IssuePageEvent {
   final Category category;
   final SubCategory subCategory;
 
-  CategorySelected({required this.category, required this.subCategory});
+  const CategorySelected({required this.category, required this.subCategory});
+
+  @override
+  List<Object?> get props => [category, subCategory];
 }
 
 class PageContentLoaded extends IssuePageEvent {
@@ -77,19 +92,71 @@ class PageContentLoaded extends IssuePageEvent {
   final String? dateEdited;
   final List<MunicipalityResponse>? municipalityResponses;
 
-  PageContentLoaded(
-      {required this.marker,
-      required this.issueState,
-      required this.municipalityResponses,
-      required this.address,
-      required this.dateCreated,
-      required this.dateEdited,
-      required this.hasVerified,
-      required this.isCreator,
-      required this.description,
-      required this.pictures,
-      required this.category,
-      required this.subCategory});
+  const PageContentLoaded({required this.marker,
+    required this.issueState,
+    required this.municipalityResponses,
+    required this.address,
+    required this.dateCreated,
+    required this.dateEdited,
+    required this.hasVerified,
+    required this.isCreator,
+    required this.description,
+    required this.pictures,
+    required this.category,
+    required this.subCategory});
+
+  @override
+  List<Object?> get props =>
+      [
+        marker,
+        address,
+        description,
+        pictures,
+        category,
+        subCategory,
+        isCreator,
+        hasVerified,
+        issueState,
+        dateCreated,
+        dateEdited,
+        municipalityResponses
+      ];
+}
+
+class LocationInformationRetrieved extends IssuePageEvent {
+  final Marker marker;
+  final String address;
+  final String municipalityName;
+
+  const LocationInformationRetrieved(
+      {required this.marker, required this.address, required this.municipalityName});
+
+  @override
+  List<Object?> get props => [marker, address, municipalityName];
+}
+
+class PictureSelected extends IssuePageEvent {
+  final Image image;
+
+  const PictureSelected({required this.image});
+
+  @override
+  List<Object?> get props => [image];
+}
+
+class IssueUpdated extends IssuePageEvent {
+  final bool? hasChanges;
+  final String? dateEdited;
+
+  const IssueUpdated(
+      {required this.hasChanges, required this.dateEdited});
+
+  @override
+  List<Object?> get props => [hasChanges, dateEdited];
+}
+
+class IssueVerified extends IssuePageEvent {
+  const IssueVerified();
 }
 
 //endregion
@@ -99,7 +166,8 @@ class PageContentLoaded extends IssuePageEvent {
 ///
 //region State
 
-class IssuePageState {
+// ignore: must_be_immutable
+class IssuePageState extends Equatable {
   bool? isCreator;
   bool? hasVerified;
   MapType? mapType;
@@ -110,54 +178,56 @@ class IssuePageState {
   List<Image>? pictures;
   Category? category;
   SubCategory? subCategory;
-  IssuePageView? issuePageView;
+  IssuePageView? pageView;
   IssueState? issueState;
   bool? hasChanges;
   String? dateCreated;
   String? dateEdited;
   List<MunicipalityResponse>? municipalityResponses;
 
-  IssuePageState(
-      {this.marker,
-      this.isCreator,
-      this.mapType,
-      this.address,
-      this.issueState,
-      this.hasVerified,
-      this.description,
-      this.dateCreated,
-      this.dateEdited,
-      this.pictures,
-      this.municipalityResponses,
-      this.issuePageView,
-      this.category,
-      this.hasChanges,
-      this.municipalityName,
-      this.subCategory});
+  int? updatedItemHashCode;
 
-  IssuePageState copyWith(
-      {Marker? marker,
-      MapType? mapType,
-      bool? isCreator,
-      String? address,
-      bool? hasVerified,
-      IssueState? issueState,
-      List<MunicipalityResponse>? municipalityResponses,
-      String? dateCreated,
-      String? dateEdited,
-      String? description,
-      String? municipalityName,
-      IssuePageView? issuePageView,
-      List<Image>? pictures,
-      Category? category,
-      bool? hasChanges,
-      SubCategory? subCategory}) {
+  IssuePageState({this.marker,
+    this.isCreator,
+    this.mapType,
+    this.address,
+    this.issueState,
+    this.hasVerified,
+    this.description,
+    this.dateCreated,
+    this.dateEdited,
+    this.pictures,
+    this.updatedItemHashCode,
+    this.municipalityResponses,
+    this.pageView,
+    this.category,
+    this.hasChanges,
+    this.municipalityName,
+    this.subCategory});
+
+  IssuePageState copyWith({Marker? marker,
+    MapType? mapType,
+    bool? isCreator,
+    String? address,
+    bool? hasVerified,
+    IssueState? issueState,
+    List<MunicipalityResponse>? municipalityResponses,
+    String? dateCreated,
+    String? dateEdited,
+    String? description,
+    String? municipalityName,
+    IssuePageView? pageView,
+    int? updatedItemHashCode,
+    List<Image>? pictures,
+    Category? category,
+    bool? hasChanges,
+    SubCategory? subCategory}) {
     return IssuePageState(
         marker: marker ?? this.marker,
         isCreator: isCreator ?? this.isCreator,
         mapType: mapType ?? this.mapType,
         municipalityResponses:
-            municipalityResponses ?? this.municipalityResponses,
+        municipalityResponses ?? this.municipalityResponses,
         address: address ?? this.address,
         dateCreated: dateCreated ?? this.dateCreated,
         dateEdited: dateEdited ?? this.dateEdited,
@@ -165,11 +235,16 @@ class IssuePageState {
         hasChanges: hasChanges ?? this.hasChanges,
         issueState: issueState ?? this.issueState,
         municipalityName: municipalityName ?? this.municipalityName,
-        issuePageView: issuePageView ?? this.issuePageView,
+        pageView: pageView ?? this.pageView,
         description: description ?? this.description,
         pictures: pictures ?? this.pictures,
+        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
         category: category ?? this.category,
         subCategory: subCategory ?? this.subCategory);
+  }
+
+  IssuePageState update({required int updatedItemHashCode}) {
+    return copyWith(updatedItemHashCode: updatedItemHashCode);
   }
 
   List<String> getNamesOfChangedProperties(
@@ -187,9 +262,8 @@ class IssuePageState {
   HashMap<String, int> getCurrentHashCodes({IssuePageState? state}) {
     state ??= this;
     HashMap<String, int> hashMap = HashMap();
-    hashMap["Marker"] = state.marker == null ? 0 : state.marker.hashCode;
-    hashMap["Description"] =
-        state.description == null ? 0 : state.description.hashCode;
+    hashMap["Marker"] = state.marker.hashCode;
+    hashMap["Description"] = state.description.hashCode;
     hashMap["Picture1"] = (pictures == null || state.pictures!.isEmpty)
         ? 0
         : state.pictures![0].hashCode;
@@ -199,10 +273,31 @@ class IssuePageState {
     hashMap["Picture3"] = (pictures == null || state.pictures!.length < 3)
         ? 0
         : state.pictures![2].hashCode;
-    hashMap["SubCategory"] =
-        state.subCategory == null ? 0 : state.subCategory.hashCode;
+    hashMap["SubCategory"] = state.subCategory.hashCode;
     return hashMap;
   }
+
+  @override
+  List<Object?> get props =>
+      [
+        marker,
+        isCreator,
+        mapType,
+        municipalityResponses,
+        address,
+        dateCreated,
+        dateEdited,
+        hasVerified,
+        hasChanges,
+        issueState,
+        municipalityName,
+        pageView,
+        description,
+        pictures,
+        category,
+        subCategory,
+        updatedItemHashCode
+      ];
 }
 
 //endregion

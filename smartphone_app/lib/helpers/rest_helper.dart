@@ -96,22 +96,29 @@ class RestHelper {
   //endregion
 
   ///
-  /// METHODS
+  /// PRIVATE METHODS
   ///
-  //region Methods
+  //region Private methods
 
   _receivedResponse(http.Response response) {
     // Print request and response for debug purposes
 
-    print("Response status: ${response.statusCode}");
+    print("Response status: ${response.statusCode}"); // ignore: avoid_print
     print("Response: ${response.body}"); // ignore: avoid_print
   }
 
   _timeout() {
-    print("Response: Timeout");
+    print("Response: Timeout"); // ignore: avoid_print
   }
 
-  _getParametersString(List<RestParameter>? parameters) {
+  Map<String, String> _getHeaders() {
+    return {
+      "Content-Type": "text/json;charset=UTF-8",
+      "cache-control": "no-cache"
+    };
+  }
+
+  String _getParametersString(List<RestParameter>? parameters) {
     if (parameters == null || parameters.isEmpty) return "";
     var tempString = "";
     for (var parameter in parameters) {
@@ -155,6 +162,13 @@ class RestHelper {
     return RestResponse(response: response, jsonResponse: jsonDecoded);
   }
 
+  //endregion
+
+  ///
+  /// PUBLIC METHODS
+  ///
+  //region Public methods
+
   Future<RestResponse> sendGetRequest(String function,
       {List<RestParameter>? parameters}) async {
     String urlComplete = url + function + _getParametersString(parameters);
@@ -163,31 +177,25 @@ class RestHelper {
       return _getIOClient()
           .get(
             Uri.parse(urlComplete),
-            headers: {
-              "Content-Type": "text/json;charset=UTF-8",
-              "cache-control": "no-cache"
-            },
+            headers: _getHeaders(),
           )
           .timeout(Duration(seconds: timeoutInSeconds))
           .then((onValue) {
-            _receivedResponse(onValue);
-            return onValue;
-          });
+        _receivedResponse(onValue);
+        return onValue;
+      });
     }, [200]);
   }
 
   Future<RestResponse> sendPostRequest(String function,
-      {List<RestParameter>? parameters, required String body}) async {
+      {List<RestParameter>? parameters, required String? body}) async {
     String urlComplete = url + function + _getParametersString(parameters);
     // Make request
-    var bodyString = utf8.encode(body);
+    var bodyString = body == null ? null : utf8.encode(body);
     return await _makeRequest(() async {
       return await _getIOClient()
           .post(Uri.parse(urlComplete),
-              headers: {
-                "Content-Type": "text/json;charset=UTF-8",
-                "cache-control": "no-cache"
-              },
+              headers: _getHeaders(),
               body: bodyString,
               encoding: Encoding.getByName("UTF-8"))
           .timeout(Duration(seconds: timeoutInSeconds))
@@ -206,10 +214,7 @@ class RestHelper {
     return await _makeRequest(() async {
       return await _getIOClient()
           .put(Uri.parse(urlComplete),
-              headers: {
-                "Content-Type": "text/json;charset=UTF-8",
-                "cache-control": "no-cache"
-              },
+              headers: _getHeaders(),
               body: bodyString,
               encoding: Encoding.getByName("UTF-8"))
           .timeout(Duration(seconds: timeoutInSeconds))
@@ -228,10 +233,7 @@ class RestHelper {
     return await _makeRequest(() async {
       return await _getIOClient()
           .delete(Uri.parse(urlComplete),
-              headers: {
-                "Content-Type": "text/json;charset=UTF-8",
-                "cache-control": "no-cache"
-              },
+              headers: _getHeaders(),
               body: bodyString,
               encoding: Encoding.getByName("UTF-8"))
           .timeout(Duration(seconds: timeoutInSeconds))

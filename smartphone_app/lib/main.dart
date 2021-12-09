@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/sign_up/sign_up_page.dart';
 import 'package:smartphone_app/utilities/sign_in/third_party_sign_in_util.dart';
 import 'package:smartphone_app/webservices/google_reverse_geocoding/service/google_service.dart';
-import 'package:smartphone_app/webservices/wasp/service/mock_wasp_service.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 import 'helpers/app_values_helper.dart';
 import 'localization/localization_helper.dart';
@@ -82,7 +81,7 @@ class MyApp extends StatelessWidget {
                     name: user!.displayName ?? "",
                     email: user.email,
                   ))
-            : LoginPage());
+            : const LoginPage());
   }
 }
 

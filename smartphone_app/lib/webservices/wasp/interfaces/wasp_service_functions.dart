@@ -21,6 +21,12 @@ class IWASPServiceFunctions {
     throw UnimplementedError();
   }
 
+  // Delete
+  Future<WASPServiceResponse<WASPResponse>> deleteIssue(
+      int issueId) async {
+    throw UnimplementedError();
+  }
+
   // Post
   Future<WASPServiceResponse<GetListOfIssues_WASPResponse>> getListOfIssues(
       {required IssuesOverviewFilter filter}) async {
@@ -94,6 +100,12 @@ class IWASPServiceFunctions {
   // Delete
   Future<WASPServiceResponse<WASPResponse>> deleteCitizen(
       {required int citizenId}) async {
+    throw UnimplementedError();
+  }
+
+  // Put
+  Future<WASPServiceResponse<WASPResponse>> updateCitizen(
+      {required int citizenId, required List<WASPUpdate> updates}) async {
     throw UnimplementedError();
   }
 

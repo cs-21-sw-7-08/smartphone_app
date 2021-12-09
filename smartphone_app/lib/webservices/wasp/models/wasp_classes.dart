@@ -1,5 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 
 part 'wasp_classes.g.dart';
 
@@ -19,8 +21,18 @@ class WASPResponse {
 
   Map<String, dynamic> toJson() => _$WASPResponseToJson(this);
 
-  String? getErrorMessage() {
+  Future<String?> getErrorMessage() async {
     if (!isSuccessful && errorNo != 0) {
+      // 1 and 2 points to exceptions and not constant errors
+      switch (errorNo) {
+        case 1:
+        case 2:
+          return errorMessage;
+      }
+      // Get localized error message
+      String? waspError = await LocalizationHelper.getInstance()
+          .getLocalizedResponseError(errorNo);
+      if (waspError != null) return waspError;
       return "WASP error: ${errorNo.toString()}";
     } else if (errorMessage != null) {
       return errorMessage;
@@ -30,6 +42,7 @@ class WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfIssues_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<Issue>? result;
@@ -44,6 +57,7 @@ class GetListOfIssues_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfMunicipalities_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<Municipality>? result;
@@ -60,6 +74,7 @@ class GetListOfMunicipalities_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class IsBlockedCitizen_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late bool? result;
@@ -74,6 +89,7 @@ class IsBlockedCitizen_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class Citizen_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Citizen? result;
@@ -88,6 +104,7 @@ class Citizen_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetIssueDetails_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late Issue? result;
@@ -102,6 +119,7 @@ class GetIssueDetails_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfCategories_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<Category>? result;
@@ -118,6 +136,7 @@ class GetListOfCategories_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
+// ignore: camel_case_types
 class GetListOfReportCategories_WASPResponse extends WASPResponse {
   @JsonKey(name: "Result")
   late List<ReportCategory>? result;
@@ -134,7 +153,8 @@ class GetListOfReportCategories_WASPResponse extends WASPResponse {
 }
 
 @JsonSerializable()
-class Location {
+// ignore: must_be_immutable
+class Location extends Equatable {
   @JsonKey(name: "Latitude")
   late double latitude;
   @JsonKey(name: "Longitude")
@@ -149,10 +169,14 @@ class Location {
 
   factory Location.fromLatLng(LatLng latLng) =>
       Location(latitude: latLng.latitude, longitude: latLng.longitude);
+
+  @override
+  List<Object?> get props => [latitude, longitude];
 }
 
 @JsonSerializable()
-class Category {
+// ignore: must_be_immutable
+class Category extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -168,20 +192,12 @@ class Category {
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
 
   @override
-  @JsonKey(ignore: true)
-  int get hashCode => id;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! Category) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
-class SubCategory {
+// ignore: must_be_immutable
+class SubCategory extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "CategoryId")
@@ -197,20 +213,12 @@ class SubCategory {
   Map<String, dynamic> toJson() => _$SubCategoryToJson(this);
 
   @override
-  @JsonKey(ignore: true)
-  int get hashCode => id;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! SubCategory) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
-class Municipality {
+// ignore: must_be_immutable
+class Municipality extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -224,20 +232,12 @@ class Municipality {
   Map<String, dynamic> toJson() => _$MunicipalityToJson(this);
 
   @override
-  @JsonKey(ignore: true)
-  int get hashCode => name.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is! Municipality) {
-      return false;
-    }
-    return hashCode == other.hashCode;
-  }
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
-class ReportCategory {
+// ignore: must_be_immutable
+class ReportCategory extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -249,12 +249,16 @@ class ReportCategory {
       _$ReportCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReportCategoryToJson(this);
+
+  @override
+  List<Object?> get props => [id];
 }
 
 enum IssueStates { created, approved, resolved, notResolved }
 
 @JsonSerializable()
-class IssueState {
+// ignore: must_be_immutable
+class IssueState extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "Name")
@@ -268,10 +272,13 @@ class IssueState {
   Map<String, dynamic> toJson() => _$IssueStateToJson(this);
 
   IssueStates getEnum() => IssueStates.values[id - 1];
+
+  @override
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()
-class MunicipalityResponse {
+class MunicipalityResponse extends Equatable {
   @JsonKey(name: "Id")
   late int id;
   @JsonKey(name: "IssueId")
@@ -297,10 +304,15 @@ class MunicipalityResponse {
       _$MunicipalityResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$MunicipalityResponseToJson(this);
+
+  @override
+  List<Object?> get props =>
+      [id, issueId, municipalityUserId, response, dateCreated, dateEdited];
 }
 
 @JsonSerializable()
-class Issue {
+// ignore: must_be_immutable
+class Issue extends Equatable {
   @JsonKey(name: "Id")
   late int? id;
   @JsonKey(name: "CitizenId")
@@ -355,6 +367,23 @@ class Issue {
   factory Issue.fromJson(Map<String, dynamic> json) => _$IssueFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssueToJson(this);
+
+  @override
+  List<Object?> get props => [
+        id,
+        citizenId,
+        description,
+        dateCreated,
+        dateEdited,
+        location,
+        address,
+        category,
+        subCategory,
+        municipality,
+        issueState,
+        municipalityResponses,
+        issueVerificationCitizenIds
+      ];
 }
 
 @JsonSerializable()
@@ -428,7 +457,8 @@ class Citizen {
 }
 
 @JsonSerializable()
-class IssuesOverviewFilter {
+// ignore: must_be_immutable
+class IssuesOverviewFilter extends Equatable {
   @JsonKey(name: "FromTime")
   late DateTime? fromTime;
   @JsonKey(name: "ToTime")
@@ -460,6 +490,18 @@ class IssuesOverviewFilter {
       _$IssuesOverviewFilterFromJson(json);
 
   Map<String, dynamic> toJson() => _$IssuesOverviewFilterToJson(this);
+
+  @override
+  List<Object?> get props => [
+        fromTime,
+        toTime,
+        municipalityIds,
+        issueStateIds,
+        categoryIds,
+        subCategoryIds,
+        isBlocked,
+        citizenIds
+      ];
 }
 
 @JsonSerializable()

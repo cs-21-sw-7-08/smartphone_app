@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartphone_app/objects/place.dart';
@@ -13,7 +14,8 @@ enum IssuesOverviewButtonEvent {
   logOut,
   changeMapType,
   getListOfIssues,
-  showFilter
+  showFilter,
+  showSettings
 }
 
 //endregion
@@ -23,42 +25,65 @@ enum IssuesOverviewButtonEvent {
 ///
 //region Event
 
-class IssuesOverviewEvent {}
+abstract class IssuesOverviewEvent extends Equatable {
+  const IssuesOverviewEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends IssuesOverviewEvent {
-  final IssuesOverviewButtonEvent issuesOverviewButtonEvent;
+  final IssuesOverviewButtonEvent buttonEvent;
 
-  ButtonPressed({required this.issuesOverviewButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class PositionRetrieved extends IssuesOverviewEvent {
   final Position devicePosition;
 
-  PositionRetrieved({required this.devicePosition});
+  const PositionRetrieved({required this.devicePosition});
+
+  @override
+  List<Object?> get props => [devicePosition];
 }
 
 class ListOfIssuesRetrieved extends IssuesOverviewEvent {
   final List<Issue> issues;
 
-  ListOfIssuesRetrieved({required this.issues});
+  const ListOfIssuesRetrieved({required this.issues});
+
+  @override
+  List<Object?> get props => [issues];
 }
 
 class IssueDetailsRetrieved extends IssuesOverviewEvent {
   final Issue issue;
 
-  IssueDetailsRetrieved({required this.issue});
+  const IssueDetailsRetrieved({required this.issue});
+
+  @override
+  List<Object?> get props => [issue];
 }
 
 class IssuePressed extends IssuesOverviewEvent {
   final Issue issue;
 
-  IssuePressed({required this.issue});
+  const IssuePressed({required this.issue});
+
+  @override
+  List<Object?> get props => [issue];
 }
 
 class MarkersUpdated extends IssuesOverviewEvent {
   final Set<Marker>? markers;
 
-  MarkersUpdated({required this.markers});
+  const MarkersUpdated({required this.markers});
+
+  @override
+  List<Object?> get props => [markers];
 }
 
 //endregion
@@ -68,7 +93,8 @@ class MarkersUpdated extends IssuesOverviewEvent {
 ///
 //region State
 
-class IssuesOverviewState {
+// ignore: must_be_immutable
+class IssuesOverviewState extends Equatable {
   Set<Marker>? markers;
   Position? devicePosition;
   MapType? mapType;
@@ -90,15 +116,19 @@ class IssuesOverviewState {
       MapType? mapType,
       List<Issue>? issues,
       List<Place>? places,
-      IssuesOverviewFilter? issuesOverviewFilter}) {
+      IssuesOverviewFilter? filter}) {
     return IssuesOverviewState(
         mapType: mapType ?? this.mapType,
         issues: issues ?? this.issues,
         places: places ?? this.places,
-        filter: issuesOverviewFilter ?? this.filter,
+        filter: filter ?? this.filter,
         markers: markers ?? this.markers,
         devicePosition: devicePosition ?? this.devicePosition);
   }
+
+  @override
+  List<Object?> get props =>
+      [markers, devicePosition, mapType, issues, places, filter];
 }
 
 //endregion

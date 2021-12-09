@@ -60,7 +60,6 @@ class TaskUtil {
                     cancelableOperation!.cancel();
                   }
                   runTask = false;
-                  Navigator.of(context).pop();
                   taskCancelled();
                 },
               ),

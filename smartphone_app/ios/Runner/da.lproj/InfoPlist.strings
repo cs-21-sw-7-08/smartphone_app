@@ -1,0 +1,12 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Jakob Precht on 31/08/2021.
+  
+*/
+
+NSLocalNetworkUsageDescription = "Bruger netværket til at hente og sende data via en webservice";
+NSLocationWhenInUseUsageDescription = "Bruger denne funktion til at vise telefonens placering på Google Maps";
+CFBundleName = "Bee A Helper";
+CFBundleDisplayName = "Bee A Helper";

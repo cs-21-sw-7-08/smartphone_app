@@ -23,6 +23,7 @@ class GeneralUtil {
 
   /// Hide keyboard
   static hideKeyboard() {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     FocusManager.instance.primaryFocus!.unfocus();
   }
 

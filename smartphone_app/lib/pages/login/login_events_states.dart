@@ -1,9 +1,19 @@
+import 'dart:ui';
+
+import 'package:equatable/equatable.dart';
+import 'package:smartphone_app/utilities/general_util.dart';
+
 ///
 /// ENUMS
 ///
 //region Enums
 
-enum LoginButtonEvent { usePhoneNo, useGoogleLogin, useAppleLogin }
+enum LoginButtonEvent {
+  usePhoneNo,
+  useGoogleLogin,
+  useAppleLogin,
+  goToSettings
+}
 
 //endregion
 
@@ -12,12 +22,31 @@ enum LoginButtonEvent { usePhoneNo, useGoogleLogin, useAppleLogin }
 ///
 //region Event
 
-class LoginEvent {}
+abstract class LoginEvent extends Equatable {
+  const LoginEvent();
+
+  @override
+  List<Object> get props => [];
+}
 
 class ButtonPressed extends LoginEvent {
-  final LoginButtonEvent loginButtonEvent;
+  final LoginButtonEvent buttonEvent;
 
-  ButtonPressed({required this.loginButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object> get props => [buttonEvent];
+}
+
+class Resumed extends LoginEvent {}
+
+class PermissionStateChanged extends LoginEvent {
+  final PermissionState permissionState;
+
+  const PermissionStateChanged({required this.permissionState});
+
+  @override
+  List<Object> get props => [permissionState];
 }
 
 //endregion
@@ -27,14 +56,18 @@ class ButtonPressed extends LoginEvent {
 ///
 //region State
 
-class LoginState {
+// ignore: must_be_immutable
+class LoginState extends Equatable {
+  PermissionState? permissionState;
 
-  LoginState();
+  LoginState({this.permissionState});
 
-  LoginState copyWith() {
-    return LoginState();
+  LoginState copyWith({PermissionState? permissionState}) {
+    return LoginState(permissionState: permissionState ?? this.permissionState);
   }
 
+  @override
+  List<Object?> get props => [permissionState];
 }
 
 //endregion

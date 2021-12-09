@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:smartphone_app/values/values.dart' as values;
 
 enum DialogQuestionResponse { yes, no }
 
@@ -58,12 +59,16 @@ class QuestionDialog extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(2))),
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(values.borderRadius))),
               child: Wrap(alignment: WrapAlignment.center, children: [
                 Container(
                     margin: const EdgeInsets.all(0),
                     padding: const EdgeInsets.only(
-                        left: 10, right: 10, bottom: 25, top: 25),
+                        left: values.padding,
+                        right: values.padding,
+                        bottom: 25,
+                        top: 25),
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -91,7 +96,8 @@ class QuestionDialog extends StatelessWidget {
                               textColor: Colors.black,
                               fontWeight: FontWeight.bold,
                               borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(2)),
+                                  bottomLeft:
+                                      Radius.circular(values.borderRadius)),
                               showBorder: false,
                               onPressed: () async {
                                 Navigator.of(context)
@@ -112,7 +118,8 @@ class QuestionDialog extends StatelessWidget {
                               textColor: Colors.black,
                               fontWeight: FontWeight.bold,
                               borderRadius: const BorderRadius.only(
-                                  bottomRight: Radius.circular(2)),
+                                  bottomRight:
+                                      Radius.circular(values.borderRadius)),
                               showBorder: false,
                               onPressed: () async {
                                 Navigator.of(context)

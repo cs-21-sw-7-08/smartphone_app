@@ -25,11 +25,11 @@ class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Create bloc
-    bloc = ReportBloc(buildContext: context);
+    bloc = ReportBloc(context: context);
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(ButtonPressed(reportButtonEvent: ReportButtonEvent.close));
+          bloc.add(const ButtonPressed(buttonEvent: ReportButtonEvent.close));
           return false;
         },
         child: BlocProvider(
@@ -55,9 +55,9 @@ class ReportPage extends StatelessWidget {
                                 titleColor: Colors.white,
                                 background: custom_colors.appBarBackground,
                                 appBarLeftButton: AppBarLeftButton.close,
-                                leftButtonPressed: () => bloc.add(ButtonPressed(
-                                    reportButtonEvent:
-                                        ReportButtonEvent.close)),
+                                leftButtonPressed: () => bloc.add(
+                                    const ButtonPressed(
+                                        buttonEvent: ReportButtonEvent.close)),
                               ),
                               body: _getContent(context, bloc, state),
                             );
@@ -111,8 +111,8 @@ class ReportPage extends StatelessWidget {
                                 ))),
                         // 'Confirm' button
                         CustomButton(
-                          onPressed: () => bloc.add(ButtonPressed(
-                              reportButtonEvent: ReportButtonEvent.confirm)),
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent: ReportButtonEvent.confirm)),
                           text: AppLocalizations.of(context)!.confirm,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -167,8 +167,8 @@ class ReportPage extends StatelessWidget {
                 ],
               ),
             CustomButton(
-              onPressed: () => bloc.add(ButtonPressed(
-                  reportButtonEvent: ReportButtonEvent.selectReportCategory)),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: ReportButtonEvent.selectReportCategory)),
               margin: EdgeInsets.only(
                   top: (state.reportCategory != null) ? values.padding : 0),
               fontWeight: FontWeight.bold,

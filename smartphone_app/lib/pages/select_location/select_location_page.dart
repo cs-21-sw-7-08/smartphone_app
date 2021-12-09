@@ -42,7 +42,7 @@ class SelectLocationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SelectLocationBloc bloc =
-        SelectLocationBloc(buildContext: context, mapType: mapType);
+        SelectLocationBloc(context: context, mapType: mapType);
 
     return WillPopScope(
         onWillPop: () async {
@@ -92,9 +92,8 @@ class SelectLocationPage extends StatelessWidget {
                 padding: const EdgeInsets.all(values.padding),
                 color: custom_colors.black,
                 child: CustomButton(
-                  onPressed: () => bloc.add(ButtonPressed(
-                      selectLocationButtonEvent:
-                          SelectLocationButtonEvent.confirm)),
+                  onPressed: () => bloc.add(const ButtonPressed(
+                      buttonEvent: SelectLocationButtonEvent.confirm)),
                   text: AppLocalizations.of(context)!.confirm,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -114,9 +113,8 @@ class SelectLocationPage extends StatelessWidget {
               icon: state.mapType == MapType.hybrid
                   ? const Icon(Icons.layers_outlined, color: Colors.black)
                   : const Icon(Icons.layers, color: Colors.black),
-              onPressed: () => bloc.add(ButtonPressed(
-                  selectLocationButtonEvent:
-                      SelectLocationButtonEvent.changeMapType))),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: SelectLocationButtonEvent.changeMapType))),
         ),
       ],
     );
@@ -145,5 +143,5 @@ class SelectLocationPage extends StatelessWidget {
     ));
   }
 
-  //endregion
+//endregion
 }

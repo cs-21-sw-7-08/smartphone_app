@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -15,30 +16,42 @@ enum SelectLocationButtonEvent { confirm, changeMapType }
 ///
 //region Event
 
-class SelectLocationEvent {}
+abstract class SelectLocationEvent extends Equatable {
+  const SelectLocationEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends SelectLocationEvent {
-  final SelectLocationButtonEvent selectLocationButtonEvent;
+  final SelectLocationButtonEvent buttonEvent;
 
-  ButtonPressed({required this.selectLocationButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class AddMarker extends SelectLocationEvent {
   final LatLng point;
 
-  AddMarker({required this.point});
+  const AddMarker({required this.point});
+
+  @override
+  List<Object?> get props => [point];
 }
 
 class RemoveMarker extends SelectLocationEvent {
-  final MarkerId markerId;
-
-  RemoveMarker({required this.markerId});
+  const RemoveMarker();
 }
 
 class PositionRetrieved extends SelectLocationEvent {
   final Position devicePosition;
 
-  PositionRetrieved({required this.devicePosition});
+  const PositionRetrieved({required this.devicePosition});
+
+  @override
+  List<Object?> get props => [devicePosition];
 }
 
 //endregion
@@ -48,7 +61,8 @@ class PositionRetrieved extends SelectLocationEvent {
 ///
 //region State
 
-class SelectLocationState {
+// ignore: must_be_immutable
+class SelectLocationState extends Equatable {
   Position? devicePosition;
   Marker? marker;
   MapType? mapType;
@@ -62,6 +76,9 @@ class SelectLocationState {
         devicePosition: devicePosition ?? this.devicePosition,
         mapType: mapType ?? this.mapType);
   }
+
+  @override
+  List<Object?> get props => [devicePosition, marker, mapType];
 }
 
 //endregion

@@ -29,8 +29,7 @@ class IssuesOverviewFilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IssuesOverviewFilterBloc bloc =
-        IssuesOverviewFilterBloc(buildContext: context, filter: filter);
+    bloc = IssuesOverviewFilterBloc(context: context, filter: filter);
 
     return WillPopScope(
         onWillPop: () async {
@@ -79,17 +78,17 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                           custom_colors.appBarBackground,
                                       appBarLeftButton: AppBarLeftButton.close,
                                       leftButtonPressed: () => bloc.add(
-                                          ButtonPressed(
-                                              issuesOverviewFilterButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   IssuesOverviewFilterButtonEvent
-                                                      .closePressed)),
+                                                      .close)),
                                       button1Icon: const Icon(
                                         Icons.refresh_outlined,
                                         color: Colors.white,
                                       ),
                                       onButton1Pressed: () => bloc.add(
-                                          ButtonPressed(
-                                              issuesOverviewFilterButtonEvent:
+                                          const ButtonPressed(
+                                              buttonEvent:
                                                   IssuesOverviewFilterButtonEvent
                                                       .resetAll)),
                                     ),
@@ -122,23 +121,23 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                       _getOnlyOwnIssues(context, bloc, state)
                                     ]),
                                     _getCard(
-                                        () => bloc.add(ButtonPressed(
-                                            issuesOverviewFilterButtonEvent:
+                                        () => bloc.add(const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewFilterButtonEvent
                                                     .resetIssueStates)),
                                         AppLocalizations.of(context)!.status,
                                         [_getIssueState(context, bloc, state)]),
                                     _getCard(
-                                        () => bloc.add(ButtonPressed(
-                                            issuesOverviewFilterButtonEvent:
+                                        () => bloc.add(const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewFilterButtonEvent
                                                     .resetCategories)),
                                         AppLocalizations.of(context)!.category,
                                         [_getCategory(context, bloc, state)]),
                                     if (state.categories!.isNotEmpty)
                                       _getCard(
-                                          () => bloc.add(ButtonPressed(
-                                              issuesOverviewFilterButtonEvent:
+                                          () => bloc.add(const ButtonPressed(
+                                              buttonEvent:
                                                   IssuesOverviewFilterButtonEvent
                                                       .resetSubCategories)),
                                           AppLocalizations.of(context)!.subcategory,
@@ -147,8 +146,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                                 context, bloc, state)
                                           ]),
                                     _getCard(
-                                        () => bloc.add(ButtonPressed(
-                                            issuesOverviewFilterButtonEvent:
+                                        () => bloc.add(const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewFilterButtonEvent
                                                     .resetMunicipalities)),
                                         AppLocalizations.of(context)!
@@ -160,8 +159,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                                 ))),
                         // 'Apply' button
                         CustomButton(
-                          onPressed: () => bloc.add(ButtonPressed(
-                              issuesOverviewFilterButtonEvent:
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent:
                                   IssuesOverviewFilterButtonEvent.applyFilter)),
                           text: AppLocalizations.of(context)!.apply,
                           fontWeight: FontWeight.bold,
@@ -260,8 +259,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                       )
                     : const Icon(Icons.check_box_outline_blank_outlined,
                         color: Colors.black, size: 50),
-                onPressed: () => bloc.add(ButtonPressed(
-                    issuesOverviewFilterButtonEvent:
+                onPressed: () => bloc.add(const ButtonPressed(
+                    buttonEvent:
                         IssuesOverviewFilterButtonEvent.onlyShowYourOwnIssues)))
           ],
         ));
@@ -321,7 +320,6 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                             ],
                           ))),
                   onPressed: () => bloc.add(IssueStatePressed(
-                      index: index,
                       issueStateFilterItem: issueStateFilterItem)),
                 ));
           }),
@@ -337,9 +335,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         children: [
           // 'Select categories' button
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issuesOverviewFilterButtonEvent:
-                    IssuesOverviewFilterButtonEvent.selectCategories)),
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent: IssuesOverviewFilterButtonEvent.selectCategories)),
             text: AppLocalizations.of(context)!.select_categories,
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -352,39 +349,43 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   CategoryFilterItem categoryFilterItem =
                       state.categories![index];
-                  return Container(
-                    margin: const EdgeInsets.only(top: values.padding),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Colors.black),
-                      borderRadius: const BorderRadius.all(
-                          Radius.circular(values.borderRadius)),
-                      color: Colors.transparent,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: CustomLabel(
-                              title: categoryFilterItem.category.name!,
-                              margin: const EdgeInsets.all(values.padding)),
-                        ),
-                        CustomButton(
-                            height: 40,
-                            width: 40,
-                            defaultBackground:
-                                custom_colors.transparentGradient,
-                            pressedBackground: custom_colors.greyGradient,
-                            margin: const EdgeInsets.only(
-                                top: 5, right: 5, bottom: 5),
-                            imagePadding: const EdgeInsets.all(5),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                            icon: const Icon(Icons.clear, color: Colors.black),
-                            onPressed: () => bloc.add(CategoryPressed(
-                                index: index,
-                                categoryFilterItem: categoryFilterItem)))
-                      ],
-                    ),
-                  );
+                  return Card(
+                      color: custom_colors.grey1,
+                      margin: const EdgeInsets.only(top: values.padding),
+                      child: Container(
+                        margin: const EdgeInsets.all(values.padding),
+                        color: Colors.transparent,
+                        child: IntrinsicHeight(
+                            child: Row(
+                          children: [
+                            Expanded(
+                              child: CustomLabel(
+                                  textAlign: TextAlign.left,
+                                  alignmentGeometry: Alignment.centerLeft,
+                                  padding: const EdgeInsets.all(0),
+                                  title: LocalizationHelper.getInstance()
+                                      .getLocalizedCategory(
+                                          context, categoryFilterItem.category),
+                                  margin: const EdgeInsets.only(
+                                      right: values.padding)),
+                            ),
+                            CustomButton(
+                                height: 40,
+                                width: 40,
+                                defaultBackground:
+                                    custom_colors.transparentGradient,
+                                pressedBackground: custom_colors.greyGradient2,
+                                margin: const EdgeInsets.all(0),
+                                imagePadding: const EdgeInsets.all(5),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(25)),
+                                icon: const Icon(Icons.clear,
+                                    color: Colors.black),
+                                onPressed: () => bloc.add(CategoryPressed(
+                                    categoryFilterItem: categoryFilterItem)))
+                          ],
+                        )),
+                      ));
                 })
         ],
       ),
@@ -401,71 +402,94 @@ class IssuesOverviewFilterPage extends StatelessWidget {
             .where((element) => element.category == item.category)
             .toList();
         if (subCategoryFilterItems.isEmpty) continue;
+
+        List<Widget> cardChildren = List.empty(growable: true);
         // Add category header
-        listViewChildren.add(Container(
-          margin: const EdgeInsets.only(top: values.padding),
+        cardChildren.add(Container(
+          margin: const EdgeInsets.all(0),
           decoration: const BoxDecoration(
             borderRadius:
                 BorderRadius.all(Radius.circular(values.borderRadius)),
-            gradient: custom_colors.buttonDefaultGradient,
+            color: Colors.transparent,
           ),
-          child: Row(
+          child: IntrinsicHeight(
+              child: Row(
             children: [
               Expanded(
                   child: CustomLabel(
+                textAlign: TextAlign.left,
+                alignmentGeometry: Alignment.centerLeft,
                 fontWeight: FontWeight.bold,
-                title: item.category.name!,
-                margin: const EdgeInsets.all(values.padding),
+                title: LocalizationHelper.getInstance()
+                    .getLocalizedCategory(context, item.category),
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.only(
+                    right: values.padding, bottom: values.padding),
               )),
               CustomButton(
                   height: 40,
                   width: 40,
                   defaultBackground: custom_colors.transparentGradient,
-                  pressedBackground: custom_colors.greyGradient,
-                  margin: const EdgeInsets.only(top: 5, right: 5, bottom: 5),
+                  pressedBackground: custom_colors.greyGradient2,
+                  margin: const EdgeInsets.only(bottom: values.padding),
                   imagePadding: const EdgeInsets.all(5),
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
                   icon: const Icon(Icons.clear, color: Colors.black),
                   onPressed: () => bloc.add(
                       CategoryInSubCategoryPressed(categoryFilterItem: item)))
             ],
-          ),
+          )),
         ));
+        cardChildren.add(Container(
+            height: 1,
+            color: custom_colors.contentDivider,
+            margin: const EdgeInsets.only(left: 0, right: 0)));
 
         for (var subCategoryFilterItem in subCategoryFilterItems) {
-          listViewChildren.add(
+          cardChildren.add(
             Container(
-              margin: const EdgeInsets.only(top: values.padding),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1, color: Colors.black),
-                borderRadius: const BorderRadius.all(
-                    Radius.circular(values.borderRadius)),
+              decoration: const BoxDecoration(
                 color: Colors.transparent,
               ),
-              child: Row(
+              child: IntrinsicHeight(
+                  child: Row(
                 children: [
                   Expanded(
                       child: CustomLabel(
-                    title: subCategoryFilterItem.subCategory.name!,
-                    margin: const EdgeInsets.all(values.padding),
+                    textAlign: TextAlign.left,
+                    alignmentGeometry: Alignment.centerLeft,
+                    title: LocalizationHelper.getInstance()
+                        .getLocalizedSubCategory(
+                            context, subCategoryFilterItem.subCategory),
+                    margin: const EdgeInsets.only(
+                        right: values.padding, top: values.padding),
                   )),
                   CustomButton(
                       height: 40,
                       width: 40,
                       defaultBackground: custom_colors.transparentGradient,
-                      pressedBackground: custom_colors.greyGradient,
-                      margin:
-                          const EdgeInsets.only(top: 5, right: 5, bottom: 5),
+                      pressedBackground: custom_colors.greyGradient2,
+                      margin: const EdgeInsets.only(top: values.padding),
                       imagePadding: const EdgeInsets.all(5),
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       icon: const Icon(Icons.clear, color: Colors.black),
                       onPressed: () => bloc.add(SubCategoryPressed(
                           subCategoryFilterItem: subCategoryFilterItem)))
                 ],
-              ),
+              )),
             ),
           );
         }
+
+        listViewChildren.add(Card(
+          color: custom_colors.grey1,
+          margin: const EdgeInsets.only(top: values.padding),
+          child: Container(
+              margin: const EdgeInsets.all(values.padding),
+              child: Column(
+                children: cardChildren,
+              )),
+        ));
       }
     }
 
@@ -475,8 +499,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         children: [
           // 'Select subcategories' button
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issuesOverviewFilterButtonEvent:
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent:
                     IssuesOverviewFilterButtonEvent.selectSubCategories)),
             text: AppLocalizations.of(context)!.select_subcategories,
             fontWeight: FontWeight.bold,
@@ -500,8 +524,8 @@ class IssuesOverviewFilterPage extends StatelessWidget {
         children: [
           // 'Select municipalities' button
           CustomButton(
-            onPressed: () => bloc.add(ButtonPressed(
-                issuesOverviewFilterButtonEvent:
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent:
                     IssuesOverviewFilterButtonEvent.selectMunicipalities)),
             text: AppLocalizations.of(context)!.select_municipalities,
             fontWeight: FontWeight.bold,
@@ -515,40 +539,39 @@ class IssuesOverviewFilterPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   MunicipalityFilterItem municipalityFilterItem =
                       state.municipalities![index];
-                  return Container(
-                    margin: const EdgeInsets.only(top: values.padding),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Colors.black),
-                      borderRadius: const BorderRadius.all(
-                          Radius.circular(values.borderRadius)),
-                      color: Colors.transparent,
-                    ),
-                    child: IntrinsicHeight(
-                        child: Row(
-                      children: [
-                        Expanded(
-                            child: CustomLabel(
-                          title: municipalityFilterItem.municipality.name!,
-                          margin: const EdgeInsets.all(values.padding),
+                  return Card(
+                      color: custom_colors.grey1,
+                      margin: const EdgeInsets.only(top: values.padding),
+                      child: Container(
+                        margin: const EdgeInsets.all(values.padding),
+                        color: Colors.transparent,
+                        child: IntrinsicHeight(
+                            child: Row(
+                          children: [
+                            Expanded(
+                                child: CustomLabel(
+                              title: municipalityFilterItem.municipality.name!,
+                              margin:
+                                  const EdgeInsets.only(right: values.padding),
+                            )),
+                            CustomButton(
+                                height: 40,
+                                width: 40,
+                                defaultBackground:
+                                    custom_colors.transparentGradient,
+                                pressedBackground: custom_colors.greyGradient2,
+                                margin: const EdgeInsets.all(0),
+                                imagePadding: const EdgeInsets.all(5),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(25)),
+                                icon: const Icon(Icons.clear,
+                                    color: Colors.black),
+                                onPressed: () => bloc.add(MunicipalityPressed(
+                                    municipalityFilterItem:
+                                        municipalityFilterItem)))
+                          ],
                         )),
-                        CustomButton(
-                            height: 40,
-                            width: 40,
-                            defaultBackground:
-                                custom_colors.transparentGradient,
-                            pressedBackground: custom_colors.greyGradient,
-                            margin: const EdgeInsets.only(
-                                top: 5, right: 5, bottom: 5),
-                            imagePadding: const EdgeInsets.all(5),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                            icon: const Icon(Icons.clear, color: Colors.black),
-                            onPressed: () => bloc.add(MunicipalityPressed(
-                                municipalityFilterItem:
-                                    municipalityFilterItem)))
-                      ],
-                    )),
-                  );
+                      ));
                 })
         ],
       ),

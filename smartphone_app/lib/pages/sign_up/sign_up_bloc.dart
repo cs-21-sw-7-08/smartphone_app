@@ -22,8 +22,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   ///
   //region Variables
 
-  late BuildContext _buildContext;
-  late String? _email;
+  late BuildContext context;
+  late String? email;
 
   //endregion
 
@@ -33,14 +33,11 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   //region Constructor
 
   SignUpBloc(
-      {required BuildContext buildContext,
+      {required this.context,
       required SignUpPageView signUpPageView,
-      required String? email,
+      required this.email,
       String? name})
-      : super(SignUpState(signUpPageView: signUpPageView, name: name)) {
-    _buildContext = buildContext;
-    _email = email;
-  }
+      : super(SignUpState(pageView: signUpPageView, name: name));
 
   //endregion
 
@@ -52,36 +49,51 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   @override
   Stream<SignUpState> mapEventToState(SignUpEvent event) async* {
     if (event is TextChanged) {
-      print(event.text); // ignore: avoid_print
-      switch (event.signUpTextChangedEvent) {
+      switch (event.textChangedEvent) {
+
+        /// Name
         case SignUpTextChangedEvent.name:
           yield state.copyWith(name: event.text);
           break;
+
+        /// Phone no.
         case SignUpTextChangedEvent.phoneNo:
           yield state.copyWith(phoneNo: event.text);
           break;
+
+        /// SMS code
         case SignUpTextChangedEvent.smsCode:
           yield state.copyWith(smsCode: event.text);
           break;
       }
     } else if (event is MakeViewChange) {
-      yield state.copyWith(signUpPageView: event.signUpPageView);
+      yield state.copyWith(pageView: event.pageView);
     } else if (event is VerificationIdRetrieved) {
       yield state.copyWith(verificationId: event.verificationId);
     } else if (event is ButtonPressed) {
-      switch (event.signUpButtonEvent) {
+      switch (event.buttonEvent) {
+
+        /// Verify phone no.
         case SignUpButtonEvent.verifyPhoneNo:
           await _verifyPhoneNo();
           break;
+
+        /// Verify SMS code
         case SignUpButtonEvent.verifySmsCode:
           await _verifySmsCode();
           break;
+
+        /// Confirm name
         case SignUpButtonEvent.confirmName:
           await _confirmName();
           break;
+
+        /// Back
         case SignUpButtonEvent.back:
           await _cancelSignUp();
           break;
+
+        /// Select municipality
         case SignUpButtonEvent.selectMunicipality:
           SignUpState? newState = await _selectMunicipality();
           if (newState == null) return;
@@ -101,8 +113,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   Future<SignUpState?> _selectMunicipality() async {
     List<Municipality> municipalities =
         AppValuesHelper.getInstance().getMunicipalities();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
-        items: municipalities, itemBuilder:
+    List<dynamic>? selectedItems =
+        await CustomListDialog.show(context, items: municipalities, itemBuilder:
             (index, item, list, showSearchBar, itemSelected, itemUpdated) {
       if (item is Municipality) {
         return Container(
@@ -138,7 +150,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       return false;
     }, titleBuilder: (item) {
       if (item == null) {
-        return AppLocalizations.of(_buildContext)!.municipality;
+        return AppLocalizations.of(context)!.municipality;
       }
       return "";
     });
@@ -148,13 +160,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     if (selectedMunicipality == null) return null;
     return state.copyWith(
         municipality: selectedMunicipality,
-        signUpPageView: SignUpPageView.name);
+        pageView: SignUpPageView.name);
   }
 
   Future<void> _cancelSignUp() async {
     await TaskUtil.runTask<bool>(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.cancelling_sign_up,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.cancelling_sign_up,
         doInBackground: (runTask) async {
           // Sign out
           await ThirdPartySignInUtil.signOut();
@@ -162,21 +174,21 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         },
         taskCancelled: () {});
 
-    GeneralUtil.goToPage(_buildContext, LoginPage());
+    GeneralUtil.goToPage(context, const LoginPage());
   }
 
   Future<void> _verifyPhoneNo() async {
     // Check for valid phone number
     if (state.phoneNo == null || state.phoneNo!.length != 8) {
-      GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
-          .please_enter_a_valid_phone_number);
+      GeneralUtil.showToast(
+          AppLocalizations.of(context)!.please_enter_a_valid_phone_number);
       return;
     }
 
     await TaskUtil.runTask<bool>(
-        buildContext: _buildContext,
+        buildContext: context,
         progressMessage:
-            AppLocalizations.of(_buildContext)!.sending_verification_code,
+            AppLocalizations.of(context)!.sending_verification_code,
         doInBackground: (runTask) async {
           await ThirdPartySignInUtil.verifyPhoneNo(
               phoneNumber: "+45" + state.phoneNo!,
@@ -188,7 +200,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
               },
               codeSent: (verificationId, token) {
                 add(VerificationIdRetrieved(verificationId: verificationId));
-                add(MakeViewChange(signUpPageView: SignUpPageView.smsCode));
+                add(const MakeViewChange(pageView: SignUpPageView.smsCode));
               },
               codeAutoRetrievalTimeout: (verificationId) {
                 add(VerificationIdRetrieved(verificationId: verificationId));
@@ -200,16 +212,16 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
   Future<void> _verifySmsCode({PhoneAuthCredential? credentials}) async {
     // Check for valid SMS code
-    if (state.smsCode == null || state.phoneNo!.length != 6) {
+    if (state.smsCode == null || state.smsCode!.length != 6) {
       GeneralUtil.showToast(
-          AppLocalizations.of(_buildContext)!.please_enter_the_sms_code_toast);
+          AppLocalizations.of(context)!.please_enter_the_sms_code_toast);
       return;
     }
 
     // Verify SMS code
     UserCredential? userCredential = await TaskUtil.runTask<UserCredential>(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.verifying_sms_code,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.verifying_sms_code,
         doInBackground: (runTask) async {
           if (credentials != null) {
             return await ThirdPartySignInUtil.signInWithCredentials(
@@ -224,14 +236,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     // Try log into Bee A Helper
     Citizen? citizen = await TaskUtil.runTask<Citizen>(
-        buildContext: _buildContext,
-        progressMessage:
-            AppLocalizations.of(_buildContext)!.checking_credentials,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.checking_credentials,
         doInBackground: (runTask) async {
           var response = await WASPService.getInstance()
               .logInCitizen(citizen: Citizen(phoneNo: state.phoneNo));
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           return response.waspResponse!.result;
@@ -240,7 +251,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     if (citizen == null) {
       // Fire event
-      add(MakeViewChange(signUpPageView: SignUpPageView.name));
+      add(const MakeViewChange(pageView: SignUpPageView.name));
     } else {
       // Save citizen ID
       await AppValuesHelper.getInstance()
@@ -249,37 +260,37 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       await AppValuesHelper.getInstance().saveInteger(
           AppValuesKey.defaultMunicipalityId, citizen.municipality!.id);
       // Go to issues overview
-      GeneralUtil.goToPage(_buildContext, const IssuesOverviewPage());
+      GeneralUtil.goToPage(context, const IssuesOverviewPage());
     }
   }
 
   Future<void> _confirmName() async {
     // Check for valid name
     if (state.name == null || state.name!.isEmpty) {
-      GeneralUtil.showToast(AppLocalizations.of(_buildContext)!
-          .please_enter_your_full_name_toast);
+      GeneralUtil.showToast(
+          AppLocalizations.of(context)!.please_enter_your_full_name_toast);
       return;
     }
     // Check for municipality selection
     if (state.municipality == null) {
       GeneralUtil.showToast(
-          AppLocalizations.of(_buildContext)!.please_select_a_municipality);
+          AppLocalizations.of(context)!.please_select_a_municipality);
       return;
     }
 
     // Sign up
     Citizen? citizen = await TaskUtil.runTask<Citizen>(
-        buildContext: _buildContext,
-        progressMessage: AppLocalizations.of(_buildContext)!.signing_up,
+        buildContext: context,
+        progressMessage: AppLocalizations.of(context)!.signing_up,
         doInBackground: (runTask) async {
           var response = await WASPService.getInstance().signUpCitizen(
               citizen: Citizen(
-                  email: _email,
+                  email: email,
                   phoneNo: state.phoneNo,
                   name: state.name,
                   municipalityId: state.municipality!.id));
           if (!response.isSuccess) {
-            GeneralUtil.showToast(response.exception!);
+            GeneralUtil.showToast((await response.errorMessage)!);
             return null;
           }
           return response.waspResponse!.result;
@@ -294,23 +305,23 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     await AppValuesHelper.getInstance().saveInteger(
         AppValuesKey.defaultMunicipalityId, state.municipality!.id);
     // Go to issues overview
-    GeneralUtil.goToPage(_buildContext, const IssuesOverviewPage());
+    GeneralUtil.goToPage(context, const IssuesOverviewPage());
   }
 
   Future<bool> getValues() async {
     return await Future.delayed(
         const Duration(milliseconds: values.pageTransitionTime), () async {
       var flag = await TaskUtil.runTask(
-          buildContext: _buildContext,
-          progressMessage:
-              AppLocalizations.of(_buildContext)!.getting_information,
+          buildContext: context,
+          progressMessage: AppLocalizations.of(context)!.getting_information,
           doInBackground: (runTask) async {
             // Get list of municipalities
             WASPServiceResponse<GetListOfMunicipalities_WASPResponse>
                 getListOfMunicipalitiesResponse =
                 await WASPService.getInstance().getListOfMunicipalities();
             if (!getListOfMunicipalitiesResponse.isSuccess) {
-              GeneralUtil.showToast(getListOfMunicipalitiesResponse.exception!);
+              GeneralUtil.showToast(
+                  (await getListOfMunicipalitiesResponse.errorMessage)!);
               return false;
             }
             AppValuesHelper.getInstance().saveMunicipalities(

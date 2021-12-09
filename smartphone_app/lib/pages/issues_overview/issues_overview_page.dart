@@ -57,7 +57,7 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
       position: cluster.location,
       onTap: () {
         if (cluster.isMultiple) {
-          // TODO: Zoom in on children of the current cluster
+          // Do nothing
         } else {
           ClusterItem item = cluster.items.first;
           if (item is Place) {
@@ -201,24 +201,20 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                                 color: Colors.black,
                                                 size: 30,
                                               ),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                bloc.add(const ButtonPressed(
+                                                    buttonEvent:
+                                                        IssuesOverviewButtonEvent
+                                                            .showSettings));
+                                              },
                                               text:
                                                   AppLocalizations.of(context)!
                                                       .settings,
                                             ),
-                                            CustomDrawerTile(
-                                              icon: const Icon(
-                                                  Icons.info_outline,
-                                                  color: Colors.black,
-                                                  size: 30),
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .help,
-                                              onPressed: () async {},
-                                            ),
                                             Container(
                                               height: 1,
-                                              color: Colors.black,
+                                              color: custom_colors.black,
                                             ),
                                             CustomDrawerTile(
                                               icon: const Icon(
@@ -231,8 +227,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                               onPressed: () async {
                                                 Navigator.pop(context);
 
-                                                bloc.add(ButtonPressed(
-                                                    issuesOverviewButtonEvent:
+                                                bloc.add(const ButtonPressed(
+                                                    buttonEvent:
                                                         IssuesOverviewButtonEvent
                                                             .logOut));
                                               },
@@ -249,13 +245,14 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                                     leftButtonPressed: () async => {
                                       _scaffoldKey.currentState!.openDrawer()
                                     },
-                                    button1Icon: const Icon(Icons.tune_outlined,
+                                    button1Icon: const Icon(
+                                        Icons.refresh_outlined,
                                         color: Colors.white),
                                     onButton1Pressed: () => bloc.add(
-                                        ButtonPressed(
-                                            issuesOverviewButtonEvent:
+                                        const ButtonPressed(
+                                            buttonEvent:
                                                 IssuesOverviewButtonEvent
-                                                    .showFilter)),
+                                                    .getListOfIssues)),
                                   ),
                                   body: _getContent(bloc))))));
             }));
@@ -280,12 +277,13 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                           right: values.padding, top: values.padding),
                       imagePadding: const EdgeInsets.all(10),
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
-                      icon: state.mapType == MapType.hybrid
-                          ? const Icon(Icons.layers_outlined,
-                              color: Colors.black)
-                          : const Icon(Icons.layers, color: Colors.black),
-                      onPressed: () => bloc.add(ButtonPressed(
-                          issuesOverviewButtonEvent:
+                      icon: Icon(
+                          state.mapType == MapType.hybrid
+                              ? Icons.layers_outlined
+                              : Icons.layers,
+                          color: Colors.black),
+                      onPressed: () => bloc.add(const ButtonPressed(
+                          buttonEvent:
                               IssuesOverviewButtonEvent.changeMapType))),
                   CustomButton(
                       height: 50,
@@ -296,11 +294,10 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
                           top: values.padding),
                       imagePadding: const EdgeInsets.all(10),
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
-                      icon: const Icon(Icons.refresh_outlined,
-                          color: Colors.black),
-                      onPressed: () => bloc.add(ButtonPressed(
-                          issuesOverviewButtonEvent:
-                              IssuesOverviewButtonEvent.getListOfIssues))),
+                      icon:
+                          const Icon(Icons.tune_outlined, color: Colors.black),
+                      onPressed: () => bloc.add(const ButtonPressed(
+                          buttonEvent: IssuesOverviewButtonEvent.showFilter))),
                 ],
               ),
             )
@@ -317,8 +314,10 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
             child: GoogleMap(
           mapType: state.mapType!,
           initialCameraPosition: CameraPosition(
-              target: LatLng(state.devicePosition!.latitude,
-                  state.devicePosition!.longitude),
+              target: state.devicePosition == null
+                  ? const LatLng(0, 0)
+                  : LatLng(state.devicePosition!.latitude,
+                      state.devicePosition!.longitude),
               zoom: 14),
           myLocationEnabled: true,
           zoomControlsEnabled: false,
@@ -337,9 +336,8 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
             color: custom_colors.black,
             padding: const EdgeInsets.all(values.padding),
             child: CustomButton(
-              onPressed: () => bloc.add(ButtonPressed(
-                  issuesOverviewButtonEvent:
-                      IssuesOverviewButtonEvent.createIssue)),
+              onPressed: () => bloc.add(const ButtonPressed(
+                  buttonEvent: IssuesOverviewButtonEvent.createIssue)),
               text: AppLocalizations.of(context)!.create_issue,
               fontWeight: FontWeight.bold,
               fontSize: 20,

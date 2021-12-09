@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
+import 'package:darq/darq.dart';
 
 enum AppValuesKey {
   citizenId,
@@ -43,14 +44,20 @@ class AppValuesHelper {
 
   List<T> _getList<T>(
       AppValuesKey appValuesKey, Function(dynamic model) mapping) {
-    Iterable l = jsonDecode(getString(appValuesKey) ?? "");
+    String str = getString(appValuesKey) ?? "";
+    if (str.isEmpty) return List.empty(growable: true);
+    Iterable l = jsonDecode(str);
     List<T> list = List<T>.from(l.map((model) => mapping(model)));
     return list;
   }
 
   List<Municipality> getMunicipalities() {
-    return _getList<Municipality>(
-        AppValuesKey.municipalities, (model) => Municipality.fromJson(model));
+    return _getList<Municipality>(AppValuesKey.municipalities,
+            (model) => Municipality.fromJson(model))
+        .orderBy((element) => element.name!,
+            keyComparer: EqualityComparer(
+                sorter: (String a, String b) => a.compareTo(b)))
+        .toList(growable: true);
   }
 
   List<Category> getCategories() {

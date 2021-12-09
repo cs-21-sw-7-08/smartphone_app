@@ -1,16 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:smartphone_app/webservices/wasp/interfaces/wasp_service_functions.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 import 'package:smartphone_app/webservices/wasp/service/wasp_service.dart';
 
-class MockWASPService extends WASPService {
+class MockWASPService extends IWASPServiceFunctions {
   ///
   /// CONSTRUCTOR
   ///
   //region Constructor
 
-  MockWASPService() : super(url: "");
+  MockWASPService();
 
   //endregion
 

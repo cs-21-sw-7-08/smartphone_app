@@ -14,27 +14,6 @@ import 'package:smartphone_app/widgets/custom_text_field.dart';
 import 'custom_list_dialog_bloc.dart';
 import 'custom_list_dialog_events_states.dart';
 
-typedef ItemSelected = Function(List<dynamic>? newList);
-typedef ItemUpdated = Function();
-typedef ItemBuilder = Widget? Function(
-    int index,
-    dynamic item,
-    List<dynamic> list,
-    bool showSearchBar,
-    ItemSelected itemSelected,
-    ItemUpdated itemUpdated);
-typedef SearchPredicate = bool Function(dynamic item, String searchString);
-typedef TitleBuilder = String Function(dynamic item);
-typedef ConfirmPressedCallBack = List<dynamic> Function(
-    List<dynamic> currentRootList);
-
-class SelectedItem {
-  dynamic selectedItem;
-  List<dynamic>? selectedItems;
-
-  SelectedItem({required this.selectedItem, required this.selectedItems});
-}
-
 // ignore: must_be_immutable
 class CustomListDialog extends StatefulWidget {
   late CustomListDialogBloc bloc;
@@ -96,9 +75,9 @@ class _CustomListDialogState extends State<CustomListDialog>
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
     opacityAnimation =
-        Tween<double>(begin: 0, end: 1).animate(animationController);
+        Tween<double>(begin: 1, end: 0).animate(animationController);
     sizeAnimation =
-        Tween<double>(begin: 0, end: 80).animate(animationController);
+        Tween<double>(begin: 80, end: 0).animate(animationController);
   }
 
   @override
@@ -110,16 +89,15 @@ class _CustomListDialogState extends State<CustomListDialog>
   @override
   Widget build(BuildContext context) {
     CustomListDialogBloc bloc = CustomListDialogBloc(
-        buildContext: context,
+        context: context,
         confirmPressedCallBack: widget.confirmPressedCallBack,
         items: widget.rootItems,
         searchPredicate: widget.searchPredicate);
 
     return WillPopScope(
         onWillPop: () async {
-          bloc.add(ButtonPressed(
-              customListDialogButtonEvent:
-                  CustomListDialogButtonEvent.backPressed));
+          bloc.add(const ButtonPressed(
+              buttonEvent: CustomListDialogButtonEvent.backPressed));
           return false;
         },
         child: BlocProvider(
@@ -153,9 +131,9 @@ class _CustomListDialogState extends State<CustomListDialog>
                                     state.selectedItemTree!.isEmpty
                                         ? AppBarLeftButton.close
                                         : AppBarLeftButton.back,
-                                leftButtonPressed: () => bloc.add(ButtonPressed(
-                                    customListDialogButtonEvent:
-                                        CustomListDialogButtonEvent
+                                leftButtonPressed: () => bloc.add(
+                                    const ButtonPressed(
+                                        buttonEvent: CustomListDialogButtonEvent
                                             .backPressed)),
                                 button1Icon: Icon(
                                     !state.showSearchBar!
@@ -163,13 +141,12 @@ class _CustomListDialogState extends State<CustomListDialog>
                                         : Icons.search_off_outlined,
                                     color: Colors.white),
                                 onButton1Pressed: () {
-                                  bloc.add(ButtonPressed(
-                                      customListDialogButtonEvent:
-                                          CustomListDialogButtonEvent
-                                              .changeSearchBarVisibility));
+                                  bloc.add(const ButtonPressed(
+                                      buttonEvent: CustomListDialogButtonEvent
+                                          .changeSearchBarVisibility));
                                   !bloc.state.showSearchBar!
-                                      ? animationController.forward()
-                                      : animationController.reverse();
+                                      ? animationController.reverse()
+                                      : animationController.forward();
                                 },
                               ),
                               body: _getContent(context, bloc, state),
@@ -208,10 +185,10 @@ class _CustomListDialogState extends State<CustomListDialog>
                                     hint: AppLocalizations.of(context)!
                                         .search_hint,
                                     onChanged: (value) => bloc.add(TextChanged(
-                                        customListDialogTextChangedEvent:
+                                        textChangedEvent:
                                             CustomListDialogTextChangedEvent
                                                 .searchText,
-                                        value: value)),
+                                        text: value)),
                                   ),
                                 ));
                           },
@@ -220,8 +197,8 @@ class _CustomListDialogState extends State<CustomListDialog>
                         if (widget.showConfirmButton)
                           // 'Confirm' button
                           CustomButton(
-                            onPressed: () => bloc.add(ButtonPressed(
-                                customListDialogButtonEvent:
+                            onPressed: () => bloc.add(const ButtonPressed(
+                                buttonEvent:
                                     CustomListDialogButtonEvent.confirm)),
                             text: AppLocalizations.of(context)!.confirm,
                             fontWeight: FontWeight.bold,
@@ -254,7 +231,7 @@ class _CustomListDialogState extends State<CustomListDialog>
           // Hide keyboard
           GeneralUtil.hideKeyboard();
           // Fire event
-          bloc.add(ItemWasUpdated());
+          bloc.add(ItemWasUpdated(updatedItem: state.filteredItems![index]));
         });
         if (itemBuilderWidget == null) {
           return Container(height: 50);

@@ -22,8 +22,8 @@ class IssuesOverviewFilterBloc
   ///
   //region Variables
 
-  late BuildContext _buildContext;
-  late IssuesOverviewFilter _filter;
+  late BuildContext context;
+  late IssuesOverviewFilter filter;
 
   //endregion
 
@@ -77,18 +77,13 @@ class IssuesOverviewFilterBloc
   ///
   //region Constructor
 
-  IssuesOverviewFilterBloc(
-      {required BuildContext buildContext,
-      required IssuesOverviewFilter filter})
+  IssuesOverviewFilterBloc({required this.context, required this.filter})
       : super(IssuesOverviewFilterState(
             municipalities: List.empty(),
             categories: List.empty(),
             subCategories: List.empty(),
             issueStates: List.empty(),
-            isOnlyShowingOwnIssues: false)) {
-    _buildContext = buildContext;
-    _filter = filter;
-  }
+            isOnlyShowingOwnIssues: false));
 
   //endregion
 
@@ -101,29 +96,35 @@ class IssuesOverviewFilterBloc
   Stream<IssuesOverviewFilterState> mapEventToState(
       IssuesOverviewFilterEvent event) async* {
     if (event is ButtonPressed) {
-      switch (event.issuesOverviewFilterButtonEvent) {
+      switch (event.buttonEvent) {
+
+        /// Select categories
         case IssuesOverviewFilterButtonEvent.selectCategories:
-          IssuesOverviewFilterState? newState = await _selectCategories();
-          if (newState == null) return;
-          yield newState;
+          await _selectCategories();
           break;
+
+        /// Select subcategories
         case IssuesOverviewFilterButtonEvent.selectSubCategories:
-          IssuesOverviewFilterState? newState = await _selectSubCategories();
-          if (newState == null) return;
-          yield newState;
+          await _selectSubCategories();
           break;
+
+        /// Select municipalities
         case IssuesOverviewFilterButtonEvent.selectMunicipalities:
-          IssuesOverviewFilterState? newState = await _selectMunicipalities();
-          if (newState == null) return;
-          yield newState;
+          await _selectMunicipalities();
           break;
+
+        /// Only show your own issues
         case IssuesOverviewFilterButtonEvent.onlyShowYourOwnIssues:
           yield state.copyWith(
               isOnlyShowingOwnIssues: !state.isOnlyShowingOwnIssues!);
           break;
-        case IssuesOverviewFilterButtonEvent.closePressed:
-          Navigator.of(_buildContext).pop(null);
+
+        /// Close
+        case IssuesOverviewFilterButtonEvent.close:
+          Navigator.of(context).pop(null);
           break;
+
+        /// Apply filter
         case IssuesOverviewFilterButtonEvent.applyFilter:
           // Category IDs
           List<int> categoryIds = state.categories!
@@ -157,21 +158,31 @@ class IssuesOverviewFilterBloc
               municipalityIds:
                   municipalityIds.isEmpty ? null : municipalityIds);
           // Return filter to parent
-          Navigator.of(_buildContext).pop(filter);
+          Navigator.of(context).pop(filter);
           break;
+
+        /// Reset issue states
         case IssuesOverviewFilterButtonEvent.resetIssueStates:
           yield state.copyWith(issueStates: _getDefaultIssueStates());
           break;
+
+        /// Reset categories
         case IssuesOverviewFilterButtonEvent.resetCategories:
           yield state.copyWith(
               categories: List.empty(), subCategories: List.empty());
           break;
+
+        /// Reset subcategories
         case IssuesOverviewFilterButtonEvent.resetSubCategories:
           yield state.copyWith(subCategories: List.empty());
           break;
+
+        /// Reset municipalities
         case IssuesOverviewFilterButtonEvent.resetMunicipalities:
           yield state.copyWith(municipalities: _getDefaultMunicipalities());
           break;
+
+        /// Reset all
         case IssuesOverviewFilterButtonEvent.resetAll:
           yield state.copyWith(
               issueStates: _getDefaultIssueStates(),
@@ -184,11 +195,16 @@ class IssuesOverviewFilterBloc
     } else if (event is IssueStatePressed) {
       event.issueStateFilterItem.isSelected =
           !event.issueStateFilterItem.isSelected;
-      yield state.copyWith(issueStates: state.issueStates);
+      yield state.update(
+          updatedItemHashCode: event.issueStateFilterItem.hashCode);
     } else if (event is CategoryPressed) {
       yield state.copyWith(
           categories: state.categories!
               .where((element) => element != event.categoryFilterItem)
+              .toList(),
+          subCategories: state.subCategories!
+              .where((element) =>
+                  element.category != event.categoryFilterItem.category)
               .toList());
     } else if (event is CategoryInSubCategoryPressed) {
       yield state.copyWith(
@@ -217,6 +233,24 @@ class IssuesOverviewFilterBloc
           subCategories: event.subCategories,
           categories: event.categories,
           municipalities: event.municipalities);
+    } else if (event is ValueSelected) {
+      switch (event.valueSelectedEvent) {
+
+        /// Categories
+        case IssuesOverviewFilterValueSelectedEvent.categories:
+          yield state.copyWith(categories: event.value);
+          break;
+
+        /// Subcategories
+        case IssuesOverviewFilterValueSelectedEvent.subCategories:
+          yield state.copyWith(subCategories: event.value);
+          break;
+
+        /// Municipalities
+        case IssuesOverviewFilterValueSelectedEvent.municipalities:
+          yield state.copyWith(municipalities: event.value);
+          break;
+      }
     }
   }
 
@@ -227,7 +261,7 @@ class IssuesOverviewFilterBloc
   ///
   //region Methods
 
-  Future<IssuesOverviewFilterState?> _selectCategories() async {
+  Future<void> _selectCategories() async {
     List<CategoryFilterItem> categories = AppValuesHelper.getInstance()
         .getCategories()
         .select((element, index) => CategoryFilterItem(
@@ -236,104 +270,7 @@ class IssuesOverviewFilterBloc
             isSelected: state.categories!
                 .any((selectedElement) => selectedElement.category == element)))
         .toList();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
-        // Show confirm button
-        showConfirmButton: true,
-        // Confirm pressed callback
-        confirmPressedCallBack: (rootList) {
-          List<dynamic> returnList = List.empty(growable: true);
-          for (var item in rootList) {
-            if (item is CategoryFilterItem) {
-              if (item.isSelected) {
-                returnList.add(item);
-              }
-            }
-          }
-          return returnList;
-        },
-        // Items
-        items: categories,
-        // Item builder
-        itemBuilder:
-            (index, item, list, showSearchBar, itemSelected, itemUpdated) {
-          if (item is CategoryFilterItem) {
-            return Container(
-                margin: EdgeInsets.only(
-                    top: index == 0 && showSearchBar ? 0 : values.padding,
-                    left: values.padding,
-                    right: values.padding),
-                child: CustomListTile(
-                    widget: Container(
-                      color: Colors.transparent,
-                      child: IntrinsicHeight(
-                          child: Row(
-                        children: [
-                          Expanded(
-                              child: CustomLabel(
-                            title: item.category.name!,
-                            margin: const EdgeInsets.only(
-                                left: values.padding,
-                                top: values.padding * 2,
-                                right: values.padding,
-                                bottom: values.padding * 2),
-                          )),
-                          if (item.isSelected)
-                            Container(
-                              margin: const EdgeInsets.all(values.padding),
-                              child:
-                                  const Icon(Icons.check, color: Colors.black),
-                            )
-                        ],
-                      )),
-                    ),
-                    onPressed: () {
-                      item.isSelected = !item.isSelected;
-                      itemUpdated();
-                    }));
-          }
-        },
-        // Search predicate
-        searchPredicate: (item, searchString) {
-          if (item is CategoryFilterItem) {
-            return item.category.name!.toLowerCase().contains(searchString);
-          }
-          return false;
-        },
-        // Title builder
-        titleBuilder: (item) {
-          if (item == null) {
-            return AppLocalizations.of(_buildContext)!.category;
-          }
-          return "";
-        });
-    if (selectedItems == null) return null;
-    if (selectedItems.isEmpty) return state.copyWith(categories: List.empty());
-    List<CategoryFilterItem> categoryFilterItems = List.empty(growable: true);
-    for (var item in selectedItems) {
-      if (item is CategoryFilterItem) {
-        categoryFilterItems.add(item);
-      }
-    }
-    return state.copyWith(categories: categoryFilterItems);
-  }
-
-  Future<IssuesOverviewFilterState?> _selectSubCategories() async {
-    List<CategoryFilterItem> categories = AppValuesHelper.getInstance()
-        .getCategories()
-        .where((element) => state.categories!
-            .any((selectedElement) => selectedElement.category == element))
-        .select((element, index) => CategoryFilterItem(
-            category: element,
-            subCategories: element.subCategories!
-                .select((subCategory, index) => SubCategoryFilterItem(
-                    category: element,
-                    subCategory: subCategory,
-                    isSelected: state.subCategories!.any((selectedElement) =>
-                        selectedElement.subCategory == subCategory)))
-                .toList(),
-            isSelected: null))
-        .toList();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         // Show confirm button
         showConfirmButton: true,
         // Confirm pressed callback
@@ -368,8 +305,121 @@ class IssuesOverviewFilterBloc
                           Expanded(
                               child: CustomLabel(
                             title: LocalizationHelper.getInstance()
-                                .getLocalizedCategory(
-                                    _buildContext, item.category),
+                                .getLocalizedCategory(context, item.category),
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
+                            margin: const EdgeInsets.only(
+                                left: values.padding,
+                                top: values.padding * 2,
+                                right: values.padding,
+                                bottom: values.padding * 2),
+                          )),
+                          if (item.isSelected)
+                            Container(
+                              margin: const EdgeInsets.all(values.padding),
+                              child:
+                                  const Icon(Icons.check, color: Colors.black),
+                            )
+                        ],
+                      )),
+                    ),
+                    onPressed: () {
+                      item.isSelected = !item.isSelected;
+                      itemUpdated();
+                    }));
+          }
+        },
+        // Search predicate
+        searchPredicate: (item, searchString) {
+          if (item is CategoryFilterItem) {
+            return LocalizationHelper.getInstance()
+                .getLocalizedCategory(context, item.category)
+                .toLowerCase()
+                .contains(searchString);
+          }
+          return false;
+        },
+        // Title builder
+        titleBuilder: (item) {
+          if (item == null) {
+            return AppLocalizations.of(context)!.category;
+          }
+          return "";
+        });
+    if (selectedItems == null) return;
+    if (selectedItems.isEmpty) {
+      // Fire event
+      add(ValueSelected(
+          valueSelectedEvent: IssuesOverviewFilterValueSelectedEvent.categories,
+          value: List.empty()));
+    }
+    List<CategoryFilterItem> categoryFilterItems = List.empty(growable: true);
+    for (var item in selectedItems) {
+      if (item is CategoryFilterItem) {
+        categoryFilterItems.add(item);
+      }
+    }
+
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent: IssuesOverviewFilterValueSelectedEvent.categories,
+        value: categoryFilterItems));
+  }
+
+  Future<void> _selectSubCategories() async {
+    List<CategoryFilterItem> categories = AppValuesHelper.getInstance()
+        .getCategories()
+        .where((element) => state.categories!
+            .any((selectedElement) => selectedElement.category == element))
+        .select((element, index) => CategoryFilterItem(
+            category: element,
+            subCategories: element.subCategories!
+                .select((subCategory, index) => SubCategoryFilterItem(
+                    category: element,
+                    subCategory: subCategory,
+                    isSelected: state.subCategories!.any((selectedElement) =>
+                        selectedElement.subCategory == subCategory)))
+                .toList(),
+            isSelected: null))
+        .toList();
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
+        // Show confirm button
+        showConfirmButton: true,
+        // Confirm pressed callback
+        confirmPressedCallBack: (rootList) {
+          List<dynamic> returnList = List.empty(growable: true);
+          for (var item in rootList) {
+            if (item is CategoryFilterItem) {
+              if (item.isSelected) {
+                returnList.add(item);
+              }
+            }
+          }
+          return returnList;
+        },
+        // Items
+        items: categories,
+        // Item builder
+        itemBuilder:
+            (index, item, list, showSearchBar, itemSelected, itemUpdated) {
+          if (item is CategoryFilterItem) {
+            return Container(
+                margin: EdgeInsets.only(
+                    top: index == 0 && showSearchBar ? 0 : values.padding,
+                    left: values.padding,
+                    right: values.padding),
+                child: CustomListTile(
+                    widget: Container(
+                      color: Colors.transparent,
+                      child: IntrinsicHeight(
+                          child: Row(
+                        children: [
+                          Expanded(
+                              child: CustomLabel(
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
+                            title: LocalizationHelper.getInstance()
+                                .getLocalizedCategory(context, item.category),
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,
@@ -404,9 +454,11 @@ class IssuesOverviewFilterBloc
                         children: [
                           Expanded(
                               child: CustomLabel(
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
                             title: LocalizationHelper.getInstance()
                                 .getLocalizedSubCategory(
-                                    _buildContext, item.subCategory),
+                                    context, item.subCategory),
                             margin: const EdgeInsets.only(
                                 left: values.padding,
                                 top: values.padding * 2,
@@ -431,24 +483,35 @@ class IssuesOverviewFilterBloc
         // Search predicate
         searchPredicate: (item, searchString) {
           if (item is CategoryFilterItem) {
-            return item.category.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance()
+                .getLocalizedCategory(context, item.category)
+                .toLowerCase()
+                .contains(searchString);
           } else if (item is SubCategoryFilterItem) {
-            return item.subCategory.name!.toLowerCase().contains(searchString);
+            return LocalizationHelper.getInstance()
+                .getLocalizedSubCategory(context, item.subCategory)
+                .toLowerCase()
+                .contains(searchString);
           }
           return false;
         },
         // Title builder
         titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.category;
+            return AppLocalizations.of(context)!.category;
           } else if (item is CategoryFilterItem) {
-            return AppLocalizations.of(_buildContext)!.subcategory;
+            return AppLocalizations.of(context)!.subcategory;
           }
           return "";
         });
-    if (selectedItems == null) return null;
+    if (selectedItems == null) return;
     if (selectedItems.isEmpty) {
-      return state.copyWith(subCategories: List.empty());
+      // Fire event
+      add(ValueSelected(
+          valueSelectedEvent:
+              IssuesOverviewFilterValueSelectedEvent.subCategories,
+          value: List.empty()));
+      return;
     }
     List<SubCategoryFilterItem> subCategoryFilterItems =
         List.empty(growable: true);
@@ -462,10 +525,15 @@ class IssuesOverviewFilterBloc
         }
       }
     }
-    return state.copyWith(subCategories: subCategoryFilterItems);
+
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent:
+            IssuesOverviewFilterValueSelectedEvent.subCategories,
+        value: subCategoryFilterItems));
   }
 
-  Future<IssuesOverviewFilterState?> _selectMunicipalities() async {
+  Future<void> _selectMunicipalities() async {
     List<MunicipalityFilterItem> municipalities = AppValuesHelper.getInstance()
         .getMunicipalities()
         .select((element, index) => MunicipalityFilterItem(
@@ -473,7 +541,7 @@ class IssuesOverviewFilterBloc
             isSelected: state.municipalities!.any(
                 (selectedElement) => selectedElement.municipality == element)))
         .toList();
-    List<dynamic>? selectedItems = await CustomListDialog.show(_buildContext,
+    List<dynamic>? selectedItems = await CustomListDialog.show(context,
         // Show confirm button
         showConfirmButton: true,
         // Confirm pressed callback
@@ -507,6 +575,8 @@ class IssuesOverviewFilterBloc
                         children: [
                           Expanded(
                               child: CustomLabel(
+                            textAlign: TextAlign.left,
+                            alignmentGeometry: Alignment.centerLeft,
                             title: item.municipality.name!,
                             margin: const EdgeInsets.only(
                                 left: values.padding,
@@ -539,13 +609,18 @@ class IssuesOverviewFilterBloc
         // Title builder
         titleBuilder: (item) {
           if (item == null) {
-            return AppLocalizations.of(_buildContext)!.municipality;
+            return AppLocalizations.of(context)!.municipality;
           }
           return "";
         });
-    if (selectedItems == null) return null;
+    if (selectedItems == null) return;
     if (selectedItems.isEmpty) {
-      return state.copyWith(municipalities: List.empty());
+      // Fire event
+      add(ValueSelected(
+          valueSelectedEvent:
+              IssuesOverviewFilterValueSelectedEvent.municipalities,
+          value: List.empty()));
+      return;
     }
     List<MunicipalityFilterItem> municipalityFilterItems =
         List.empty(growable: true);
@@ -554,7 +629,11 @@ class IssuesOverviewFilterBloc
         municipalityFilterItems.add(item);
       }
     }
-    return state.copyWith(municipalities: municipalityFilterItems);
+    // Fire event
+    add(ValueSelected(
+        valueSelectedEvent:
+            IssuesOverviewFilterValueSelectedEvent.municipalities,
+        value: municipalityFilterItems));
   }
 
   Future<bool> getValues() async {
@@ -563,8 +642,8 @@ class IssuesOverviewFilterBloc
 
     List<CategoryFilterItem> categories = savedCategories
         .where((element) =>
-            _filter.categoryIds != null &&
-            _filter.categoryIds!.any((selectedId) => element.id == selectedId))
+            filter.categoryIds != null &&
+            filter.categoryIds!.any((selectedId) => element.id == selectedId))
         .select((element, index) => CategoryFilterItem(
             category: element, subCategories: null, isSelected: true))
         .toList();
@@ -572,8 +651,9 @@ class IssuesOverviewFilterBloc
     for (var categoryFilterItem in categories) {
       if (categoryFilterItem.category.subCategories == null) continue;
       for (var subCategory in categoryFilterItem.category.subCategories!) {
-        if (_filter.subCategoryIds!
-            .any((element) => element == subCategory.id)) {
+        if (filter.subCategoryIds != null &&
+            filter.subCategoryIds!
+                .any((element) => element == subCategory.id)) {
           subCategories.add(SubCategoryFilterItem(
               category: categoryFilterItem.category,
               subCategory: subCategory,
@@ -584,8 +664,8 @@ class IssuesOverviewFilterBloc
     List<MunicipalityFilterItem> municipalities = AppValuesHelper.getInstance()
         .getMunicipalities()
         .where((element) =>
-            _filter.municipalityIds != null &&
-            _filter.municipalityIds!
+            filter.municipalityIds != null &&
+            filter.municipalityIds!
                 .any((selectedId) => element.id == selectedId))
         .select((element, index) =>
             MunicipalityFilterItem(municipality: element, isSelected: true))
@@ -593,13 +673,13 @@ class IssuesOverviewFilterBloc
     List<IssueStateFilterItem> issueStates = AppValuesHelper.getInstance()
         .getIssueStates()
         .select((element, index) => IssueStateFilterItem(
-            isSelected: _filter.issueStateIds != null &&
-                _filter.issueStateIds!
+            isSelected: filter.issueStateIds != null &&
+                filter.issueStateIds!
                     .any((selectedId) => element.id == selectedId),
             issueState: element))
         .toList();
-    bool isOnlyShowingOwnIssues = _filter.citizenIds != null &&
-        _filter.citizenIds!.any((element) =>
+    bool isOnlyShowingOwnIssues = filter.citizenIds != null &&
+        filter.citizenIds!.any((element) =>
             element ==
             AppValuesHelper.getInstance().getInteger(AppValuesKey.citizenId));
 

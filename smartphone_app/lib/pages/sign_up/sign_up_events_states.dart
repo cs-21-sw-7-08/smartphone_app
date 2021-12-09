@@ -1,3 +1,6 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
 
 ///
@@ -23,31 +26,48 @@ enum SignUpViewChangeEvent { name, phoneNo, smsCode }
 ///
 //region Event
 
-class SignUpEvent {}
+abstract class SignUpEvent extends Equatable {
+  const SignUpEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ButtonPressed extends SignUpEvent {
-  final SignUpButtonEvent signUpButtonEvent;
+  final SignUpButtonEvent buttonEvent;
 
-  ButtonPressed({required this.signUpButtonEvent});
+  const ButtonPressed({required this.buttonEvent});
+
+  @override
+  List<Object?> get props => [buttonEvent];
 }
 
 class TextChanged extends SignUpEvent {
-  final SignUpTextChangedEvent signUpTextChangedEvent;
+  final SignUpTextChangedEvent textChangedEvent;
   final String? text;
 
-  TextChanged({required this.signUpTextChangedEvent, required this.text});
+  const TextChanged({required this.textChangedEvent, required this.text});
+
+  @override
+  List<Object?> get props => [textChangedEvent, text];
 }
 
 class MakeViewChange extends SignUpEvent {
-  final SignUpPageView signUpPageView;
+  final SignUpPageView pageView;
 
-  MakeViewChange({required this.signUpPageView});
+  const MakeViewChange({required this.pageView});
+
+  @override
+  List<Object?> get props => [pageView];
 }
 
 class VerificationIdRetrieved extends SignUpEvent {
   final String verificationId;
 
-  VerificationIdRetrieved({required this.verificationId});
+  const VerificationIdRetrieved({required this.verificationId});
+
+  @override
+  List<Object?> get props => [verificationId];
 }
 
 //endregion
@@ -57,8 +77,9 @@ class VerificationIdRetrieved extends SignUpEvent {
 ///
 //region State
 
-class SignUpState {
-  SignUpPageView? signUpPageView;
+// ignore: must_be_immutable
+class SignUpState extends Equatable {
+  SignUpPageView? pageView;
   String? name;
   String? phoneNo;
   String? smsCode;
@@ -71,7 +92,7 @@ class SignUpState {
       this.municipality,
       this.verificationId,
       this.phoneNo,
-      this.signUpPageView});
+      this.pageView});
 
   SignUpState copyWith(
       {String? name,
@@ -79,15 +100,19 @@ class SignUpState {
       String? smsCode,
       Municipality? municipality,
       String? verificationId,
-      SignUpPageView? signUpPageView}) {
+      SignUpPageView? pageView}) {
     return SignUpState(
         name: name ?? this.name,
         phoneNo: phoneNo ?? this.phoneNo,
         smsCode: smsCode ?? this.smsCode,
         municipality: municipality ?? this.municipality,
         verificationId: verificationId ?? this.verificationId,
-        signUpPageView: signUpPageView ?? this.signUpPageView);
+        pageView: pageView ?? this.pageView);
   }
+
+  @override
+  List<Object?> get props =>
+      [pageView, name, phoneNo, smsCode, verificationId, municipality];
 }
 
 //endregion
