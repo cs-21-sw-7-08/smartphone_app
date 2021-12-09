@@ -138,34 +138,25 @@ class WASPService implements IWASPServiceFunctions {
   @override
   Future<WASPServiceResponse<WASPResponse>> verifyIssue(
       {required int citizenId, required int issueId}) async {
-    RestResponse response =
-        await restHelper.sendPostRequest("${issueControllerPath}VerifyIssue",
-            parameters: [
-              RestParameter(name: "issueId", value: issueId.toString()),
-              RestParameter(name: "citizenId", value: citizenId.toString())
-            ],
-            body: null);
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        WASPResponse.fromJson(response.jsonResponse));
+    return actionCall(() {
+      return restHelper.sendPostRequest("${issueControllerPath}VerifyIssue",
+          parameters: [
+            RestParameter(name: "issueId", value: issueId.toString()),
+            RestParameter(name: "citizenId", value: citizenId.toString())
+          ],
+          body: null);
+    }, (response) => WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
   Future<WASPServiceResponse<GetListOfCategories_WASPResponse>>
       getListOfCategories() async {
-    RestResponse response = await restHelper
-        .sendGetRequest("${issueControllerPath}GetListOfCategories");
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        GetListOfCategories_WASPResponse.fromJson(response.jsonResponse));
+    return actionCall(() {
+      return restHelper
+          .sendGetRequest("${issueControllerPath}GetListOfCategories");
+    },
+        (response) =>
+            GetListOfCategories_WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
@@ -173,36 +164,25 @@ class WASPService implements IWASPServiceFunctions {
       {required IssueCreateDTO issueCreateDTO}) async {
     String jsonIssueCreateDTO = WASPUtil.encodeToJson(issueCreateDTO.toJson());
     print("IssueCreateDTO: $jsonIssueCreateDTO"); // ignore: avoid_print
-    RestResponse response = await restHelper.sendPostRequest(
-        "${issueControllerPath}CreateIssue",
-        body: jsonIssueCreateDTO);
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        WASPResponse.fromJson(response.jsonResponse));
+
+    return actionCall(() {
+      return restHelper.sendPostRequest("${issueControllerPath}CreateIssue",
+          body: jsonIssueCreateDTO);
+    }, (response) => WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
   Future<WASPServiceResponse<WASPResponse>> reportIssue(
       {required int reportCategoryId, required int issueId}) async {
-    RestResponse response =
-        await restHelper.sendPostRequest("${issueControllerPath}ReportIssue",
-            parameters: [
-              RestParameter(name: "issueId", value: issueId.toString()),
-              RestParameter(
-                  name: "reportCategoryId", value: reportCategoryId.toString())
-            ],
-            body: null);
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        WASPResponse.fromJson(response.jsonResponse));
+    return actionCall(() {
+      return restHelper.sendPostRequest("${issueControllerPath}ReportIssue",
+          parameters: [
+            RestParameter(name: "issueId", value: issueId.toString()),
+            RestParameter(
+                name: "reportCategoryId", value: reportCategoryId.toString())
+          ],
+          body: null);
+    }, (response) => WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
@@ -211,31 +191,25 @@ class WASPService implements IWASPServiceFunctions {
     var jsonString = jsonEncode(
         updates.map((e) => WASPUtil.removeNullValues(e.toJson())).toList());
     print("WASP Updates: $jsonString"); // ignore: avoid_print
-    RestResponse response = await restHelper.sendPutRequest(
-        "${issueControllerPath}UpdateIssue",
-        parameters: [RestParameter(name: "issueId", value: issueId.toString())],
-        body: jsonString);
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        WASPResponse.fromJson(response.jsonResponse));
+
+    return actionCall(() {
+      return restHelper.sendPutRequest("${issueControllerPath}UpdateIssue",
+          parameters: [
+            RestParameter(name: "issueId", value: issueId.toString())
+          ],
+          body: jsonString);
+    }, (response) => WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
   Future<WASPServiceResponse<GetListOfReportCategories_WASPResponse>>
       getListOfReportCategories() async {
-    RestResponse response = await restHelper
-        .sendGetRequest("${issueControllerPath}GetListOfReportCategories");
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        GetListOfReportCategories_WASPResponse.fromJson(response.jsonResponse));
+    return actionCall(() {
+      return restHelper
+          .sendGetRequest("${issueControllerPath}GetListOfReportCategories");
+    },
+        (response) => GetListOfReportCategories_WASPResponse.fromJson(
+            response.jsonResponse));
   }
 
   //endregion
@@ -245,15 +219,12 @@ class WASPService implements IWASPServiceFunctions {
   @override
   Future<WASPServiceResponse<GetListOfMunicipalities_WASPResponse>>
       getListOfMunicipalities() async {
-    RestResponse response = await restHelper
-        .sendGetRequest("${municipalityControllerPath}GetListOfMunicipalities");
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        GetListOfMunicipalities_WASPResponse.fromJson(response.jsonResponse));
+    return actionCall(() {
+      return restHelper.sendGetRequest(
+          "${municipalityControllerPath}GetListOfMunicipalities");
+    },
+        (response) => GetListOfMunicipalities_WASPResponse.fromJson(
+            response.jsonResponse));
   }
 
   //endregion
@@ -290,16 +261,11 @@ class WASPService implements IWASPServiceFunctions {
       {required Citizen citizen}) async {
     String jsonCitizen = WASPUtil.encodeToJson(citizen.toJson());
     print("Citizen: $jsonCitizen"); // ignore: avoid_print
-    RestResponse response = await restHelper.sendPostRequest(
-        "${citizenControllerPath}SignUpCitizen",
-        body: jsonCitizen);
-    // Check for HTTP errors
-    if (!response.isSuccess) {
-      return WASPServiceResponse.error(response.errorMessage);
-    }
-    // Return response
-    return WASPServiceResponse.success(
-        Citizen_WASPResponse.fromJson(response.jsonResponse));
+
+    return actionCall(() {
+      return restHelper.sendPostRequest("${citizenControllerPath}SignUpCitizen",
+          body: jsonCitizen);
+    }, (response) => Citizen_WASPResponse.fromJson(response.jsonResponse));
   }
 
   @override
