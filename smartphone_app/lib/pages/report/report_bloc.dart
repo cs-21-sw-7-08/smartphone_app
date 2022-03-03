@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/pages/custom_list_dialog/custom_list_dialog.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/webservices/wasp/models/wasp_classes.dart';
@@ -96,7 +97,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
                   child: Column(
                     children: [
                       CustomLabel(
-                        title: item.name!,
+                        title: LocalizationHelper.getInstance()
+                            .getLocalizedReportCategory(context, item),
                         margin: const EdgeInsets.only(
                             left: values.padding,
                             top: values.padding * 2,
@@ -112,6 +114,10 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       }
     }, searchPredicate: (item, searchString) {
       if (item is ReportCategory) {
+        return LocalizationHelper.getInstance()
+            .getLocalizedReportCategory(context, item)
+            .toLowerCase()
+            .contains(searchString);
         return item.name!.toLowerCase().contains(searchString);
       }
       return false;

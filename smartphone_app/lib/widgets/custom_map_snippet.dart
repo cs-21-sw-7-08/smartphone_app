@@ -48,9 +48,31 @@ class GoogleMapSnippet extends StatefulWidget {
 //endregion
 }
 
-class _GoogleMapSnippetState extends State<GoogleMapSnippet> {
+class _GoogleMapSnippetState extends State<GoogleMapSnippet> with WidgetsBindingObserver {
   final Completer<GoogleMapController> _googleMapCompleter = Completer();
   GoogleMapController? controller;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("new state");
+    setState(() {
+      if (controller != null) {
+        controller!.setMapStyle("[]");
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

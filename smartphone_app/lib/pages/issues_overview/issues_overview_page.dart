@@ -35,6 +35,7 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
 
   late ClusterManager _clusterManager;
   final Completer<GoogleMapController> _googleMapCompleter = Completer();
+  GoogleMapController? controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late IssuesOverviewBloc bloc;
 
@@ -308,6 +309,10 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
   }
 
   Widget _getOverview(IssuesOverviewBloc bloc, IssuesOverviewState state) {
+    if (controller != null) {
+      controller!.setMapStyle("[]");
+    }
+
     return Column(
       children: [
         Expanded(
@@ -328,6 +333,7 @@ class _IssuesOverviewPageState extends State<IssuesOverviewPage> {
           onCameraIdle: _clusterManager.updateMap,
           markers: state.markers ?? <Marker>{},
           onMapCreated: (GoogleMapController controller) {
+            this.controller = controller;
             _googleMapCompleter.complete(controller);
             _clusterManager.setMapId(controller.mapId);
           },
